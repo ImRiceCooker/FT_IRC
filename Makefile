@@ -1,32 +1,45 @@
-NAME		=	ircserv
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: sesim <sesim@student.42seoul.kr>           +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/01/27 10:57:54 by sesim             #+#    #+#              #
+#    Updated: 2023/02/09 14:56:30 by sesim            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 CXX			=	c++
+CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g3
+
 RM			=	rm -rf
-CXXFLAGS	=	-std=c++98 -MMD -Wall -Werror -Wextra
-SRC_DIR		=	srcs/
-CINCLUDE	=	-Isrcs/ -Iincludes/
 
-SRCS		=	$(wildcard $(SRC_DIR)*.cpp) $(wildcard $(SRC_DIR)**/*.cpp)
-OBJS		=	$(SRCS:.cpp=.o)
-DEPS		=	$(SRCS:.cpp=.d)
+OBJS_DIR	:=	objs/
 
-all			:	$(NAME)
+SRCS		:=	$(wildcard *.cpp)
+OBJS		:=	$(addprefix $(OBJS_DIR), $(SRCS:.cpp=.o))
+NAME		:=	ircserv
 
-%.o			:	%.cpp
-				$(CXX) $(CXXFLAGS) $(CINCLUDE) -c $< -o $@
 
-$(NAME)		:	$(OBJS)
-				$(CXX) $(CXXFLAGS) $^ -o $@
+all : $(NAME)
 
-clean		:
-				$(RM) $(OBJS)
-				$(RM) $(DEPS)
+$(NAME) : $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+	
+$(OBJS_DIR)%.o : %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $< -c -o $@
 
-fclean		:
-				$(MAKE) clean
-				$(RM) $(NAME)
+clean:
+	$(RM) $(OBJS_DIR)
+	$(RM) $(DEPS_DIR)
 
-re			:
-				$(MAKE) fclean
-				$(MAKE) all
+fclean: clean
+	$(RM) $(NAME)
 
-.PHONY		:	all clean re fclean
+re: fclean 
+	@make all
+
+
+.PHONY: all clean fclean re
