@@ -1,45 +1,33 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: sesim <sesim@student.42seoul.kr>           +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/01/27 10:57:54 by sesim             #+#    #+#              #
-#    Updated: 2023/02/09 14:56:30 by sesim            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+CXX		 = c++
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+DEPFLAGS = -MMD#-g -fsanitize=address
+NAME	 = ircserv
+DIR_SRC = srcs
+DIR_INC = incs
+DIR_BUILD = build
 
-CXX			=	c++
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g3
-
-RM			=	rm -rf
-
-OBJS_DIR	:=	objs/
-
-SRCS		:=	$(wildcard *.cpp)
-OBJS		:=	$(addprefix $(OBJS_DIR), $(SRCS:.cpp=.o))
-NAME		:=	ircserv
-
+SRCS_ORG = main.cpp PmergeMe.cpp
+SRCS	= $(addprefix $(DIR_SRC)/, $(SRCS_ORG))
+OBJS	= $(patsubst %.cpp, $(DIR_BUILD)/%.o, $(SRCS_ORG))
+DEPS	= $(patsubst %.cpp, $(DIR_BUILD)/%.d, $(SRCS_ORG))
 
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
-	
-$(OBJS_DIR)%.o : %.cpp
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $< -c -o $@
+	$(CXX) $(CXXFLAGS) $(DEPFLAGS) -I $(DIR_INC) $^ -o $@
 
-clean:
-	$(RM) $(OBJS_DIR)
-	$(RM) $(DEPS_DIR)
+$(DIR_BUILD)/%.o : $(DIR_SRC)/%.cpp
+	@mkdir  -p $(DIR_BUILD)
+	$(CXX) $(CXXFLAGS) $(DEPFLAGS) -I $(DIR_INC) -c $< -o $@
 
-fclean: clean
+clean :
+	$(RM) -rf $(DIR_BUILD)
+
+fclean : clean
 	$(RM) $(NAME)
 
-re: fclean 
-	@make all
+re : fclean all
 
+.PHONY : all clean fclean re
 
-.PHONY: all clean fclean re
+-include $(DEPS)
