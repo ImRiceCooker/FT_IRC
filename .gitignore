@@ -4,4 +4,4 @@ tags
 a.out
 .vscode/
 ircserv
-.vscode/
+build/
