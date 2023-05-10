@@ -6,7 +6,7 @@ DIR_SRC = srcs
 DIR_INC = incs
 DIR_BUILD = build
 
-SRCS_ORG = main.cpp Channel.cpp Database_channels.cpp Database_users.cpp
+SRCS_ORG = *.cpp # main.cpp Channel.cpp Database_channels.cpp Database_users.cpp
 SRCS	= $(addprefix $(DIR_SRC)/, $(SRCS_ORG))
 OBJS	= $(patsubst %.cpp, $(DIR_BUILD)/%.o, $(SRCS_ORG))
 DEPS	= $(patsubst %.cpp, $(DIR_BUILD)/%.d, $(SRCS_ORG))
