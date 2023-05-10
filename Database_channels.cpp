@@ -196,6 +196,10 @@ Udata Database::part_channel(User &leaver, std::string &chan_name, const std::st
 	return ret;
 }
 
+/**		channel_msg   **/
+/**		@brief PRVMSG 커맨드 비즈니스 로직   **/
+/**		@param msg 보낼 메세지   **/
+
 Udata Database::channel_msg(User &sender, std::string chan_name, const std::string &msg)
 {
 	Udata ret;
@@ -218,6 +222,10 @@ Udata Database::channel_msg(User &sender, std::string chan_name, const std::stri
 	return ret;
 }
 
+/**		notice_channel   **/
+/**		@brief NOTICE 커맨드 비즈니스 로직   **/
+/**		@param msg 보낼 메세지   **/
+
 Udata Database::notice_channel(User &sender, std::string chan_name, const std::string &msg)
 {
 	Udata ret;
@@ -230,6 +238,12 @@ Udata Database::notice_channel(User &sender, std::string chan_name, const std::s
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
+	if (channel.is_user(sender) == false)
+	{
+		tmp = Sender::no_user_message(sender, sender.nickname_);
+		ret.insert(tmp);
+		return ret;
+	}
 	ret = channel.send_all(sender, sender, msg, NOTICE);
 	return ret;
 }

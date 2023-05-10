@@ -306,7 +306,7 @@ void Parser::parser_notice_(const uintptr_t &ident, std::stringstream &line_ss, 
 		msg = message_resize_(msg, to_send);
 		ret = database_.command_notice(ident, target, msg);
 	}
-	push_multiple_write_events_(ret, ident, 2);
+	push_multiple_write_events_(ret, ident, 0);
 }
 
 /**		parser_join_   **/
