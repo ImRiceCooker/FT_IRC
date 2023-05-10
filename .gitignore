@@ -3,3 +3,6 @@
 tags
 a.out
 .vscode/
+ircserv
+build/
+*.json
