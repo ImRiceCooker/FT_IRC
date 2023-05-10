@@ -230,6 +230,12 @@ Udata Database::notice_channel(User &sender, std::string chan_name, const std::s
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
+	if (channel.is_user(sender) == false)
+	{
+		tmp = Sender::no_user_message(sender, sender.nickname_);
+		ret.insert(tmp);
+		return ret;
+	}
 	ret = channel.send_all(sender, sender, msg, NOTICE);
 	return ret;
 }
