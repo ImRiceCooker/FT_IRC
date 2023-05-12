@@ -26,6 +26,7 @@ class Channel
 private:
 	User host_;
 	std::vector<User> connectors_;
+	std::vector<uintptr_t> invitations_;
 	std::string name_;
 	std::string topic_;
 	std::string access_;
