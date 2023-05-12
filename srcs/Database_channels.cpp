@@ -314,3 +314,28 @@ Udata Database::set_topic(User &sender, std::string &chan_name, std::string &top
 	}
 	return ret;
 }
+
+Udata Database::command_mode_0(const uintptr_t &ident, const std::string &target_name)
+{
+	Udata ret;
+	Event tmp;
+
+	if (is_channel(target_name) == false)
+	{
+		tmp = Sender::no_channel_message(select_user(ident), target_name);
+		ret.insert(tmp);
+		return ret;
+	}
+	Channel &tmp_channel = select_channel(target_name);
+	User &host = select_user(ident);
+	if (tmp_channel.get_host() == host)
+	{
+		// ret = tmp_channel.set_flag(host, tmp_channel, 0);
+	}
+	else
+	{
+		// tmp = Sender::mode_i_error_not_op_message(host, host.nickname_, target_name);
+		ret.insert(tmp);
+	}
+	return ret;
+}

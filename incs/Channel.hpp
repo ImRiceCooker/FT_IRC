@@ -41,6 +41,9 @@ private:
 	int error_;
 
 public:
+	char channel_flag_;
+	
+	Channel();
 	std::string &get_name(void);
 	std::string &get_topic(void);
 	User &get_host(void);

@@ -203,19 +203,28 @@ Udata Database::command_mode(const uintptr_t &ident, const std::string &target_n
 {
 	int	mode_type;
 	Udata ret;
+	Event tmp = valid_user_checker_(ident, "MODE");
 
-	mode_type = check_mode_type(mode);
-	switch (mode_type)
+	if (tmp.second.size())
 	{
-	case -1:
-		ret = Sender::mode_worng_msg(ident, mode);
-		break;
-	case 0:
-		ret = command_mode_0(ident, target_name);
-		break;
-	case 1:
-		ret = command_mode_1(ident, target_name);
-		break;
+		ret.insert(tmp);
+		return ret;
+	}
+	mode_type = check_mode_type(mode);
+	if (is_user(ident))
+	{
+		switch (mode_type)
+		{
+		case -1:
+			ret = Sender::mode_worng_msg(ident, mode);
+			break;
+		case 0:
+			ret = command_mode_0(ident, target_name);
+			break;
+		case 1:
+			ret = command_mode_1(ident, target_name);
+			break;
+		}
 	}
 	return ret;
 }
