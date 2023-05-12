@@ -7,10 +7,10 @@
 #include <string>
 #include <sys/_types/_size_t.h>
 
-const std::string Parser::commands[N_COMMAND] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE"};
+const std::string Parser::commands[N_COMMAND] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE", "MODE"};
 void (Parser::*Parser::func_ptr[N_COMMAND])(const uintptr_t &, std::stringstream &, std::string &) =
 		{&Parser::parser_pass_, &Parser::parser_nick_, &Parser::parser_user_, &Parser::parser_ping_, &Parser::parser_join_, &Parser::parser_quit_, &Parser::parser_privmsg_,
-		 &Parser::parser_kick_, &Parser::parser_part_, &Parser::parser_topic_, &Parser::parser_notice_};
+		 &Parser::parser_kick_, &Parser::parser_part_, &Parser::parser_topic_, &Parser::parser_notice_, &Parser::parser_mode_};
 
 /**		command_toupper   **/
 /**		@brief NC로 소문자 명령을 보낼 경우 대문자로 변경하여 처리하기 위한 함수   **/
@@ -149,7 +149,39 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
-	std::string 
+	std::string target, mode, param;
+	Udata ret;
+
+	line_ss >> target >> mode >> param;
+	// std::cout << "tartget :" << target << std::endl;
+	// std::cout << "mode :" << mode << std::endl;
+	// std::cout << "param :" << param << std::endl;
+
+	if (target.empty() || mode.empty())
+	{
+		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+		ret.insert(tmp);
+	}
+	// @todo mode_ivalid_check(std::string mode)
+	// else
+	// {
+	// 	if (2글자 아니면)
+	//	{
+	//		에러
+	//	}
+	//	else if (첫글자 + or - 아니면)
+	// {
+	// 	에러
+	// }
+	// else if (2번째 글자가 i, o, k, l, t 중에 하나라도 아니면)
+	// {
+	// 	에러
+	// }
+
+	// todo: 하나의 modetype 값으로 10개의 함수 관리
+	// 	ret = database_.command_mode(ident, target, mode_type);
+	// }
+	// push_multiple_write_events_(ret, ident, 0);
 }
 
 /**		parser_pass_   **/
