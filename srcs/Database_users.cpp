@@ -180,6 +180,46 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
+int	Database::check_mode_type(const std::string &mode)
+{
+	char first;
+	char second;
+
+	if (mode.length() != 2)
+		return -1;
+	first = mode.substr(0, 1);
+	second = mode.substr(1, 2);
+	if (second == 'i')
+	{
+		if (first == '+')
+			return 0;
+		else
+			return 1;
+	}
+	return -1;
+}
+
+Udata Database::command_mode(const uintptr_t &ident, const std::string &target_name, const std::string &mode, std::string &param)
+{
+	int	mode_type;
+	Udata ret;
+
+	mode_type = check_mode_type(mode);
+	switch (mode_type)
+	{
+	case -1:
+		ret = Sender::mode_worng_msg(ident, mode);
+		break;
+	case 0:
+		ret = command_mode_0(ident, target_name);
+		break;
+	case 1:
+		ret = command_mode_1(ident, target_name);
+		break;
+	}
+	return ret;
+}
+
 Event Database::command_pass(const uintptr_t &ident)
 {
 	Event tmp;

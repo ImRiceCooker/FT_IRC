@@ -21,6 +21,14 @@ enum e_send_switch
 	MODE,
 	WHO
 };
+
+enum e_channel_flag
+{
+	F_INVITE_ONLY = 0b001,
+	F_KEY_NEEDED = 0b010,
+	F_LIMITED_MEMBERSHIP = 0b100
+};
+
 class Channel
 {
 private:

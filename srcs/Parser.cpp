@@ -150,6 +150,7 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	std::string target, mode, param;
+	int	mode_type;
 	Udata ret;
 
 	line_ss >> target >> mode >> param;
@@ -162,6 +163,11 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
 		ret.insert(tmp);
 	}
+	else
+	{
+		ret = database_.command_mode(ident, target, mode, param);
+	}
+	push_multiple_write_events_(ret, ident, 0);
 	// @todo mode_ivalid_check(std::string mode)
 	// else
 	// {
@@ -181,7 +187,6 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 	// todo: 하나의 modetype 값으로 10개의 함수 관리
 	// 	ret = database_.command_mode(ident, target, mode_type);
 	// }
-	// push_multiple_write_events_(ret, ident, 0);
 }
 
 /**		parser_pass_   **/
