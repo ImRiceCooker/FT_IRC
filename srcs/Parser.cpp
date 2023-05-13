@@ -145,7 +145,7 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 
 /**		parser_mode_   **/
 /**		@brief MODE 명령어를 파싱하는 함수   **/
-/**		@brief    **/
+/**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
@@ -156,6 +156,7 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 
 	line_ss >> tmp;
 
+	// 파싱
 	if (tmp.find('#') != std::string::npos)
 	{
 		mode.target = tmp;
@@ -172,7 +173,7 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 		mode.param = tmp;
 	}
 
-
+	// 에러처리
 	if (mode.option.length() < 1)
 	{
 		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
