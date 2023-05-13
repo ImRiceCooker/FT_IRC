@@ -3,7 +3,7 @@
 const std::string Sender::server_name_ = "irc.local";
 /****************************       <MODE>                             ****************************/
 
-/** @brief 472 - join 할 때 invaild한 채널 이름을 만들 경우 보내는 오류 패킷 메세지 ex) "#" 과 같은 이름 **/
+/** @brief 472 - 변경해야함 **/
 
 Event Sender::mode_wrong_message(const uintptr_t &socket, const std::string &mode)
 

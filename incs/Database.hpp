@@ -4,6 +4,12 @@
 #include "Sender.hpp"
 #include "Udata.hpp"
 
+typedef enum e_mode_flag
+{
+	I_PLUS,
+	I_MINUS
+}			t_mode_flag;
+
 class Database
 {
 private:
