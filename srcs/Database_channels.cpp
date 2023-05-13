@@ -330,7 +330,7 @@ Udata Database::command_mode_0(const uintptr_t &ident, std::string &chan_name)
 	User &host = select_user(ident);
 	if (tmp_channel.get_host() == host)
 	{
-		tmp_channel.set_flag(host, tmp_channel, I_PLUS, param);
+		tmp_channel.set_flag(tmp_channel, I_PLUS, param);
 		// tmp = Sender::
 		// ret.insert(tmp);
 	}
