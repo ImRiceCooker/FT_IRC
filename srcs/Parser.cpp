@@ -146,27 +146,59 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		parser_mode_   **/
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief    **/
+
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
-	std::string target, mode, param;
+	std::string tmp, target, mode, param;
 	Udata ret;
 
-	line_ss >> target >> mode >> param;
-	// std::cout << "tartget :" << target << std::endl;
-	// std::cout << "mode :" << mode << std::endl;
-	// std::cout << "param :" << param << std::endl;
+	line_ss >> tmp;
 
-	if (target.empty() || mode.empty())
+	if (tmp.find('#') != std::string::npos)
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-		ret.insert(tmp);
+		target = tmp;
+		line_ss >> mode;
+		line_ss >> param;
+	}
+	else if (tmp.find('+') != std::string::npos || tmp.find('-') != std::string::npos)
+	{
+		mode = tmp;
+		line_ss >> param;
 	}
 	else
 	{
-		ret = database_.command_mode(ident, target, mode, param);
+		param = tmp;
 	}
-	push_multiple_write_events_(ret, ident, 0);
+
+	// std::cout << "target: " << target << std::endl;
+	// std::cout << "mode: " << mode << std::endl;
+	// std::cout << "param: " << param << std::endl;
+
+	// switch (verify_mode(mode))
+	// {
+	// 	case /* constant-expression */:
+	// 		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+	// 		ret.insert(tmp);
+	// 		break;
+		
+	// 	default:
+	// 		break;
+	// }
+
+	// if (verify_mode(mode))
+	// {
+	// }
+	// else if (target.length() == 0)
+	// {
+	// 	Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+	// 	ret.insert(tmp);
+	// }
+	// else
+	// {
+	// 	ret = database_.command_mode(ident, target, mode, param);
+	// }
+	// push_multiple_write_events_(ret, ident, 0);
 	// @todo mode_ivalid_check(std::string mode)
 	// else
 	// {

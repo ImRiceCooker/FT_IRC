@@ -10,7 +10,7 @@ Event Sender::mode_wrong_message(const uintptr_t &socket, const std::string &mod
 {
 	Event ret;
 
-	const std::string &error_message = ":" + Sender::server_name_ + " 472 " + mode + " :Invaild mode type";
+	const std::string &error_message = ":" + Sender::server_name_ + " 472 " + mode + " :is not a recognised channel mode.";
 	ret = std::make_pair(socket, error_message + "\r\n");
 	return ret;
 }
@@ -274,7 +274,7 @@ Event Sender::mode_no_option_error_message(const User &sender, const std::string
 {
 	Event ret;
 
-	const std::string &mode_message = ":" + Sender::server_name_ + " 472 " + sender.nickname_ + " " + channel + " :You must have channel op access or above to set channel mode p";
+	const std::string &mode_message = ":" + Sender::server_name_ + " 472 " + sender.nickname_ + " " + channel + " :is not a recognised channel mode.";
 	ret = std::make_pair(sender.client_sock_, mode_message + "\r\n");
 	return ret;
 }
