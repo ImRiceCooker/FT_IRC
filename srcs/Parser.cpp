@@ -150,7 +150,6 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	std::string target, mode, param;
-	int	mode_type;
 	Udata ret;
 
 	line_ss >> target >> mode >> param;
