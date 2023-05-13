@@ -210,3 +210,4 @@ void set_flag(User &host_user, Channel &channel, t_mode_flag mode_flag, std::str
 	}
 	return;
 }
+
