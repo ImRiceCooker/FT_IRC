@@ -180,31 +180,44 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
-int Database::check_mode_type(const std::string &mode)
-{
-	std::string sign;
-	std::string option;
+// int Database::check_mode_type(t_mode &mode)
+// {
+// 	std::string sign;
+// 	std::string option;
+// 	Udata ret;
 
-	if (mode.length() != 2)
-		return -1;
-	sign = mode.substr(0, 1);
-	option = mode.substr(1, 2);
-	if (option == "i")
-	{
-		if (sign == "+")
-			return 0;
-		else if (sign == "-")
-			return 1;
-	}
-	return -1;
-}
+// 	sign = mode.option.substr(0, 1);
+// 	option = mode.option.substr(1, 2);
+// 	if (option == "i" || option == "t")
+// 	{
+// 		if (mode.param.length() > 0) // i 와 t는 파라미터가 없어야함
+// 		{
+// 			Event tmp = Sender::command_empty_argument_461(ident, "NOTICE");
+// 			ret.insert(tmp);
+// 			return -1;
+// 		}
+// 	}
+// 	else if (option == "k" || option == "o" || option == "l")
+// 	{
+// 		if (mode.param.length() == 0) // k, o, l은 파라미터가 있어야함
+// 		{
 
-Udata Database::command_mode(const uintptr_t &ident, std::string &target_name, std::string &mode, std::string &param)
+// 			return -1;
+// 		}
+// 	}
+// 	else if (mode.target.length() > 0) // target이 없으면 안됨
+// 	{
+// 		command_
+// 		return -1;
+// 	}
+// 	return -1;
+// }
+
+Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
 	int mode_type;
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "MODE");
-	(void)param;
 
 	if (tmp.second.size())
 	{
@@ -216,12 +229,13 @@ Udata Database::command_mode(const uintptr_t &ident, std::string &target_name, s
 	{
 		switch (mode_type)
 		{
-		case -1:
-			tmp = Sender::mode_wrong_message(ident, mode);
-			ret.insert(tmp);
-			break;
-		case 0:
-			ret = command_mode_0(ident, target_name);
+			case NO_ERROR:
+				break ;
+			case -1:
+				tmp = Sender::mode_wrong_message(ident, mode.option);
+				ret.insert(tmp);
+				break;
+			ret = command_mode_0(ident, mode.target);
 			break;
 		// case 1:
 		// 	ret = command_mode_1(ident, target_name);

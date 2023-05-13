@@ -10,6 +10,22 @@ typedef enum e_mode_flag
 	I_MINUS
 }			t_mode_flag;
 
+typedef enum e_mode_error_flag
+{
+	NO_ERROR,
+	UNUSED_PARA,
+	NO_PARA,
+	NO_OPTION,
+	NO_TARGET
+}			t_mode_error_flag;
+
+typedef struct s_mode
+{
+	std::string	target;
+	std::string	option;
+	std::string	param;
+}			t_mode;
+
 class Database
 {
 private:
@@ -49,10 +65,10 @@ public:
 	Udata command_join(const uintptr_t &ident, const std::string &chan_name);
 	Udata command_part(const uintptr_t &ident, std::string &chan_name, const std::string &msg);
 	Udata command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg);
-	Udata command_mode(const uintptr_t &ident, std::string &target_name, std::string &mode, std::string &param);
+	Udata command_mode(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_0(const uintptr_t &ident, std::string &chan_name);
 	Udata command_mode_1(const uintptr_t &ident, std::string &chan_name);
-	int check_mode_type(const std::string &mode);
+	int check_mode_type(t_mode &mode);
 	bool is_user(const uintptr_t &ident);
 	bool is_user(const std::string &nickname);
 	User &select_user(const uintptr_t &ident);

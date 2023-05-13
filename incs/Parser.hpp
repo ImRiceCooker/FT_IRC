@@ -9,6 +9,7 @@ class Receiver;
 
 enum e_val { N_COMMAND = 12 };
 
+
 class Parser
 {
 	private:
