@@ -192,9 +192,9 @@ int Database::check_mode_type(const std::string &mode)
 	if (option == "i")
 	{
 		if (sign == "+")
-			return 0;
+			return I_PLUS;
 		else if (sign == "-")
-			return 1;
+			return I_MINUS;
 	}
 	return -1;
 }
