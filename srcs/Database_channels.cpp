@@ -334,7 +334,8 @@ Udata Database::command_mode_0(const uintptr_t &ident, std::string &chan_name)
 		// tmp_channel.set_flag(host, tmp_channel, 0, param);
 		// send_all 함수를 쓰려면, USER, USER, msg, remocon 변수를 넣어줘야 한다.
 		// 여기서 host가 User 객체이고, tmp_channel 이 채널 객체이다.
-    tmp_channel.set_flag(tmp_channel, I_PLUS, param);
+		std::string dumy_param = "";
+		tmp_channel.set_flag(tmp_channel, I_PLUS, dumy_param);
 		ret = tmp_channel.send_all(host, host, "+i", MODE);
 	}
 	else
