@@ -54,7 +54,7 @@ std::string Channel::get_user_list_str(void)
 	std::vector<User> sort = sort_users();
 	for (std::vector<User>::iterator it = sort.begin(); it != sort.end(); ++it)
 	{
-		ret += *it == get_host() ? "@" + it->nickname_ : it->nickname_;
+		ret += (is_host(*it) ? "@" + it->nickname_ : it->nickname_);
 		ret += " ";
 	}
 	return ret;
@@ -107,12 +107,12 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 				packet = Sender::notice_channel_message(sender, *it, msg, this->get_name());
 			}
 			break;
-		case WALL:
-			if (sender == *it)
-			{
-				continue;
-			}
-			packet = Sender::wall_message(sender, this->get_host(), this->get_name(), msg);
+		// case WALL:
+		// 	if (sender == *it)
+		// 	{
+		// 		continue;
+		// 	}
+		// 	packet = Sender::wall_message(sender, this->get_host(), this->get_name(), msg);
 		case TOPIC:
 			packet = Sender::topic_message(sender, *it, this->get_name(), msg);
 			break;
@@ -158,16 +158,6 @@ void Channel::add_user(User &joiner)
 	connectors_.push_back(joiner);
 }
 
-void Channel::set_host()
-{
-	this->host_ = connectors_[0];
-}
-
-void Channel::set_host(User &new_host)
-{
-	this->host_ = new_host;
-}
-
 void Channel::set_channel_name(std::string &chan_name)
 {
 	this->name_ = chan_name;
@@ -193,9 +183,61 @@ bool Channel::operator==(const Channel &t) const
 {
 	return (this->name_ == t.name_);
 }
-User &Channel::get_host()
+
+std::vector<uintptr_t> &Channel::get_hosts(void)
 {
-	return this->host_;
+	return this->hosts_;
+}
+
+void Channel::set_host(uintptr_t host_sock)
+{
+	this->hosts_.push_back(host_sock);
+}
+
+void Channel::set_host(User &user)
+{
+	uintptr_t host_sock = user.client_sock_;
+	this->hosts_.push_back(host_sock);
+}
+
+void Channel::unset_host(uintptr_t host_sock)
+{
+	std::vector<uintptr_t>::iterator it = std::find(this->hosts_.begin(), this->hosts_.end(), host_sock);
+	std::size_t size = std::distance(this->hosts_.begin(), it);
+	this->hosts_.erase(this->hosts_.begin() + size);
+}
+
+void Channel::unset_host(User &host_user)
+{
+	uintptr_t host_sock = host_user.client_sock_;
+	std::vector<uintptr_t>::iterator it = std::find(this->hosts_.begin(), this->hosts_.end(), host_sock);
+	std::size_t size = std::distance(this->hosts_.begin(), it);
+	this->hosts_.erase(this->hosts_.begin() + size);
+}
+
+bool Channel::is_host(uintptr_t client_sock)
+{
+	std::vector<uintptr_t>::iterator it;
+
+	for (it = hosts_.begin(); it != hosts_.end(); it++)
+	{
+		if (*it == client_sock)
+			return true;
+	}
+	return false;
+}
+
+bool Channel::is_host(User &usr)
+{
+	std::vector<uintptr_t>::iterator it;
+	uintptr_t client_sock = usr.client_sock_;
+
+	for (it = hosts_.begin(); it != hosts_.end(); it++)
+	{
+		if (*it == client_sock)
+			return true;
+	}
+	return false;
 }
 
 void Channel::set_flag(Channel &channel, t_mode_type mode_type, std::string &param)
