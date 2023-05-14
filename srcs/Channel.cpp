@@ -196,17 +196,20 @@ User &Channel::get_host()
 	return this->host_;
 }
 
-void set_flag(Channel &channel, t_mode_flag mode_flag, std::string &param)
+void set_flag(Channel &channel, t_mode_type mode_type, std::string &param)
 {
 	void param;
 	
-	switch (mode_flag)
+	switch (mode_type)
 	{
 	case I_PLUS:
 		channel.channel_flag_ |= F_INVITE_ONLY;
 		break;
 	case I_MINUS:
 		channel.channel_flag_ |= !F_INVITE_ONLY;
+	// case K_PLUS:
+	// 	channel.channel_flag_ |= F_KEY_NEEDED;
+	// 	channel.password_ = param;
 	}
 	return;
 }
