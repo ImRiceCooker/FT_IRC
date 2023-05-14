@@ -198,7 +198,7 @@ User &Channel::get_host()
 	return this->host_;
 }
 
-void set_flag(Channel &channel, t_mode_type mode_type, std::string &param)
+void Channel::set_flag(Channel &channel, t_mode_type mode_type, std::string &param)
 {
 	(void)param;
 
