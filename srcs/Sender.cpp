@@ -1,6 +1,20 @@
 #include "Sender.hpp"
 
 const std::string Sender::server_name_ = "irc.local";
+/****************************       <MODE>                             ****************************/
+
+/** @brief 472 - 변경해야함 **/
+
+Event Sender::mode_wrong_message(const uintptr_t &socket, const std::string &mode)
+
+{
+	Event ret;
+
+	const std::string &error_message = ":" + Sender::server_name_ + " 472 " + mode + " :Invaild mode type";
+	ret = std::make_pair(socket, error_message + "\r\n");
+	return ret;
+}
+
 /****************************       <PING && PONG && USE && etc>       ****************************/
 
 /** @brief PING명령에 대한 응답으로 PONG 전송s **/

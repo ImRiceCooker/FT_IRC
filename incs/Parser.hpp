@@ -7,7 +7,7 @@
 
 class Receiver;
 
-enum e_val { N_COMMAND = 11 };
+enum e_val { N_COMMAND = 12 };
 
 class Parser
 {
