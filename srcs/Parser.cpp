@@ -149,22 +149,20 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
 
-t_mode_type check_mode_type(t_mode &mode)
+t_mode_type check_mode_type(t_mode &mode, char &sign, char &ch)
 {
-	std::string sign;
-	std::string option;
+	mode.mode_type = MODE_TYPE_ERR;
 
-	sign = mode.option.substr(0, 1);
-	option = mode.option.substr(1, 2);
-	if (option == "i")
+	if (sign == '+')
 	{
-		if (sign == "+")
-			mode.mode_type = I_PLUS;
-		else if (sign == "-")
+		if (ch == 'i')
 			mode.mode_type = I_MINUS;
 	}
-	else
-		mode.mode_type = MODE_TYPE_ERR;
+	else if (sign == '-')
+	{
+		if (ch == 'i')
+			mode.mode_type = I_PLUS;
+	}
 	return (mode.mode_type);
 }
 
@@ -207,23 +205,23 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 
 		if ((ch == 'i' || ch == 't') && mode.param.length() > 0) // i 와 t는 파라미터가 없어야함
 		{
-			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-			// ret.insert(tmp);
+			Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			ret.insert(tmp);
 		}
 		else if ((ch == 'k' || ch == 'o' || ch == 'l') && mode.param.length() == 0) // k, o, l은 파라미터가 있어야함
 		{
-			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-			// ret.insert(tmp);
+			Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			ret.insert(tmp);
 		}
-		else if (check_mode_type(mode) == MODE_TYPE_ERR)
+		else if (check_mode_type(mode, sign, ch) == MODE_TYPE_ERR)
 		{
 			Event tmp = Sender::mode_wrong_message(ident, ch);
 			ret.insert(tmp);
 		}
-		else if (mode.target.length() > 0) // target이 없으면 안됨
+		else if (mode.target.length() < 2) // target이 없으면 안됨
 		{
-			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-			// ret.insert(tmp);
+			Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			ret.insert(tmp);
 		}
 		else
 			ret = database_.command_mode(ident, mode);

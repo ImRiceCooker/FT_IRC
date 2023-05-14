@@ -182,7 +182,6 @@ bool Database::is_valid_nick(std::string &new_nick)
 
 Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
-	t_mode_type mode_type;
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "MODE");
 

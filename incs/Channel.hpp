@@ -59,7 +59,7 @@ public:
 	void set_channel_name(std::string &chan_name);
 	void delete_user(User &usr);
 	std::string get_user_list_str(void);
-	void set_flag(Channel &channel, t_mode_type mode_type, std::string &param);
+	void set_flag(Channel &channel, t_mode &mode);
 
 	Udata send_all(User &sender, User &target, std::string msg, int remocon);
 
