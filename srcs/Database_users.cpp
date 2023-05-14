@@ -199,12 +199,11 @@ int Database::check_mode_type(const std::string &mode)
 	return -1;
 }
 
-Udata Database::command_mode(const uintptr_t &ident, std::string &target_name, std::string &mode, std::string &param)
+Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
 	int mode_type;
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "MODE");
-	(void)param;
 
 	if (tmp.second.size())
 	{

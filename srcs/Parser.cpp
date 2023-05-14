@@ -145,47 +145,65 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 
 /**		parser_mode_   **/
 /**		@brief MODE 명령어를 파싱하는 함수   **/
-/**		@brief    **/
+/**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
+
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
-	std::string target, mode, param;
+	t_mode mode;
+	std::string tmp;
 	Udata ret;
 
-	line_ss >> target >> mode >> param;
-	// std::cout << "tartget :" << target << std::endl;
-	// std::cout << "mode :" << mode << std::endl;
-	// std::cout << "param :" << param << std::endl;
+	line_ss >> tmp;
 
-	if (target.empty() || mode.empty())
+	// 파싱
+	if (tmp.find('#') != std::string::npos)
+	{
+		mode.target = tmp;
+		line_ss >> mode.option;
+		line_ss >> mode.param;
+	}
+	else if (tmp.find('+') != std::string::npos || tmp.find('-') != std::string::npos)
+	{
+		mode.option = tmp;
+		line_ss >> mode.param;
+	}
+	else
+	{
+		mode.param = tmp;
+	}
+
+	// 에러처리
+	if (mode.option.length() < 1)
 	{
 		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
 		ret.insert(tmp);
 	}
 	else
 	{
-		ret = database_.command_mode(ident, target, mode, param);
-	}
-	push_multiple_write_events_(ret, ident, 0);
-	// @todo mode_ivalid_check(std::string mode)
-	// else
-	// {
-	// 	if (2글자 아니면)
-	//	{
-	//		에러
-	//	}
-	//	else if (첫글자 + or - 아니면)
-	// {
-	// 	에러
-	// }
-	// else if (2번째 글자가 i, o, k, l, t 중에 하나라도 아니면)
-	// {
-	// 	에러
-	// }
+		char ch = mode.option.at(1);
 
-	// todo: 하나의 modetype 값으로 10개의 함수 관리
-	// 	ret = database_.command_mode(ident, target, mode_type);
-	// }
+		if ((ch == 'i' || ch == 't') && mode.param.length() > 0) // i 와 t는 파라미터가 없어야함
+		{
+			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			// ret.insert(tmp);
+		}
+		else if (ch == 'k' || ch == 'o' || ch == 'l')
+		{
+			if (mode.param.length() == 0) // k, o, l은 파라미터가 있어야함
+			{
+				// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+				// ret.insert(tmp);
+			}
+		}
+		else if (mode.target.length() > 0) // target이 없으면 안됨
+		{
+			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			// ret.insert(tmp);
+		}
+	}
+	ret = database_.command_mode(ident, mode);
+	push_multiple_write_events_(ret, ident, 0);
 }
 
 /**		parser_pass_   **/
