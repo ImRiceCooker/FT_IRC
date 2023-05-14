@@ -2,6 +2,7 @@
 #include "Receiver.hpp"
 #include "Udata.hpp"
 #include "color.hpp"
+#include "Database.hpp"
 
 #include <sstream>
 #include <string>
@@ -147,6 +148,26 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
+
+t_mode_type check_mode_type(t_mode &mode)
+{
+	std::string sign;
+	std::string option;
+
+	sign = mode.option.substr(0, 1);
+	option = mode.option.substr(1, 2);
+	if (option == "i")
+	{
+		if (sign == "+")
+			mode.mode_type = I_PLUS;
+		else if (sign == "-")
+			mode.mode_type = I_MINUS;
+	}
+	else
+		mode.mode_type = MODE_TYPE_ERR;
+	return (mode.mode_type);
+}
+
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
@@ -173,7 +194,7 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 		mode.param = tmp;
 	}
 
-	// 에러처리
+	// 파싱 후 에러처리
 	if (mode.option.length() < 1)
 	{
 		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
@@ -181,6 +202,7 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 	}
 	else
 	{
+		char sign = mode.option.at(0);
 		char ch = mode.option.at(1);
 
 		if ((ch == 'i' || ch == 't') && mode.param.length() > 0) // i 와 t는 파라미터가 없어야함
@@ -188,21 +210,24 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
 			// ret.insert(tmp);
 		}
-		else if (ch == 'k' || ch == 'o' || ch == 'l')
+		else if ((ch == 'k' || ch == 'o' || ch == 'l') && mode.param.length() == 0) // k, o, l은 파라미터가 있어야함
 		{
-			if (mode.param.length() == 0) // k, o, l은 파라미터가 있어야함
-			{
-				// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-				// ret.insert(tmp);
-			}
+			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			// ret.insert(tmp);
+		}
+		else if (check_mode_type(mode) == MODE_TYPE_ERR)
+		{
+			Event tmp = Sender::mode_wrong_message(ident, ch);
+			ret.insert(tmp);
 		}
 		else if (mode.target.length() > 0) // target이 없으면 안됨
 		{
 			// Event tmp = Sender::command_empty_argument_461(ident, "MODE");
 			// ret.insert(tmp);
 		}
+		else
+			ret = database_.command_mode(ident, mode);
 	}
-	ret = database_.command_mode(ident, mode);
 	push_multiple_write_events_(ret, ident, 0);
 }
 

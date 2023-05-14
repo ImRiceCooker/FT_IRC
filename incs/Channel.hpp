@@ -2,6 +2,7 @@
 
 #include "Sender.hpp"
 #include "Udata.hpp"
+#include "type_mode.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -28,12 +29,6 @@ enum e_channel_flag
 	F_KEY_NEEDED = 0b010,
 	F_LIMITED_MEMBERSHIP = 0b100
 };
-
-typedef enum e_mode_type
-{
-	I_PLUS,
-	I_MINUS
-}	t_mode_type;
 
 class Channel
 {
