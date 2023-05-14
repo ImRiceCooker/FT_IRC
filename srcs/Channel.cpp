@@ -77,7 +77,6 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 		case PART:
 			packet = Sender::part_message(sender, *it, this->get_name(), msg);
 			packet.second += Sender::mode_make_operator_message(sender, "Channel", *it);
-			;
 			break;
 		case PRIV:
 			if (sender == *it)
@@ -122,6 +121,9 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 			break;
 		case WHO:
 			packet = Sender::who_joiner_352_message(sender, this->get_name());
+			break;
+		case MODE:
+			packet = Sender::mode_message(sender, *it, this->get_name(), msg);
 			break;
 		}
 		ret.insert(packet);
