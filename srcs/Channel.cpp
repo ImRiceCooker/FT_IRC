@@ -123,7 +123,8 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 			packet = Sender::who_joiner_352_message(sender, this->get_name());
 			break;
 		case MODE:
-			packet = Sender::mode_message(sender, *it,)
+			packet = Sender::mode_message(sender, *it, this->get_name());
+			break;
 		}
 		ret.insert(packet);
 	}

@@ -56,6 +56,7 @@ class Sender
 		static std::string	mode_329_message(const User& sender, const std::string channel, const std::string time_stamp);
 		static std::string	join_353_message(const User& sender, const std::string& chan_name, const std::string& chan_status, const std::string& chan_user_list);
 		static std::string	join_366_message(const User& sender, const std::string& chan_name);
+		static Event				mode_message(const User &sender, const User &receiver, const std::string &channel);
 	private:
 		static const std::string	server_name_;
 };

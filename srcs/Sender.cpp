@@ -516,3 +516,15 @@ Event Sender::no_user_message(const User &sender, const std::string &target)
 	ret = std::make_pair(sender.client_sock_, no_msg + "\r\n");
 	return (ret);
 }
+
+// /****************************       <MODE>       ****************************/
+
+/**  @brief mode +i 성공 시 보내는 패킷 메세지 **/
+Event Sender::mode_message(const User &sender, const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &join_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 JOIN :" + channel;
+	ret = make_pair(receiver.client_sock_, join_message + "\r\n");
+	return ret;
+}
