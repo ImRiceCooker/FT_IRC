@@ -43,7 +43,7 @@ public:
 	static Event notice_p2p_message(const User &sender, const User &target, const std::string &msg);
 	static Event notice_channel_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg);
 	static Event notice_no_nick_message(const User &sender, const User &receiver);
-	static Event wall_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg);
+	// static Event wall_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg);
 	static Event no_channel_message(const User &sender, const std::string &channel);
 	static Event no_user_message(const User &sender, const std::string &target);
 	static Event mode_324_message(const User &sender, const std::string channel);

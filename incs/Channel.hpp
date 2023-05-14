@@ -38,8 +38,8 @@ typedef enum e_mode_type
 class Channel
 {
 private:
-	User host_;
 	std::vector<User> connectors_;
+	std::vector<uintptr_t> hosts_;
 	std::vector<uintptr_t> invitations_;
 	std::string name_;
 	std::string topic_;
@@ -50,11 +50,15 @@ public:
 	char channel_flag_;
 	
 	Channel();
+	std::vector<uintptr_t> &get_hosts(void);
+	void set_host(uintptr_t host_sock);
+	void set_host(User &user);
+	void unset_host(uintptr_t host_sock);
+	void unset_host(User &host_user);
+	bool is_host(uintptr_t client_sock);
+	bool is_host(User &user);
 	std::string &get_name(void);
 	std::string &get_topic(void);
-	User &get_host(void);
-	void set_host(void);
-	void set_host(User &new_host);
 	std::string &get_access(void);
 	void set_access(const std::string &access);
 	void set_topic(std::string &topic);

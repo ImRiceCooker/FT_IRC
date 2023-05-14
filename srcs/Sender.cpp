@@ -450,15 +450,15 @@ Event Sender::notice_no_nick_message(const User &sender, const User &receiver)
 }
 
 /** @brief  wall 할 때 메세지를 받는 receiver 클라이언트들에게 보내지는 패킷 메세지 **/
-Event Sender::wall_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg)
-{
-	Event ret;
+// Event Sender::wall_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg)
+// {
+// 	Event ret;
 
-	const std::string &privmsg = ":" + sender.nickname_ + "!" + sender.username_ + "@" + receiver.unused_ +
-															 " NOTICE @" + channel + " :" + msg;
-	ret = std::make_pair(receiver.client_sock_, privmsg + "\r\n");
-	return (ret);
-}
+// 	const std::string &privmsg = ":" + sender.nickname_ + "!" + sender.username_ + "@" + receiver.unused_ +
+// 															 " NOTICE @" + channel + " :" + msg;
+// 	ret = std::make_pair(receiver.client_sock_, privmsg + "\r\n");
+// 	return (ret);
+// }
 
 /****************************       <TOPIC>       ****************************/
 

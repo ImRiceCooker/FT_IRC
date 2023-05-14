@@ -39,7 +39,7 @@ Channel &Database::create_channel(User &joiner, std::string &chan_name, std::str
 
 	tmp.set_channel_name(chan_name);
 	tmp.add_user(joiner);
-	tmp.set_host();
+	tmp.set_host(joiner);
 	tmp.set_access(chan_access);
 	channel_list_.push_back(tmp);
 	return channel_list_.back();
@@ -151,9 +151,9 @@ Udata Database::quit_channel(User &leaver, std::string &chan_name, const std::st
 	}
 	else
 	{
-		if (leaver == chan.get_host())
+		if (chan.is_host(leaver) && chan.get_hosts().size() == 1)
 		{
-			chan.set_host();
+			chan.set_host(chan.get_users().at(0));
 		}
 	}
 	return ret;
@@ -187,10 +187,9 @@ Udata Database::part_channel(User &leaver, std::string &chan_name, const std::st
 	}
 	else
 	{
-		if (leaver == chan.get_host())
+		if (chan.is_host(leaver) && chan.get_hosts().size() == 1)
 		{
-			Udata tmp_;
-			chan.set_host();
+			chan.set_host(chan.get_users().at(0));
 		}
 	}
 	return ret;
@@ -252,7 +251,7 @@ Udata Database::kick_channel(User &host, User &target, std::string &chan_name, s
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
-	if (channel.get_host() == host)
+	if (channel.is_host(host))
 	{
 		if (channel.is_user(target) == true)
 		{
@@ -282,10 +281,6 @@ Udata Database::nick_channel(User &nicker, std::string &send_msg)
 	Channel &channel = select_channel(nicker);
 	ret = channel.send_all(nicker, trash, send_msg, NICK);
 	channel.change_nick(nicker, send_msg);
-	if (channel.get_host() == nicker)
-	{
-		channel.set_host(nicker);
-	}
 	return ret;
 }
 
@@ -301,7 +296,7 @@ Udata Database::set_topic(User &sender, std::string &chan_name, std::string &top
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
-	if (channel.get_host() == sender)
+	if (channel.is_host(sender))
 	{
 		std::string topic_msg = "Topic was changed to " + topic;
 		channel.set_topic(topic);
@@ -328,7 +323,7 @@ Udata Database::command_mode_0(const uintptr_t &ident, std::string &chan_name)
 	}
 	Channel &tmp_channel = select_channel(chan_name);
 	User &host = select_user(ident);
-	if (tmp_channel.get_host() == host)
+	if (tmp_channel.is_host(host))
 	{
 		// set_flag(host_user, channel, i인지 k인지, param)
 		// tmp_channel.set_flag(host, tmp_channel, 0, param);
