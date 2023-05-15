@@ -205,7 +205,7 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 
 		if ((ch == 'i' || ch == 't') && mode.param.length() > 0) // i 와 t는 파라미터가 없어야함
 		{
-			Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+			Event tmp = Sender::command_too_many_argument_461(ident, "MODE");
 			ret.insert(tmp);
 		}
 		else if ((ch == 'k' || ch == 'o' || ch == 'l') && mode.param.length() == 0) // k, o, l은 파라미터가 있어야함

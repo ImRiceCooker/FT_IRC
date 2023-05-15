@@ -329,7 +329,7 @@ Udata Database::command_mode_0(const uintptr_t &ident, t_mode &mode)
 	}
 	else
 	{
-		// tmp = Sender::mode_i_error_not_op_message(host, host.nickname_, target_name);
+		tmp = Sender::mode_error_not_op_message(host, mode.target);
 		ret.insert(tmp);
 	}
 	return ret;

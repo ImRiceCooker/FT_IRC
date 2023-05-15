@@ -3,7 +3,7 @@
 const std::string Sender::server_name_ = "irc.local";
 /****************************       <MODE>                             ****************************/
 
-/** @brief 472 - 변경해야함 **/
+/** @brief 472 - 변경완료 **/
 
 Event Sender::mode_wrong_message(const uintptr_t &socket, const char &mode_option)
 
@@ -14,6 +14,7 @@ Event Sender::mode_wrong_message(const uintptr_t &socket, const char &mode_optio
 	ret = std::make_pair(socket, error_message + "\r\n");
 	return ret;
 }
+
 
 /****************************       <PING && PONG && USE && etc>       ****************************/
 
@@ -526,5 +527,25 @@ Event Sender::mode_message(const User &sender, const User &receiver, const std::
 
 	const std::string &join_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 MODE " + channel + ":" + mode_type;
 	ret = make_pair(receiver.client_sock_, join_message + "\r\n");
+	return ret;
+}
+
+/**  @brief mode +i 실패 시 보내는 패킷 메세지 **/
+Event	Sender::mode_error_not_op_message(const User &sender, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &join_message = ":" + Sender::server_name_ + " 482 " + sender.nickname_ + " " + channel + " " + "You're not channel operator";
+	ret = make_pair(sender.client_sock_, join_message + "\r\n");
+	return ret;
+}
+
+/**  @brief mode 불필요한 파라미터가 들어왔을 시 보내는 패킷 메세지 **/
+Event	Sender::command_too_many_argument_461(const uintptr_t &sock, const std::string &command)
+{
+	Event ret;
+
+	const std::string &error_message = ":" + Sender::server_name_ + " 461 * " + command + " : too many parameters";
+	ret = std::make_pair(sock, error_message + "\r\n");
 	return ret;
 }

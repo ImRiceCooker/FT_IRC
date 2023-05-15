@@ -49,6 +49,10 @@ public:
 	static Event mode_324_message(const User &sender, const std::string channel);
 	static Event mode_no_option_error_message(const User &sender, const std::string wrong_option);
 	static Event mode_not_operator_error_message(const User &sender, const std::string channel);
+	static Event mode_error_not_op_message(const User &sender, const std::string &channel);
+	static Event command_too_many_argument_461(const uintptr_t &sock, const std::string &command);
+
+
 	static Event who_joiner_352_message(const User &sender, const std::string channel);
 	static std::string who_352_target_message(const User &sender, const std::string channel, const std::string target);
 	static std::string who_315_message(const User &sender, const std::string channel);
