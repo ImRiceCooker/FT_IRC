@@ -7,7 +7,7 @@
 class Sender
 {
 public:
-	static Event mode_wrong_message(const uintptr_t &ident, const std::string &mode);
+	static Event mode_wrong_message(const uintptr_t &ident, const char &mode_option);
 	static Event unknown_command_message_421(const User &sender, const std::string &command);
 	static Event pong(const uintptr_t &socket, const std::string &target, const std::string &msg);
 	static Event command_no_origin_specified_409(const User &sender, const std::string &command);

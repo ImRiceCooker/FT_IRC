@@ -2,6 +2,7 @@
 
 #include "Sender.hpp"
 #include "Udata.hpp"
+#include "type_mode.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -28,12 +29,6 @@ enum e_channel_flag
 	F_KEY_NEEDED = 0b010,
 	F_LIMITED_MEMBERSHIP = 0b100
 };
-
-typedef enum e_mode_type
-{
-	I_PLUS,
-	I_MINUS
-}	t_mode_type;
 
 class Channel
 {
@@ -64,7 +59,7 @@ public:
 	void set_channel_name(std::string &chan_name);
 	void delete_user(User &usr);
 	std::string get_user_list_str(void);
-	void set_flag(Channel &channel, t_mode_type mode_type, std::string &param);
+	void set_flag(Channel &channel, t_mode &mode);
 
 	Udata send_all(User &sender, User &target, std::string msg, int remocon);
 

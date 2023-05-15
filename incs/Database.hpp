@@ -3,6 +3,7 @@
 #include "Channel.hpp"
 #include "Sender.hpp"
 #include "Udata.hpp"
+#include "type_mode.hpp"
 
 class Database
 {
@@ -43,10 +44,9 @@ public:
 	Udata command_join(const uintptr_t &ident, const std::string &chan_name);
 	Udata command_part(const uintptr_t &ident, std::string &chan_name, const std::string &msg);
 	Udata command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg);
-	Udata command_mode(const uintptr_t &ident, std::string &target_name, std::string &mode, std::string &param);
-	Udata command_mode_0(const uintptr_t &ident, std::string &chan_name);
+	Udata command_mode(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_0(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_1(const uintptr_t &ident, std::string &chan_name);
-	int check_mode_type(const std::string &mode);
 	bool is_user(const uintptr_t &ident);
 	bool is_user(const std::string &nickname);
 	User &select_user(const uintptr_t &ident);

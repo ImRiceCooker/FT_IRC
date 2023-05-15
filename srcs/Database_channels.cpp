@@ -315,18 +315,12 @@ Udata Database::set_topic(User &sender, std::string &chan_name, std::string &top
 	return ret;
 }
 
-Udata Database::command_mode_0(const uintptr_t &ident, std::string &chan_name)
+Udata Database::command_mode_0(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
 
-	if (is_channel(chan_name) == false)
-	{
-		tmp = Sender::no_channel_message(select_user(ident), chan_name);
-		ret.insert(tmp);
-		return ret;
-	}
-	Channel &tmp_channel = select_channel(chan_name);
+	Channel &tmp_channel = select_channel(mode.target);
 	User &host = select_user(ident);
 	if (tmp_channel.get_host() == host)
 	{
@@ -335,7 +329,7 @@ Udata Database::command_mode_0(const uintptr_t &ident, std::string &chan_name)
 		// send_all 함수를 쓰려면, USER, USER, msg, remocon 변수를 넣어줘야 한다.
 		// 여기서 host가 User 객체이고, tmp_channel 이 채널 객체이다.
 		std::string dumy_param = "";
-		tmp_channel.set_flag(tmp_channel, I_PLUS, dumy_param);
+		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "+i", MODE);
 	}
 	else
