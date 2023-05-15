@@ -274,3 +274,8 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 	// }
 	return;
 }
+
+void	Channel::invite_user(uintptr_t user)
+{
+	invitations_.push_back(user);
+}

@@ -45,6 +45,7 @@ public:
 	Udata command_part(const uintptr_t &ident, std::string &chan_name, const std::string &msg);
 	Udata command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg);
 	Udata command_mode(const uintptr_t &ident, t_mode &mode);
+	Udata command_invite(const uintptr_t &ident, std::string &user, std::string &chan_name);
 	Udata run_mode(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_i_on(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_i_off(const uintptr_t &ident, t_mode &mode);
