@@ -31,9 +31,9 @@ void Database::delete_error_user(const uintptr_t &ident)
 		}
 		else
 		{
-			if (cur_usr == cur_chan.get_host())
+			if (cur_chan.is_host(cur_usr) && cur_chan.get_hosts().size() == 1)
 			{
-				cur_chan.set_host();
+				cur_chan.set_host(cur_chan.get_users().at(0));
 			}
 		}
 	}
