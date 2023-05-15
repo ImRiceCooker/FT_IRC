@@ -156,12 +156,12 @@ t_mode_type check_mode_type(t_mode &mode, char &sign, char &ch)
 	if (sign == '+')
 	{
 		if (ch == 'i')
-			mode.mode_type = I_MINUS;
+			mode.mode_type = PLUS_I;
 	}
 	else if (sign == '-')
 	{
 		if (ch == 'i')
-			mode.mode_type = I_PLUS;
+			mode.mode_type = MINUS_I;
 	}
 	return (mode.mode_type);
 }

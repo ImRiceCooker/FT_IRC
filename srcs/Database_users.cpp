@@ -180,6 +180,15 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
+Udata Database::run_mode(const uintptr_t &ident, t_mode &mode)
+{
+	if (mode.mode_type == PLUS_I)
+		return command_mode_i_on(ident, mode);
+	// else if (mode.mode_type == MINUS_I)
+	else
+		return command_mode_i_off(ident, mode);
+}
+
 Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
@@ -196,8 +205,7 @@ Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 		return ret;
 	}
 	else
-		ret = command_mode_0(ident, mode);
-
+		ret = run_mode(ident, mode);
 	return ret;
 }
 

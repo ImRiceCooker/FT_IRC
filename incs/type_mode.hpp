@@ -4,8 +4,8 @@
 typedef enum e_mode_type
 {
 	MODE_TYPE_ERR,
-	I_PLUS,
-	I_MINUS
+	PLUS_I,
+	MINUS_I,
 }	t_mode_type;
 
 
