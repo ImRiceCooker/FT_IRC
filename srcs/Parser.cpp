@@ -148,7 +148,6 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
-
 t_mode_type check_mode_type(t_mode &mode, char &sign, char &ch)
 {
 	mode.mode_type = MODE_TYPE_ERR;
@@ -259,6 +258,7 @@ void Parser::parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, 
 	{
 		ret = database_.command_invite(ident, user, channel);
 	}
+	push_multiple_write_events_(ret, ident, 0);
 }
 
 /**		parser_pass_   **/
@@ -507,8 +507,6 @@ void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, st
 	}
 	push_multiple_write_events_(ret, ident, 2);
 }
-
-
 
 /**		push_write_event_   **/
 /**		@brief 발생한 하나의 이벤트를 write 상태로 변경하는 함수   **/
