@@ -20,7 +20,8 @@ enum e_send_switch
 	WALL,
 	NICK,
 	MODE,
-	WHO
+	WHO,
+	INVITE
 };
 
 enum e_channel_flag

@@ -125,6 +125,17 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 		case MODE:
 			packet = Sender::mode_message(sender, *it, this->get_name(), msg);
 			break;
+		case INVITE:
+			if (sender == *it)
+			{
+				packet.first = sender.client_sock_;
+				packet.second = "";
+			}
+			else
+			{
+				packet = Sender::invite_message(sender, *it, this->get_name());
+			}
+			break;
 		}
 		ret.insert(packet);
 	}
@@ -263,7 +274,7 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 	return;
 }
 
-void	Channel::invite_user(uintptr_t user)
+void Channel::invite_user(uintptr_t user)
 {
 	invitations_.push_back(user);
 }

@@ -222,7 +222,6 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 	Udata ret;
 	Event tmp;
 
-
 	set_mode(mode, line_ss);
 	std::cout << "target: " << mode.target << std::endl;
 	std::cout << "option: " << mode.option << std::endl;
