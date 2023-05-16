@@ -62,6 +62,8 @@ public:
 	void add_user(User &joiner);
 	void set_channel_name(std::string &chan_name);
 	void delete_user(User &usr);
+	void invite_user(uintptr_t user_sock);
+
 	std::string get_user_list_str(void);
 	void set_flag(Channel &channel, t_mode &mode);
 

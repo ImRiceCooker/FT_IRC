@@ -180,6 +180,15 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
+Udata Database::run_mode(const uintptr_t &ident, t_mode &mode)
+{
+	if (mode.mode_type == PLUS_I)
+		return command_mode_i_on(ident, mode);
+	// else if (mode.mode_type == MINUS_I)
+	else
+		return command_mode_i_off(ident, mode);
+}
+
 Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
@@ -196,10 +205,47 @@ Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 		return ret;
 	}
 	else
-		ret = command_mode_0(ident, mode);
-
+		ret = run_mode(ident, mode);
 	return ret;
 }
+
+
+Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::string &chan_name)
+{
+	Udata ret;
+	Event tmp = valid_user_checker_(ident, "INVITE");
+
+	if (tmp.second.size())
+	{
+		ret.insert(tmp);
+	}
+	else if (is_channel(chan_name) == false)
+	{
+		Event tmp = Sender::no_channel_message(select_user(ident), chan_name);
+		ret.insert(tmp);
+	}
+	else if (is_user(user) == false)
+	{
+		Event tmp = Sender::invite_no_user_message(select_user(ident), user);
+		ret.insert(tmp);
+	}
+	else if (is_user_in_channel(select_user(user)) == true) // 이미 이 방에 있는 유저라면
+	{
+		Event tmp = Sender::already_in_channel_message(select_user(ident), chan_name);
+		ret.insert(tmp);
+	}
+	else
+	{
+		User &sender = select_user(ident);
+		User &invited_user = select_user(user);
+		Channel &cur_channel = select_channel(chan_name);
+		cur_channel.invite_user(invited_user.client_sock_);
+		Event tmp = Sender::invite_message(sender, invited_user, chan_name);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
 
 
 Event Database::command_pass(const uintptr_t &ident)

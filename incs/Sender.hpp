@@ -62,6 +62,10 @@ public:
 	static std::string join_366_message(const User &sender, const std::string &chan_name);
 	static Event mode_message(const User &sender, const User &receiver, const std::string &channel, const std::string &mode_type);
 
+	static Event already_in_channel_message(const User &target_user, const std::string &channel);
+	static Event invite_message(const User &sender, const User &receiver, const std::string &channel);
+	static Event invite_no_user_message(const User &sender, const std::string &target_user);
+
 private:
 	static const std::string server_name_;
 };

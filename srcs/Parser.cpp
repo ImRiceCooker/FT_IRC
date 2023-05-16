@@ -8,10 +8,10 @@
 #include <string>
 #include <sys/_types/_size_t.h>
 
-const std::string Parser::commands[N_COMMAND] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE", "MODE"};
+const std::string Parser::commands[N_COMMAND] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE", "MODE", "INVITE"};
 void (Parser::*Parser::func_ptr[N_COMMAND])(const uintptr_t &, std::stringstream &, std::string &) =
 		{&Parser::parser_pass_, &Parser::parser_nick_, &Parser::parser_user_, &Parser::parser_ping_, &Parser::parser_join_, &Parser::parser_quit_, &Parser::parser_privmsg_,
-		 &Parser::parser_kick_, &Parser::parser_part_, &Parser::parser_topic_, &Parser::parser_notice_, &Parser::parser_mode_};
+		 &Parser::parser_kick_, &Parser::parser_part_, &Parser::parser_topic_, &Parser::parser_notice_, &Parser::parser_mode_, &Parser::parser_invite_};
 
 /**		command_toupper   **/
 /**		@brief NC로 소문자 명령을 보낼 경우 대문자로 변경하여 처리하기 위한 함수   **/
@@ -148,7 +148,6 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
-
 t_mode_type check_mode_type(t_mode &mode, char &sign, char &ch)
 {
 	mode.mode_type = MODE_TYPE_ERR;
@@ -156,12 +155,12 @@ t_mode_type check_mode_type(t_mode &mode, char &sign, char &ch)
 	if (sign == '+')
 	{
 		if (ch == 'i')
-			mode.mode_type = I_MINUS;
+			mode.mode_type = PLUS_I;
 	}
 	else if (sign == '-')
 	{
 		if (ch == 'i')
-			mode.mode_type = I_PLUS;
+			mode.mode_type = MINUS_I;
 	}
 	return (mode.mode_type);
 }
@@ -225,6 +224,39 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 		}
 		else
 			ret = database_.command_mode(ident, mode);
+	}
+	push_multiple_write_events_(ret, ident, 0);
+}
+
+/**		parser_invite_   **/
+/**		@brief INVITE 명령어를 파싱하는 함수   **/
+/**		@brief 매개변수가 없거나, 채널이 없거나, 유저가 없으면 에러메세지 반환   **/
+void Parser::parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+{
+	static_cast<void>(to_send);
+	std::string channel;
+	std::string user;
+	Udata ret;
+
+	line_ss >> user;
+	line_ss >> channel;
+
+	std::cout << "user: " << user << std::endl;
+	std::cout << "channel: " << channel << std::endl;
+
+	if (user.empty() || channel.empty())
+	{
+		Event tmp = Sender::command_empty_argument_461(ident, "INVITE");
+		ret.insert(tmp);
+	}
+	else if (line_ss.rdbuf()->in_avail() != 0)
+	{
+		Event tmp = Sender::command_too_many_argument_461(ident, "INVITE");
+		ret.insert(tmp);
+	}
+	else
+	{
+		ret = database_.command_invite(ident, user, channel);
 	}
 	push_multiple_write_events_(ret, ident, 0);
 }

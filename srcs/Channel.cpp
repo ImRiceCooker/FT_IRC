@@ -242,19 +242,40 @@ bool Channel::is_host(User &usr)
 
 void Channel::set_flag(Channel &channel, t_mode &mode)
 {
-	switch (mode.mode_type)
+	std::cout << "before: " << std::bitset<3>(channel.channel_flag_) << std::endl;
+
+	if (mode.mode_type == PLUS_I && channel.channel_flag_ != F_INVITE_ONLY)
 	{
-		case I_PLUS:
-			channel.channel_flag_ |= F_INVITE_ONLY;
-			break;
-		case I_MINUS:
-			channel.channel_flag_ |= !F_INVITE_ONLY;
-			break ;
-		// case K_PLUS:
-		// 	channel.channel_flag_ |= F_KEY_NEEDED;
-		// 	channel.password_ = mode.param;
-		case MODE_TYPE_ERR:
-			break;
+		channel.channel_flag_ |= F_INVITE_ONLY;
+		std::cout << "set flag: turned +I" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
+	else if (mode.mode_type == MINUS_I && channel.channel_flag_ == F_INVITE_ONLY)
+	{
+		channel.channel_flag_ &= !F_INVITE_ONLY;
+		std::cout << "set flag: turned -I" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+		
+
+	// switch (mode.mode_type)
+	// {
+	// 	case PLUS_I:
+	// 		channel.channel_flag_ |= F_INVITE_ONLY;
+	// 		break;
+	// 	case MINUS_I:
+	// 		channel.channel_flag_ |= !F_INVITE_ONLY;
+	// 		break ;
+	// 	// case K_PLUS:
+	// 	// 	channel.channel_flag_ |= F_KEY_NEEDED;
+	// 	// 	channel.password_ = mode.param;
+	// 	case MODE_TYPE_ERR:
+	// 		break;
+	// }
 	return;
+}
+
+void	Channel::invite_user(uintptr_t user)
+{
+	invitations_.push_back(user);
 }

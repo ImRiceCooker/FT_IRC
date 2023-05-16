@@ -7,7 +7,7 @@
 
 class Receiver;
 
-enum e_val { N_COMMAND = 12 };
+enum e_val { N_COMMAND = 13 };
 
 class Parser
 {
@@ -33,6 +33,7 @@ class Parser
 		void				parser_wall_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
 		void				parser_join_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
 		void				parser_mode_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
+		void				parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send);
 		void				parser_who_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
 		void				parser_part_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
 		void				parser_topic_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);

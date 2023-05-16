@@ -4,6 +4,8 @@
 #include "User.hpp"
 #include "color.hpp"
 #include <sys/_types/_size_t.h>
+//
+#include <bitset>
 
 bool Database::is_channel(std::string &chan_name)
 {
@@ -310,7 +312,7 @@ Udata Database::set_topic(User &sender, std::string &chan_name, std::string &top
 	return ret;
 }
 
-Udata Database::command_mode_0(const uintptr_t &ident, t_mode &mode)
+Udata Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
@@ -319,10 +321,6 @@ Udata Database::command_mode_0(const uintptr_t &ident, t_mode &mode)
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
 	{
-		// set_flag(host_user, channel, i인지 k인지, param)
-		// tmp_channel.set_flag(host, tmp_channel, 0, param);
-		// send_all 함수를 쓰려면, USER, USER, msg, remocon 변수를 넣어줘야 한다.
-		// 여기서 host가 User 객체이고, tmp_channel 이 채널 객체이다.
 		std::string dumy_param = "";
 		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "+i", MODE);
@@ -334,3 +332,26 @@ Udata Database::command_mode_0(const uintptr_t &ident, t_mode &mode)
 	}
 	return ret;
 }
+
+Udata Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
+{
+	Udata ret;
+	Event tmp;
+
+	Channel &tmp_channel = select_channel(mode.target);
+	User &host = select_user(ident);
+	if (tmp_channel.is_host(host))
+	{
+		std::string dumy_param = "";
+		tmp_channel.set_flag(tmp_channel, mode);
+		ret = tmp_channel.send_all(host, host, "-i", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+
