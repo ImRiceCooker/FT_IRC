@@ -574,7 +574,7 @@ Event	Sender::invite_message(const User &sender, const User &target_user, const 
 {
 	Event ret;
 
-	const std::string &invite_message = ":" + sender.nickname_ + " INVITE " + target_user.nickname_ + " into the channel " + channel;
+	const std::string &invite_message = ":" + sender.nickname_ + " INVITE " + target_user.nickname_ + " :" + channel;
 	ret = std::make_pair(target_user.client_sock_, invite_message + "\r\n");
 	return ret;
 }
