@@ -209,7 +209,6 @@ Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-
 Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::string &chan_name)
 {
 	Udata ret;
@@ -242,11 +241,12 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 		cur_channel.invite_user(invited_user.client_sock_);
 		Event tmp = Sender::invite_message(sender, invited_user, chan_name);
 		ret.insert(tmp);
+		tmp.first = sender.client_sock_;
+		tmp.second.clear();
+		ret.insert(tmp);
 	}
 	return ret;
 }
-
-
 
 Event Database::command_pass(const uintptr_t &ident)
 {

@@ -169,34 +169,19 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	t_mode mode;
-	std::string tmp;
 	Udata ret;
 
-	line_ss >> tmp;
-
-	// 파싱
-	if (tmp.find('#') != std::string::npos)
-	{
-		mode.target = tmp;
-		line_ss >> mode.option;
-		line_ss >> mode.param;
-	}
-	else if (tmp.find('+') != std::string::npos || tmp.find('-') != std::string::npos)
-	{
-		mode.option = tmp;
-		line_ss >> mode.param;
-	}
-	else
-	{
-		mode.param = tmp;
-	}
+	line_ss >> mode.target >> mode.option >> mode.param;
 
 	std::cout << "target: " << mode.target << std::endl;
 	std::cout << "option: " << mode.option << std::endl;
 	std::cout << "param: " << mode.param << std::endl;
 
 	// 파싱 후 에러처리
-	if (mode.option.length() < 1)
+	// + or - option이 시작되는지
+	// param 조건 없는지... (printable한 단어로만 이루어져있는지.)
+	//
+	if (mode.option.length() < 2)
 	{
 		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
 		ret.insert(tmp);

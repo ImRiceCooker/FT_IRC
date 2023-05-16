@@ -574,7 +574,7 @@ Event	Sender::invite_message(const User &sender, const User &target_user, const 
 {
 	Event ret;
 
-	const std::string &invite_message = ":" + sender.nickname_ + " INVITED " + target_user.nickname_ + " into the channel " + channel;
+	const std::string &invite_message = ":" + sender.nickname_ + " INVITE " + target_user.nickname_ + " into the channel " + channel;
 	ret = std::make_pair(target_user.client_sock_, invite_message + "\r\n");
 	return ret;
 }
@@ -583,7 +583,7 @@ Event Sender::invite_no_user_message(const User &sender, const std::string &targ
 {
 	Event ret;
 
-	const std::string &error_message = ":" + target_user + " is not present ";
+	const std::string &error_message = ":" + target_user + " No such nick ";
 	ret = std::make_pair(sender.client_sock_, error_message + "\r\n");
 	return ret;
 }
