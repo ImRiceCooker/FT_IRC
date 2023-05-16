@@ -3,7 +3,6 @@
 #include "Channel.hpp"
 #include "Sender.hpp"
 #include "Udata.hpp"
-#include "type_mode.hpp"
 
 class Database
 {

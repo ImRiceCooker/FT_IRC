@@ -148,16 +148,7 @@ Udata Database::quit_channel(User &leaver, std::string &chan_name, const std::st
 	chan.delete_user(leaver);
 
 	if (user_size == 1)
-	{
 		delete_channel(chan_name);
-	}
-	else
-	{
-		if (chan.is_host(leaver) && chan.get_hosts().size() == 1)
-		{
-			chan.set_host(chan.get_users().at(0));
-		}
-	}
 	return ret;
 }
 
@@ -184,16 +175,7 @@ Udata Database::part_channel(User &leaver, std::string &chan_name, const std::st
 	ret = chan.send_all(leaver, leaver, msg, PART);
 	chan.delete_user(leaver);
 	if (user_size == 1)
-	{
 		delete_channel(chan_name);
-	}
-	else
-	{
-		if (chan.is_host(leaver) && chan.get_hosts().size() == 1)
-		{
-			chan.set_host(chan.get_users().at(0));
-		}
-	}
 	return ret;
 }
 

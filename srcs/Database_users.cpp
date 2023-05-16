@@ -26,16 +26,7 @@ void Database::delete_error_user(const uintptr_t &ident)
 		const int user_size = users.size();
 		cur_chan.delete_user(cur_usr);
 		if (user_size == 1)
-		{
 			delete_channel(cur_chan.get_name());
-		}
-		else
-		{
-			if (cur_chan.is_host(cur_usr) && cur_chan.get_hosts().size() == 1)
-			{
-				cur_chan.set_host(cur_chan.get_users().at(0));
-			}
-		}
 	}
 	user_list_.erase(remove(user_list_.begin(), user_list_.end(), cur_usr), user_list_.end());
 }

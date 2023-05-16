@@ -1,19 +1,7 @@
 #include "Sender.hpp"
 
 const std::string Sender::server_name_ = "irc.local";
-/****************************       <MODE>                             ****************************/
 
-/** @brief 472 - 변경완료 **/
-
-Event Sender::mode_wrong_message(const uintptr_t &socket, const char &mode_option)
-
-{
-	Event ret;
-
-	const std::string &error_message = ":" + Sender::server_name_ + " 472 " + mode_option + " :is not a recognized channel mode.";
-	ret = std::make_pair(socket, error_message + "\r\n");
-	return ret;
-}
 
 
 /****************************       <PING && PONG && USE && etc>       ****************************/
@@ -268,15 +256,6 @@ Event Sender::mode_324_message(const User &sender, const std::string channel)
 std::string Sender::mode_329_message(const User &sender, const std::string channel, const std::string time_stamp)
 {
 	const std::string &ret = ":" + Sender::server_name_ + " 329 " + sender.nickname_ + " " + channel + " :" + time_stamp + "";
-	return ret;
-}
-/** @brief 472 - mode 명령어 시 존재하지 않는 옵션을 넣을 때 보내는 오류 패킷 메세지 **/
-Event Sender::mode_no_option_error_message(const User &sender, const std::string channel)
-{
-	Event ret;
-
-	const std::string &mode_message = ":" + Sender::server_name_ + " 472 " + sender.nickname_ + " " + channel + " :You must have channel op access or above to set channel mode p";
-	ret = std::make_pair(sender.client_sock_, mode_message + "\r\n");
 	return ret;
 }
 /** @brief 482 - operator가 아닌 클라이언트가 operator 권한이 필요한 명령어를 사용하려 할 때 보내는 오류 패킷 메세지 **/
@@ -547,6 +526,18 @@ Event	Sender::command_too_many_argument_461(const uintptr_t &sock, const std::st
 
 	const std::string &error_message = ":" + Sender::server_name_ + " 461 * " + command + " : too many parameters";
 	ret = std::make_pair(sock, error_message + "\r\n");
+	return ret;
+}
+
+/** @brief 472 - 변경완료 **/
+
+Event Sender::mode_wrong_message(const uintptr_t &socket, const char &mode_option)
+
+{
+	Event ret;
+
+	const std::string &error_message = ":" + Sender::server_name_ + " 472 " + mode_option + " :is not a recognized channel mode.";
+	ret = std::make_pair(socket, error_message + "\r\n");
 	return ret;
 }
 

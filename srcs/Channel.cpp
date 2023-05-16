@@ -174,10 +174,14 @@ std::vector<User> &Channel::get_users()
 }
 void Channel::delete_user(User &usr)
 {
+	if (is_host(usr))
+		unset_host(usr);
+	
 	std::vector<User>::iterator it = std::find(this->connectors_.begin(),
 																						 this->connectors_.end(), usr);
 	std::size_t size = std::distance(this->connectors_.begin(), it);
 	this->connectors_.erase(this->connectors_.begin() + size);
+
 }
 bool Channel::operator==(const Channel &t) const
 {
@@ -256,22 +260,6 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 		std::cout << "set flag: turned -I" << std::endl;
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
-		
-
-	// switch (mode.mode_type)
-	// {
-	// 	case PLUS_I:
-	// 		channel.channel_flag_ |= F_INVITE_ONLY;
-	// 		break;
-	// 	case MINUS_I:
-	// 		channel.channel_flag_ |= !F_INVITE_ONLY;
-	// 		break ;
-	// 	// case K_PLUS:
-	// 	// 	channel.channel_flag_ |= F_KEY_NEEDED;
-	// 	// 	channel.password_ = mode.param;
-	// 	case MODE_TYPE_ERR:
-	// 		break;
-	// }
 	return;
 }
 
