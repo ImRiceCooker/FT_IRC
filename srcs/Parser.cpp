@@ -148,21 +148,71 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
-t_mode_type check_mode_type(t_mode &mode, char &sign, char &ch)
+int check_mode_err_type(t_mode &mode)
+{
+	if (mode.target.length() == 0 || mode.option.length() == 0)
+		return CMD_EMPTY;
+	else if (mode.option.length() == 2 && (mode.option.at(1) == 'i' || mode.option.at(1) == 't') && mode.param.length() > 0)
+	{
+		return CMD_TOO_MANY;
+	}
+	else if (mode.mode_type == MODE_TYPE_ERR)
+	{
+		return WRONG_MSG;
+	}
+	return -1;
+}
+
+void set_mode_type(t_mode &mode)
 {
 	mode.mode_type = MODE_TYPE_ERR;
+	if (mode.option.length() != 2)
+		return ;
+
+	char sign = mode.option.at(0);
+	char option = mode.option.at(1);
 
 	if (sign == '+')
 	{
-		if (ch == 'i')
+		if (option == 'i')
 			mode.mode_type = PLUS_I;
+		if (option == 't')
+			mode.mode_type = PLUS_T;
+		if (option == 'l')
+			mode.mode_type = PLUS_L;
+		if (option == 'o')
+			mode.mode_type = PLUS_O;
+		if (option == 'k')
+			mode.mode_type = PLUS_K;
 	}
 	else if (sign == '-')
 	{
-		if (ch == 'i')
+		if (option == 'i')
 			mode.mode_type = MINUS_I;
+		if (option == 't')
+			mode.mode_type = MINUS_T;
+		if (option == 'l')
+			mode.mode_type = MINUS_L;
+		if (option == 'o')
+			mode.mode_type = MINUS_O;
+		if (option == 'k')
+			mode.mode_type = MINUS_K;
 	}
-	return (mode.mode_type);
+	return ;
+}
+
+void set_mode(t_mode &mode, std::stringstream &line)
+{
+	line >> mode.target >> mode.option >> mode.param;
+	set_mode_type(mode);
+}
+
+char get_wrong_mode_option(std::string wrong_mode)
+{
+	if (wrong_mode.length() < 2)
+		return ' ';
+	else
+		return wrong_mode.at(1);
 }
 
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
@@ -170,50 +220,31 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 	static_cast<void>(to_send);
 	t_mode mode;
 	Udata ret;
+	Event tmp;
 
-	line_ss >> mode.target >> mode.option >> mode.param;
-
+	set_mode(mode, line_ss);
 	std::cout << "target: " << mode.target << std::endl;
 	std::cout << "option: " << mode.option << std::endl;
 	std::cout << "param: " << mode.param << std::endl;
 
-	// 파싱 후 에러처리
-	// + or - option이 시작되는지
-	// param 조건 없는지... (printable한 단어로만 이루어져있는지.)
-	//
-	if (mode.option.length() < 2)
+	switch (check_mode_err_type(mode))
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "MODE");
+	case CMD_EMPTY:
+		tmp = Sender::command_empty_argument_461(ident, "MODE");
 		ret.insert(tmp);
+		break;
+	case CMD_TOO_MANY:
+		tmp = Sender::command_too_many_argument_461(ident, "MODE");
+		ret.insert(tmp);
+		break;
+	case WRONG_MSG:
+		tmp = Sender::mode_wrong_message(ident, get_wrong_mode_option(mode.option));
+		ret.insert(tmp);
+		break;
+	default:
+		ret = database_.command_mode(ident, mode);
 	}
-	else
-	{
-		char sign = mode.option.at(0);
-		char ch = mode.option.at(1);
 
-		if ((ch == 'i' || ch == 't') && mode.param.length() > 0) // i 와 t는 파라미터가 없어야함
-		{
-			Event tmp = Sender::command_too_many_argument_461(ident, "MODE");
-			ret.insert(tmp);
-		}
-		else if ((ch == 'k' || ch == 'o' || ch == 'l') && mode.param.length() == 0) // k, o, l은 파라미터가 있어야함
-		{
-			Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-			ret.insert(tmp);
-		}
-		else if (check_mode_type(mode, sign, ch) == MODE_TYPE_ERR)
-		{
-			Event tmp = Sender::mode_wrong_message(ident, ch);
-			ret.insert(tmp);
-		}
-		else if (mode.target.length() < 2) // target이 없으면 안됨
-		{
-			Event tmp = Sender::command_empty_argument_461(ident, "MODE");
-			ret.insert(tmp);
-		}
-		else
-			ret = database_.command_mode(ident, mode);
-	}
 	push_multiple_write_events_(ret, ident, 0);
 }
 

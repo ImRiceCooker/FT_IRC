@@ -47,7 +47,6 @@ public:
 	static Event no_channel_message(const User &sender, const std::string &channel);
 	static Event no_user_message(const User &sender, const std::string &target);
 	static Event mode_324_message(const User &sender, const std::string channel);
-	static Event mode_no_option_error_message(const User &sender, const std::string wrong_option);
 	static Event mode_not_operator_error_message(const User &sender, const std::string channel);
 	static Event mode_error_not_op_message(const User &sender, const std::string &channel);
 	static Event command_too_many_argument_461(const uintptr_t &sock, const std::string &command);
