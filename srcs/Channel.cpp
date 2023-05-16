@@ -174,10 +174,14 @@ std::vector<User> &Channel::get_users()
 }
 void Channel::delete_user(User &usr)
 {
+	if (is_host(usr))
+		unset_host(usr);
+	
 	std::vector<User>::iterator it = std::find(this->connectors_.begin(),
 																						 this->connectors_.end(), usr);
 	std::size_t size = std::distance(this->connectors_.begin(), it);
 	this->connectors_.erase(this->connectors_.begin() + size);
+
 }
 bool Channel::operator==(const Channel &t) const
 {
