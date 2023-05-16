@@ -235,12 +235,25 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 	}
 	else
 	{
+		// if (is_user_in_channel(cur_usr))
+		// {
+		// 	Channel &cur_chan = select_channel(cur_usr);
+		// 	ret = quit_channel(cur_usr, cur_chan.get_name(), msg);
+		// }
+		// 	else
+		// 	{
+		// 		tmp = Sender::quit_leaver_message(cur_usr, msg);
+		// 		ret.insert(tmp);
+		// 	}
+
+		// 127.000.000.001.06667-127.000.000.001.59616: :irc.local 341 A C :#6
+		// 127.000.000.001.06667-127.000.000.001.46928: :irc.local NOTICE #6 :*** A invited C into the channel // 채널에 있는
+
 		User &sender = select_user(ident);
 		User &invited_user = select_user(user);
 		Channel &cur_channel = select_channel(chan_name);
 		cur_channel.invite_user(invited_user.client_sock_);
-		Event tmp = Sender::invite_message(sender, invited_user, chan_name);
-		ret.insert(tmp);
+		ret = cur_channel.send_all(sender, invited_user, chan_name, INVITE);
 		tmp.first = sender.client_sock_;
 		tmp.second.clear();
 		ret.insert(tmp);

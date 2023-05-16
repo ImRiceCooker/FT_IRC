@@ -15,7 +15,6 @@ Event Sender::mode_wrong_message(const uintptr_t &socket, const char &mode_optio
 	return ret;
 }
 
-
 /****************************       <PING && PONG && USE && etc>       ****************************/
 
 /** @brief PING명령에 대한 응답으로 PONG 전송s **/
@@ -531,7 +530,7 @@ Event Sender::mode_message(const User &sender, const User &receiver, const std::
 }
 
 /**  @brief mode +i 실패 시 보내는 패킷 메세지 **/
-Event	Sender::mode_error_not_op_message(const User &sender, const std::string &channel)
+Event Sender::mode_error_not_op_message(const User &sender, const std::string &channel)
 {
 	Event ret;
 
@@ -541,7 +540,7 @@ Event	Sender::mode_error_not_op_message(const User &sender, const std::string &c
 }
 
 /**  @brief mode 불필요한 파라미터가 들어왔을 시 보내는 패킷 메세지 **/
-Event	Sender::command_too_many_argument_461(const uintptr_t &sock, const std::string &command)
+Event Sender::command_too_many_argument_461(const uintptr_t &sock, const std::string &command)
 {
 	Event ret;
 
@@ -552,7 +551,7 @@ Event	Sender::command_too_many_argument_461(const uintptr_t &sock, const std::st
 
 /**  @brief invite  **/
 /** 127.000.000.001.06667-127.000.000.001.59616: :irc.local 443 A B #6 :is already on channel **/
-Event	Sender::already_in_channel_message(const User &target_user, const std::string &channel)
+Event Sender::already_in_channel_message(const User &target_user, const std::string &channel)
 {
 	Event ret;
 
@@ -563,18 +562,13 @@ Event	Sender::already_in_channel_message(const User &target_user, const std::str
 
 /**  @brief invite_message  **/
 /*
-127.000.000.001.06667-127.000.000.001.59616: :irc.local 341 A C :#6
-
-127.000.000.001.06667-127.000.000.001.46928: :irc.local NOTICE #6 :*** A invited C into the channel
-
 127.000.000.001.06667-127.000.000.001.43726: :A!root@127.0.0.1 INVITE C :#6
 */
-// 모두가 알 수 있게 수정하기
-Event	Sender::invite_message(const User &sender, const User &target_user, const std::string &channel)
+Event Sender::invite_message(const User &sender, const User &target_user, const std::string &channel)
 {
 	Event ret;
 
-	const std::string &invite_message = ":" + sender.nickname_ + " INVITE " + target_user.nickname_ + " :" + channel;
+	const std::string &invite_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 INVITE " + target_user.nickname_ + " :" + channel;
 	ret = std::make_pair(target_user.client_sock_, invite_message + "\r\n");
 	return ret;
 }
