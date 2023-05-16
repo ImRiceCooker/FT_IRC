@@ -256,22 +256,6 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 		std::cout << "set flag: turned -I" << std::endl;
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
-		
-
-	// switch (mode.mode_type)
-	// {
-	// 	case PLUS_I:
-	// 		channel.channel_flag_ |= F_INVITE_ONLY;
-	// 		break;
-	// 	case MINUS_I:
-	// 		channel.channel_flag_ |= !F_INVITE_ONLY;
-	// 		break ;
-	// 	// case K_PLUS:
-	// 	// 	channel.channel_flag_ |= F_KEY_NEEDED;
-	// 	// 	channel.password_ = mode.param;
-	// 	case MODE_TYPE_ERR:
-	// 		break;
-	// }
 	return;
 }
 

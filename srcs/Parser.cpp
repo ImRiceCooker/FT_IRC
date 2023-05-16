@@ -191,6 +191,10 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 		mode.param = tmp;
 	}
 
+	std::cout << "target: " << mode.target << std::endl;
+	std::cout << "option: " << mode.option << std::endl;
+	std::cout << "param: " << mode.param << std::endl;
+
 	// 파싱 후 에러처리
 	if (mode.option.length() < 1)
 	{
