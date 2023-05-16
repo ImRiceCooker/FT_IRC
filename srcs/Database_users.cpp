@@ -224,14 +224,14 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 		Event tmp = Sender::no_channel_message(select_user(ident), chan_name);
 		ret.insert(tmp);
 	}
-	else if (is_user_in_channel(select_user(user)) == true) // 이미 이 방에 있는 유저라면
-	{
-		Event tmp = Sender::already_in_channel_message(select_user(ident), chan_name);
-		ret.insert(tmp);
-	}
 	else if (is_user(user) == false)
 	{
 		Event tmp = Sender::invite_no_user_message(select_user(ident), user);
+		ret.insert(tmp);
+	}
+	else if (is_user_in_channel(select_user(user)) == true) // 이미 이 방에 있는 유저라면
+	{
+		Event tmp = Sender::already_in_channel_message(select_user(ident), chan_name);
 		ret.insert(tmp);
 	}
 	else
