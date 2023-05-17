@@ -4,6 +4,7 @@
 Channel::Channel()
 {
 	this->channel_flag_ = 0;
+	this->password_ = "";
 }
 
 std::string &Channel::get_access(void) { return access_; }
@@ -264,17 +265,33 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 {
 	std::cout << "before: " << std::bitset<3>(channel.channel_flag_) << std::endl;
 
-	if (mode.mode_type == PLUS_I && channel.channel_flag_ != F_INVITE_ONLY)
+	if (mode.mode_type == PLUS_I && !(channel.channel_flag_ & F_INVITE_ONLY))
 	{
-		channel.channel_flag_ |= F_INVITE_ONLY;
+		channel.channel_flag_ += F_INVITE_ONLY;
 		std::cout << "set flag: turned +I" << std::endl;
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
-	else if (mode.mode_type == MINUS_I && channel.channel_flag_ == F_INVITE_ONLY)
+	else if (mode.mode_type == MINUS_I && (channel.channel_flag_ & F_INVITE_ONLY))
 	{
-		channel.channel_flag_ &= !F_INVITE_ONLY;
+		channel.channel_flag_ -= F_INVITE_ONLY;
 		std::cout << "set flag: turned -I" << std::endl;
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == PLUS_K && !(channel.channel_flag_ & F_KEY_NEEDED))
+	{
+		channel.channel_flag_ += F_KEY_NEEDED;
+		std::cout << "set flag: turned +K" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == MINUS_K && (channel.channel_flag_ & F_KEY_NEEDED))
+	{
+		channel.channel_flag_ -= F_KEY_NEEDED;
+		std::cout << "set flag: turned -K" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+	else
+	{
+		std::cout << "ELSE!!\n";
 	}
 	return;
 }

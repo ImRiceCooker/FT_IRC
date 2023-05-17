@@ -177,9 +177,12 @@ Udata Database::run_mode(const uintptr_t &ident, t_mode &mode)
 		return command_mode_i_on(ident, mode);
 	else if (mode.mode_type == MINUS_I)
 		return command_mode_i_off(ident, mode);
+	else if (mode.mode_type == PLUS_K)
+		return (command_mode_k_on(ident, mode));
+	else if (mode.mode_type == MINUS_K)
+		return (command_mode_k_off(ident, mode));
 	else if (mode.mode_type == PLUS_O)
 		return command_mode_o_on(ident, mode);
-	// else if (mode.mode_type == MINUS_O)
 	else
 		return command_mode_o_off(ident, mode);
 }

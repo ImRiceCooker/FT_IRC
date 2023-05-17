@@ -50,6 +50,8 @@ public:
 	Udata run_mode(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_i_on(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_i_off(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_k_on(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_k_off(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_o_on(const uintptr_t &socket, t_mode mode);
 	Udata command_mode_o_off(const uintptr_t &socket, t_mode mode);
 	bool is_user(const uintptr_t &ident);
