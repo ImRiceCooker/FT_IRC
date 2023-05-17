@@ -218,7 +218,7 @@ Event Sender::join_message(const User &sender, const User &receiver, const std::
 }
 
 /** @brief 476 - join 할 때 invaild한 채널 이름을 만들 경우 보내는 오류 패킷 메세지 ex) "#" 과 같은 이름 **/
-Event Sender::join_invaild_channel_name_message(const User &sender, const std::string invaild_channel)
+Event Sender::join_invalid_channel_name_message(const User &sender, const std::string invaild_channel)
 {
 	Event ret;
 
@@ -586,6 +586,15 @@ Event Sender::invitee_message(const User &sender, const User &receiver, const st
 	Event ret;
 
 	const std::string &inviting_message = ":" + server_name_ + " NOTICE " + channel + " :*** " + sender.nickname_ + " invited " + receiver.username_ + " into the channel ";
+	ret = std::make_pair(receiver.client_sock_, inviting_message + "\r\n");
+	return ret;
+}
+
+Event Sender::cannot_join_message(const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &inviting_message = ":" + server_name_ + " 473 " + receiver.nickname_ + " " + channel + " :Cannot join channel (invite only)";
 	ret = std::make_pair(receiver.client_sock_, inviting_message + "\r\n");
 	return ret;
 }

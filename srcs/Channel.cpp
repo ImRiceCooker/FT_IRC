@@ -279,6 +279,17 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 	return;
 }
 
+bool Channel::has_invitation(const uintptr_t &usr)
+{
+	std::vector<uintptr_t>::iterator it;
+
+	for (it = invitations_.begin(); it != invitations_.end(); it++)
+	{
+		if (*it == usr)
+			return true;
+	}
+	return false;
+}
 void Channel::invite_user(uintptr_t user)
 {
 	invitations_.push_back(user);
