@@ -67,7 +67,7 @@ public:
 
 	std::string get_user_list_str(void);
 	void set_flag(Channel &channel, t_mode &mode);
-
+	bool has_invitation(const uintptr_t &usr);
 	Udata send_all(User &sender, User &target, std::string msg, int remocon);
 
 	std::vector<User> &get_users(void);

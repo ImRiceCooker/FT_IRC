@@ -33,7 +33,7 @@ public:
 	static Event privmsg_no_user_error_message(const User &sender, const std::string &target);
 	static Event privmsg_external_error_message(const User &sender, const std::string channel);
 	static Event join_message(const User &sender, const User &receiver, const std::string &channel);
-	static Event join_invaild_channel_name_message(const User &sender, const std::string invaild_channel);
+	static Event join_invalid_channel_name_message(const User &sender, const std::string invaild_channel);
 	static Event part_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg);
 	static Event kick_message(const User &sender, const User &receiver, const std::string &subject, const std::string &channel, const std::string &msg);
 	static Event kick_error_not_op_message(const User &sender, const std::string &host, const std::string &channel);
@@ -66,7 +66,7 @@ public:
 	static Event invitee_message(const User &sender, const User &receiver, const std::string &channel);
 	static Event invite_no_user_message(const User &sender, const std::string &target_user);
 	static Event invitor_message(const User &invitor, const User &target_user, const std::string &channel);
-
+	static Event cannot_join_message(const User &receiver, const std::string &channel);
 private:
 	static const std::string server_name_;
 };

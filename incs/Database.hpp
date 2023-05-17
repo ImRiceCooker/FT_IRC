@@ -21,7 +21,9 @@ public:
 	Channel &create_channel(User &joiner, std::string &chan_name, std::string chan_access);
 	void delete_channel(std::string &chan_name);
 	Channel &select_channel(std::string &chan_name);
+	Channel &select_channel(const std::string &chan_name);
 	Channel &select_channel(User &connector);
+
 	Udata set_topic(User &sender, std::string &chan_name, std::string &topic);
 	Udata kick_channel(User &host, User &target, std::string &chan_name, std::string &msg);
 	Udata join_channel(User &joiner, const std::string &chan_name_);
