@@ -135,7 +135,7 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name)
 	}
 	else
 	{
-		std::cout << "bitset: "<< std::bitset<3>(cur_chan.channel_flag_) << "\n";
+		std::cout << "bitset: " << std::bitset<3>(cur_chan.channel_flag_) << "\n";
 		std::cout << ", has invitation: " << cur_chan.has_invitation(joiner.client_sock_) << "\n";
 		Channel &chan = select_channel(chan_name);
 		chan.add_user(joiner);
@@ -327,7 +327,6 @@ Udata Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
 	{
-		std::string dumy_param = "";
 		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "+i", MODE);
 	}
@@ -348,7 +347,6 @@ Udata Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
 	{
-		std::string dumy_param = "";
 		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "-i", MODE);
 	}
@@ -360,4 +358,74 @@ Udata Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
+Udata Database::command_mode_o_on(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
 
+	if (mode.param.length() == 0)
+	{
+		tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "op", "nick");
+		ret.insert(tmp);
+		return ret;
+	}
+	else if (!is_user(mode.param))
+	{
+		tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
+		ret.insert(tmp);
+		return ret;
+	}
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		if (!target_channel.is_host(select_user(mode.param)))
+		{
+			target_channel.set_host(select_user(mode.param));
+		}
+		ret = target_channel.send_all(host_user, host_user, "+o", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	if (mode.param.length() == 0)
+	{
+		tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "op", "nick");
+		ret.insert(tmp);
+		return ret;
+	}
+	else if (!is_user(mode.param))
+	{
+		tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
+		ret.insert(tmp);
+		return ret;
+	}
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		if (target_channel.is_host(select_user(mode.param)))
+		{
+			target_channel.unset_host(select_user(mode.param));
+		}
+		ret = target_channel.send_all(host_user, host_user, "-o", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}

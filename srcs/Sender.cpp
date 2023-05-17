@@ -256,15 +256,6 @@ std::string Sender::mode_329_message(const User &sender, const std::string chann
 	const std::string &ret = ":" + Sender::server_name_ + " 329 " + sender.nickname_ + " " + channel + " :" + time_stamp + "";
 	return ret;
 }
-/** @brief 482 - operator가 아닌 클라이언트가 operator 권한이 필요한 명령어를 사용하려 할 때 보내는 오류 패킷 메세지 **/
-Event Sender::mode_not_operator_error_message(const User &sender, const std::string wrong_option)
-{
-	Event ret;
-
-	const std::string &mode_message = ":" + Sender::server_name_ + " 482 " + sender.nickname_ + " " + wrong_option + " :is not a recognised channel mode";
-	ret = std::make_pair(sender.client_sock_, mode_message + "\r\n");
-	return ret;
-}
 
 /** @brief 352 join 할때 joiner(조인 하는 자신)에게도 보내는 패킷 메세자 **/
 Event Sender::who_joiner_352_message(const User &sender, const std::string channel)
@@ -507,7 +498,7 @@ Event Sender::mode_message(const User &sender, const User &receiver, const std::
 	return ret;
 }
 
-/**  @brief mode +i 실패 시 보내는 패킷 메세지 **/
+/**  @brief 482 mode +i 실패 시 보내는 패킷 메세지 **/
 Event Sender::mode_error_not_op_message(const User &sender, const std::string &channel)
 {
 	Event ret;
@@ -530,13 +521,34 @@ Event Sender::command_too_many_argument_461(const uintptr_t &sock, const std::st
 /** @brief 472 - 변경완료 **/
 
 Event Sender::mode_wrong_message(const uintptr_t &socket, const char &mode_option)
-
 {
 	Event ret;
 
 	const std::string &error_message = ":" + Sender::server_name_ + " 472 " + mode_option + " :is not a recognized channel mode.";
 	ret = std::make_pair(socket, error_message + "\r\n");
 	return ret;
+}
+
+/** @brief 401 - 존재하지 않는 target 클라이언트를 parameter로 사용하려 할 때 보내는 패킷 메시지 **/
+Event Sender::mode_no_user_message(const User &sender, const std::string &target)
+{
+	Event ret;
+
+	const std::string &no_msg = ":" + Sender::server_name_ + " 401 " + sender.nickname_ + " " +
+															target + " " + ":No such nick";
+	ret = std::make_pair(sender.client_sock_, no_msg + "\r\n");
+	return (ret);
+}
+
+/** @brief 696 - param이 입력되어야 하는 mode 명령어에서 param이 존재하지 않을 때 **/
+Event Sender::mode_syntax_error(const User &sender, const std::string &target, const std::string &mode_option, const std::string &description, const std::string &err_syntax)
+{
+	Event ret;
+
+	const std::string &msg = ":" + Sender::server_name_ + " 696 " + sender.nickname_ + " " +
+													 target + " " + mode_option + " * :You must specify a parameter for the " + description + " mode. Syntax: <" + err_syntax + ">.";
+	ret = std::make_pair(sender.client_sock_, msg + "\r\n");
+	return (ret);
 }
 
 /**  @brief invite  **/
