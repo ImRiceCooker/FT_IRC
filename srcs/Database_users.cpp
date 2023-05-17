@@ -204,6 +204,7 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 {
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "INVITE");
+	Event invitor_packet;
 
 	if (tmp.second.size())
 	{
@@ -244,7 +245,6 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 		User &invited_user = select_user(user);
 		Channel &cur_channel = select_channel(chan_name);
 		cur_channel.invite_user(invited_user.client_sock_);
-		tmp = Sender::invitor_message(invitor, invited_user, chan_name);
 		ret = cur_channel.send_all(invitor, invited_user, chan_name, INVITE);
 		tmp.first = invitor.client_sock_;
 		tmp.second.clear();

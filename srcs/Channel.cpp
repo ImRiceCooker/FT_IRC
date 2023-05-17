@@ -126,12 +126,15 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 			packet = Sender::mode_message(sender, *it, this->get_name(), msg);
 			break;
 		case INVITE:
-			if (sender == *it)
+			if (sender == *it) // invitor 에게 보내는 메세지
 			{
-				packet.first = sender.client_sock_;
-				packet.second = "";
+				packet = Sender::invitor_message(sender, target, this->get_name());
 			}
-			else
+			// if (sender == target)
+			// {
+			// 	packet = Sender::invoker_message(sender, *it, this->
+			// }
+			else // 방에 있는 사람들에게 보내는 메세지
 			{
 				packet = Sender::invite_message(sender, *it, this->get_name());
 			}

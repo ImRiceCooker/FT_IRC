@@ -576,7 +576,7 @@ Event Sender::invitor_message(const User &invitor, const User &invited_user, con
 {
 	Event ret;
 
-	const std::string &inviting_message = ":" + server_name_ + "341" + invitor.nickname_ + invited_user.nickname_ + ":" + channel;
+	const std::string &inviting_message = ":" + server_name_ + " 341 " + invitor.nickname_ + " " + invited_user.nickname_ + " " + ":" + channel;
 	ret = std::make_pair(invitor.client_sock_, inviting_message + "\r\n");
 	return ret;
 }
