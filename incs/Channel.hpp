@@ -40,6 +40,7 @@ private:
 	std::string name_;
 	std::string topic_;
 	std::string access_;
+	std::string password_;
 	int error_;
 
 public:
