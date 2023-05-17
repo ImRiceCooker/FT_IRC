@@ -2,7 +2,6 @@
 
 const std::string Sender::server_name_ = "irc.local";
 
-
 /****************************       <PING && PONG && USE && etc>       ****************************/
 
 /** @brief PING명령에 대한 응답으로 PONG 전송s **/
@@ -555,20 +554,29 @@ Event Sender::already_in_channel_message(const User &target_user, const std::str
 /*
 127.000.000.001.06667-127.000.000.001.43726: :A!root@127.0.0.1 INVITE C :#6
 */
-Event Sender::invite_message(const User &sender, const User &target_user, const std::string &channel)
+Event Sender::invite_message(const User &invitor, const User &invited_user, const std::string &channel)
 {
 	Event ret;
 
-	const std::string &invite_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 INVITE " + target_user.nickname_ + " :" + channel;
-	ret = std::make_pair(target_user.client_sock_, invite_message + "\r\n");
+	const std::string &invite_message = ":" + invitor.nickname_ + "!" + invitor.username_ + "@127.0.0.1 INVITE " + invited_user.nickname_ + " :" + channel;
+	ret = std::make_pair(invited_user.client_sock_, invite_message + "\r\n");
 	return ret;
 }
 
-Event Sender::invite_no_user_message(const User &sender, const std::string &target_user)
+Event Sender::invite_no_user_message(const User &invitor, const std::string &invited_user)
 {
 	Event ret;
 
-	const std::string &error_message = ":" + target_user + " No such nick ";
-	ret = std::make_pair(sender.client_sock_, error_message + "\r\n");
+	const std::string &error_message = ":" + invited_user + " No such nick ";
+	ret = std::make_pair(invitor.client_sock_, error_message + "\r\n");
+	return ret;
+}
+
+Event Sender::invitor_message(const User &invitor, const User &invited_user, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &inviting_message = ":" + server_name_ + "341" + invitor.nickname_ + invited_user.nickname_ + ":" + channel;
+	ret = std::make_pair(invitor.client_sock_, inviting_message + "\r\n");
 	return ret;
 }

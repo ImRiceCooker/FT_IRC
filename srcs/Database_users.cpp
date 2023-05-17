@@ -237,15 +237,16 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 		// 		ret.insert(tmp);
 		// 	}
 
-		// 127.000.000.001.06667-127.000.000.001.59616: :irc.local 341 A C :#6
-		// 127.000.000.001.06667-127.000.000.001.46928: :irc.local NOTICE #6 :*** A invited C into the channel // 채널에 있는
+		// 127.000.000.001.06667-127.000.000.001.59616: :irc.local 341 A C :#6 // A에게 보내는 메세지 (초대한 자)
+		// 127.000.000.001.06667-127.000.000.001.46928: :irc.local NOTICE #6 :*** A invited C into the channel // C에게 보내는 메시지(초대받은자)
 
-		User &sender = select_user(ident);
+		User &invitor = select_user(ident);
 		User &invited_user = select_user(user);
 		Channel &cur_channel = select_channel(chan_name);
 		cur_channel.invite_user(invited_user.client_sock_);
-		ret = cur_channel.send_all(sender, invited_user, chan_name, INVITE);
-		tmp.first = sender.client_sock_;
+		tmp = Sender::invitor_message(invitor, invited_user, chan_name);
+		ret = cur_channel.send_all(invitor, invited_user, chan_name, INVITE);
+		tmp.first = invitor.client_sock_;
 		tmp.second.clear();
 		ret.insert(tmp);
 	}
