@@ -63,6 +63,7 @@ public:
 
 	static Event already_in_channel_message(const User &target_user, const std::string &channel);
 	static Event invite_message(const User &sender, const User &receiver, const std::string &channel);
+	static Event invitee_message(const User &sender, const User &receiver, const std::string &channel);
 	static Event invite_no_user_message(const User &sender, const std::string &target_user);
 	static Event invitor_message(const User &invitor, const User &target_user, const std::string &channel);
 

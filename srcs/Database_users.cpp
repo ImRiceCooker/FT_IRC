@@ -204,7 +204,6 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 {
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "INVITE");
-	Event invitor_packet;
 
 	if (tmp.second.size())
 	{
