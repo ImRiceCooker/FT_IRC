@@ -580,3 +580,12 @@ Event Sender::invitor_message(const User &invitor, const User &invited_user, con
 	ret = std::make_pair(invitor.client_sock_, inviting_message + "\r\n");
 	return ret;
 }
+
+Event Sender::invitee_message(const User &sender, const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &inviting_message = ":" + server_name_ + " NOTICE " + channel + " :*** " + sender.nickname_ + " invited " + receiver.username_ + " into the channel ";
+	ret = std::make_pair(receiver.client_sock_, inviting_message + "\r\n");
+	return ret;
+}
