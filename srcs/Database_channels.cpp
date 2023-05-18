@@ -444,7 +444,7 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 		ret.insert(tmp);
 		return ret;
 	}
-	else if ()
+	else if (!is_user(mode.param))
 	{
 		tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
 		ret.insert(tmp);
