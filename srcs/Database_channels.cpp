@@ -444,7 +444,7 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 		ret.insert(tmp);
 		return ret;
 	}
-	else if (!is_user(mode.param))
+	else if ()
 	{
 		tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
 		ret.insert(tmp);
@@ -460,6 +460,67 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 			target_channel.unset_host(select_user(mode.param));
 		}
 		ret = target_channel.send_all(host_user, host_user, "-o", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+
+Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	// if (mode.param.length() == 0)
+	// {
+	// 	tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "op", "nick"); //l에 맞춰서 수정해야함
+	// 	ret.insert(tmp);
+	// 	return ret;
+	// }
+	// else if (!is_user(mode.param)) // 숫자가 아니면 에러가 발생할 것 같음
+	// {
+	// 	tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
+	// 	ret.insert(tmp);
+	// 	return ret;
+	// }
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "+l", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+Udata Database::command_mode_l_off(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	// if (mode.param.length() == 0)
+	// {
+	// 	tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "op", "nick"); //l에 맞춰서 수정해야함
+	// 	ret.insert(tmp);
+	// 	return ret;
+	// }
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "-l", MODE);
 	}
 	else
 	{

@@ -41,6 +41,7 @@ private:
 	std::string topic_;
 	std::string access_;
 	std::string password_;
+	int	member_limit_;
 	int error_;
 
 public:

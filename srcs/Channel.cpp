@@ -261,6 +261,16 @@ bool Channel::is_host(User &usr)
 	return false;
 }
 
+int Channel::get_member_limit()
+{
+	return this->member_limit_;
+}
+
+void Channel::set_member_limit(int &member_limit)
+{
+	this->member_limit_ = member_limit;
+}
+
 void Channel::set_flag(Channel &channel, t_mode &mode)
 {
 	std::cout << "before: " << std::bitset<3>(channel.channel_flag_) << std::endl;
@@ -287,6 +297,19 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 	{
 		channel.channel_flag_ -= F_KEY_NEEDED;
 		std::cout << "set flag: turned -K" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == PLUS_L && !(channel.channel_flag_ & F_LIMITED_MEMBERSHIP))
+	{
+		channel.channel_flag_ += F_LIMITED_MEMBERSHIP;
+		// channel.set_member_limit(mode.param.str_to_int());
+		std::cout << "set flag: turned +L" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == MINUS_L && (channel.channel_flag_ & F_LIMITED_MEMBERSHIP))
+	{
+		channel.channel_flag_ -= F_LIMITED_MEMBERSHIP;
+		std::cout << "set flag: turned -L" << std::endl;
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
 	else
