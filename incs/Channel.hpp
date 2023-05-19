@@ -45,7 +45,7 @@ private:
 
 public:
 	char channel_flag_;
-	
+
 	Channel();
 	std::vector<uintptr_t> &get_hosts(void);
 	void set_host(uintptr_t host_sock);
@@ -65,6 +65,7 @@ public:
 	void set_channel_name(std::string &chan_name);
 	void delete_user(User &usr);
 	void invite_user(uintptr_t user_sock);
+	void set_password(Channel &tmp_channel, t_mode mode);
 
 	std::string get_user_list_str(void);
 	void set_flag(Channel &channel, t_mode &mode);

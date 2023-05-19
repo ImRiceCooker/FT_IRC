@@ -7,8 +7,6 @@
 //
 #include <bitset>
 
-#include <bitset>
-
 bool Database::is_channel(std::string &chan_name)
 {
 	std::vector<Channel>::iterator it;
@@ -366,6 +364,7 @@ Udata Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
 	{
+		tmp_channel.set_password(tmp_channel, mode);
 		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "+k", MODE);
 	}
