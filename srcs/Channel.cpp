@@ -5,6 +5,7 @@ Channel::Channel()
 {
 	this->channel_flag_ = 0;
 	this->password_ = "";
+	this->member_limit_ = 0;
 }
 
 std::string &Channel::get_access(void) { return access_; }
@@ -261,7 +262,7 @@ bool Channel::is_host(User &usr)
 	return false;
 }
 
-int Channel::get_member_limit()
+int Channel::get_member_limit(void)
 {
 	return this->member_limit_;
 }
@@ -302,7 +303,6 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 	else if (mode.mode_type == PLUS_L && !(channel.channel_flag_ & F_LIMITED_MEMBERSHIP))
 	{
 		channel.channel_flag_ += F_LIMITED_MEMBERSHIP;
-		// channel.set_member_limit(mode.param.str_to_int());
 		std::cout << "set flag: turned +L" << std::endl;
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
