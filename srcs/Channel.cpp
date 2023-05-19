@@ -3,7 +3,7 @@
 
 Channel::Channel()
 {
-	this->channel_flag_ = 0;
+	this->channel_flag_ = 0b1000;
 	this->password_ = "";
 }
 
@@ -263,37 +263,46 @@ bool Channel::is_host(User &usr)
 
 void Channel::set_flag(Channel &channel, t_mode &mode)
 {
-	std::cout << "before: " << std::bitset<3>(channel.channel_flag_) << std::endl;
+	std::cout << "before: " << std::bitset<4>(channel.channel_flag_) << std::endl;
 
 	if (mode.mode_type == PLUS_I && !(channel.channel_flag_ & F_INVITE_ONLY))
 	{
 		channel.channel_flag_ += F_INVITE_ONLY;
 		std::cout << "set flag: turned +I" << std::endl;
-		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
 	}
 	else if (mode.mode_type == MINUS_I && (channel.channel_flag_ & F_INVITE_ONLY))
 	{
 		channel.channel_flag_ -= F_INVITE_ONLY;
 		std::cout << "set flag: turned -I" << std::endl;
-		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
 	}
 	else if (mode.mode_type == PLUS_K && !(channel.channel_flag_ & F_KEY_NEEDED))
 	{
 		channel.channel_flag_ += F_KEY_NEEDED;
 		std::cout << "set flag: turned +K" << std::endl;
-		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
 	}
 	else if (mode.mode_type == MINUS_K && (channel.channel_flag_ & F_KEY_NEEDED))
 	{
 		channel.channel_flag_ -= F_KEY_NEEDED;
 		std::cout << "set flag: turned -K" << std::endl;
-		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == PLUS_T && !(channel.channel_flag_ & F_TOPIC_OWNERSHIP))
+	{
+		channel.channel_flag_ += F_TOPIC_OWNERSHIP;
+		std::cout << "set flag: turned +T" << std::endl;
+		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == MINUS_T && (channel.channel_flag_ & F_TOPIC_OWNERSHIP))
+	{
+		channel.channel_flag_ -= F_TOPIC_OWNERSHIP;
+		std::cout << "set flag: turned -T" << std::endl;
+		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
 	}
 	else
-	{
-		std::cout << "ELSE!!\n";
-	}
-	return;
+		return ;
 }
 
 bool Channel::has_invitation(const uintptr_t &usr)

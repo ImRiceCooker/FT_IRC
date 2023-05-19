@@ -468,3 +468,44 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 	}
 	return ret;
 }
+
+Udata Database::command_mode_t_on(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "+t", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+Udata Database::command_mode_t_off(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "-t", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+

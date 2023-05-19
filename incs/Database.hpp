@@ -54,6 +54,9 @@ public:
 	Udata command_mode_k_off(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_o_on(const uintptr_t &socket, t_mode mode);
 	Udata command_mode_o_off(const uintptr_t &socket, t_mode mode);
+	Udata command_mode_t_on(const uintptr_t &socket, t_mode mode);
+	Udata command_mode_t_off(const uintptr_t &socket, t_mode mode);
+
 	bool is_user(const uintptr_t &ident);
 	bool is_user(const std::string &nickname);
 	User &select_user(const uintptr_t &ident);

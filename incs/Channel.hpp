@@ -26,9 +26,10 @@ enum e_send_switch
 
 enum e_channel_flag
 {
-	F_INVITE_ONLY = 0b001,
-	F_KEY_NEEDED = 0b010,
-	F_LIMITED_MEMBERSHIP = 0b100
+	F_INVITE_ONLY = 0b0001,
+	F_KEY_NEEDED = 0b0010,
+	F_LIMITED_MEMBERSHIP = 0b0100,
+	F_TOPIC_OWNERSHIP = 0b1000
 };
 
 class Channel
