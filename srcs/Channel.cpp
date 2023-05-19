@@ -317,3 +317,12 @@ void Channel::set_password(Channel &tmp_channel, t_mode mode)
 	tmp_channel.password_ = mode.param;
 	std::cout << "tmp_channel.password : " + tmp_channel.password_ << std::endl;
 }
+
+bool Channel::check_password(Channel &tmp_channel, const std::string &tmp_password)
+{
+	if (tmp_channel.password_ != tmp_password)
+	{
+		return false;
+	}
+	return true;
+}
