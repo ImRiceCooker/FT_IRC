@@ -41,6 +41,7 @@ private:
 	std::string topic_;
 	std::string access_;
 	std::string password_;
+	int	member_limit_;
 	int error_;
 
 public:
@@ -57,6 +58,7 @@ public:
 	std::string &get_name(void);
 	std::string &get_topic(void);
 	std::string &get_access(void);
+	int get_member_limit(void);
 	void set_access(const std::string &access);
 	void set_topic(std::string &topic);
 	bool is_user(User &usr);
@@ -65,6 +67,7 @@ public:
 	void set_channel_name(std::string &chan_name);
 	void delete_user(User &usr);
 	void invite_user(uintptr_t user_sock);
+	void set_member_limit(int &member_limit);
 	void set_password(Channel &tmp_channel, t_mode mode);
 
 	std::string get_user_list_str(void);

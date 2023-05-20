@@ -493,7 +493,7 @@ Event Sender::mode_message(const User &sender, const User &receiver, const std::
 {
 	Event ret;
 
-	const std::string &join_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 MODE " + channel + ":" + mode_type;
+	const std::string &join_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 MODE " + channel + " :" + mode_type;
 	ret = make_pair(receiver.client_sock_, join_message + "\r\n");
 	return ret;
 }
@@ -547,6 +547,17 @@ Event Sender::mode_syntax_error(const User &sender, const std::string &target, c
 
 	const std::string &msg = ":" + Sender::server_name_ + " 696 " + sender.nickname_ + " " +
 													 target + " " + mode_option + " * :You must specify a parameter for the " + description + " mode. Syntax: <" + err_syntax + ">.";
+	ret = std::make_pair(sender.client_sock_, msg + "\r\n");
+	return (ret);
+}
+
+/** @brief 696 - param이 입력되어야 하는 mode 명령어에서 param이 존재하지 않을 때 **/
+Event Sender::mode_syntax_error_l_negative_num(const User &sender, const std::string &target, const std::string &mode_option, const std::string &mode_param)
+{
+	Event ret;
+
+	const std::string &msg = ":" + Sender::server_name_ + " 696 " + sender.nickname_ + " " +
+													 target + " " + mode_option + " " + mode_param + " :Invalid limit mode parameter. Syntax: <limit>.";
 	ret = std::make_pair(sender.client_sock_, msg + "\r\n");
 	return (ret);
 }
