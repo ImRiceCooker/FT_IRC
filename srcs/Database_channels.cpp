@@ -295,15 +295,19 @@ Udata Database::nick_channel(User &nicker, std::string &send_msg)
 Udata Database::set_topic(User &sender, std::string &chan_name, std::string &topic)
 {
 	Udata ret;
-	Event tmp;
+	Event tmp = valid_user_checker_(sender.client_sock_, "INVITE");
+	Channel &channel = select_channel(chan_name);
 
-	if (is_channel(chan_name) == false)
+	if (tmp.second.size())
+	{
+		ret.insert(tmp);
+	}
+	else if (is_channel(chan_name) == false)
 	{
 		tmp = Sender::no_channel_message(sender, chan_name);
 		ret.insert(tmp);
 		return ret;
 	}
-	Channel &channel = select_channel(chan_name);
 	if ((channel.channel_flag_ & F_TOPIC_OWNERSHIP) && !(channel.is_host(sender)))
 	{
 		tmp = Sender::topic_access_error(sender, chan_name);
