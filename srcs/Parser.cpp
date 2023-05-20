@@ -519,7 +519,7 @@ void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, st
 	line_ss >> chan_name >> target_name >> msg;
 	if (chan_name.empty() || target_name.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "NOTICE");
+		Event tmp = Sender::command_empty_argument_461(ident, "KICK");
 		ret.insert(tmp);
 	}
 	else
