@@ -54,6 +54,8 @@ public:
 	Udata command_mode_k_off(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_o_on(const uintptr_t &socket, t_mode mode);
 	Udata command_mode_o_off(const uintptr_t &socket, t_mode mode);
+	Udata command_mode_t_on(const uintptr_t &socket, t_mode mode);
+	Udata command_mode_t_off(const uintptr_t &socket, t_mode mode);
 	Udata command_mode_l_on(const uintptr_t &socket, t_mode mode);
 	Udata command_mode_l_off(const uintptr_t &socket, t_mode mode);
 

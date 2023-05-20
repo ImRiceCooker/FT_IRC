@@ -301,24 +301,28 @@ Udata Database::nick_channel(User &nicker, std::string &send_msg)
 Udata Database::set_topic(User &sender, std::string &chan_name, std::string &topic)
 {
 	Udata ret;
-	Event tmp;
+	Event tmp = valid_user_checker_(sender.client_sock_, "INVITE");
+	Channel &channel = select_channel(chan_name);
 
-	if (is_channel(chan_name) == false)
+	if (tmp.second.size())
+	{
+		ret.insert(tmp);
+	}
+	else if (is_channel(chan_name) == false)
 	{
 		tmp = Sender::no_channel_message(sender, chan_name);
 		ret.insert(tmp);
 		return ret;
 	}
-	Channel &channel = select_channel(chan_name);
-	if (channel.is_host(sender))
+	if ((channel.channel_flag_ & F_TOPIC_OWNERSHIP) && !(channel.is_host(sender)))
 	{
-		std::string topic_msg = "Topic was changed to " + topic;
-		channel.set_topic(topic);
-		ret = channel.send_all(sender, sender, topic_msg, TOPIC);
+		tmp = Sender::topic_access_error(sender, chan_name);
+		ret.insert(tmp);
 	}
 	else
 	{
-		std::string topic_msg = "You do not have the authority to change the topic on this channel";
+		std::string topic_msg = "Topic was changed to " + topic;
+		channel.set_topic(topic);
 		ret = channel.send_all(sender, sender, topic_msg, TOPIC);
 	}
 	return ret;
@@ -477,6 +481,47 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 }
 
 
+Udata Database::command_mode_t_on(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "+t", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+Udata Database::command_mode_t_off(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "-t", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+
 Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
 {
 	Udata ret;
@@ -543,3 +588,5 @@ Udata Database::command_mode_l_off(const uintptr_t &socket, t_mode mode)
 	}
 	return ret;
 }
+
+

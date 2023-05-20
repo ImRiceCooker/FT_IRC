@@ -508,6 +508,16 @@ Event Sender::mode_error_not_op_message(const User &sender, const std::string &c
 	return ret;
 }
 
+/**  @brief 482 mode +t일 때 권한 문제로 실패 시 보내는 패킷 메세지 **/
+Event Sender::topic_access_error(const User &sender, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &topic_message = ":" + Sender::server_name_ + " 482 " + sender.nickname_ + " " + channel + " :You do not have access to change the topic on this channel";
+	ret = make_pair(sender.client_sock_, topic_message + "\r\n");
+	return ret;
+}
+
 /**  @brief mode 불필요한 파라미터가 들어왔을 시 보내는 패킷 메세지 **/
 Event Sender::command_too_many_argument_461(const uintptr_t &sock, const std::string &command)
 {

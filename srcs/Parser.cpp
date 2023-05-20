@@ -486,9 +486,12 @@ void Parser::parser_part_(const uintptr_t &ident, std::stringstream &line_ss, st
 void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	Udata ret;
+	User cur_usr = database_.select_user(ident);
 	std::string chan_name, msg;
 
 	line_ss >> chan_name;
+	Channel cur_chan = database_.select_channel(chan_name);
+
 	if (chan_name.empty())
 	{
 		Event tmp = Sender::command_empty_argument_461(ident, "NOTICE");
@@ -499,8 +502,7 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 		line_ss >> std::ws;
 		std::getline(line_ss, msg);
 		msg = message_resize_(msg, to_send);
-		User cur_usr = database_.select_user(ident);
-		ret = database_.set_topic(cur_usr, chan_name, to_send);
+		ret = database_.set_topic(cur_usr, chan_name, msg);
 	}
 	push_multiple_write_events_(ret, ident, 2);
 }
