@@ -390,7 +390,7 @@ Event Database::command_pong(const uintptr_t &ident, const std::string &target, 
 	return ret;
 }
 
-Udata Database::command_join(const uintptr_t &ident, const std::string &chan_name)
+Udata Database::command_join(const uintptr_t &ident, const std::string &chan_name, const std::string &tmp_password)
 {
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "JOIN");
@@ -428,7 +428,7 @@ Udata Database::command_join(const uintptr_t &ident, const std::string &chan_nam
 		}
 		else
 		{
-			ret = join_channel(cur_usr, chan_name);
+			ret = join_channel(cur_usr, chan_name, tmp_password);
 		}
 	}
 	return ret;

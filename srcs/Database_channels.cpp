@@ -104,7 +104,7 @@ Channel &Database::select_channel(User &connector)
 	return *it;
 }
 
-Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name)
+Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, const std::string &tmp_password)
 {
 	Udata ret;
 	Event tmp;
@@ -131,7 +131,12 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name)
 	}
 	else if ((cur_chan.channel_flag_ & F_INVITE_ONLY) && !cur_chan.has_invitation(joiner.client_sock_))
 	{
-		tmp = Sender::cannot_join_message(joiner, chan_name);
+		tmp = Sender::cannot_join_message(joiner, chan_name); // cannot_join_messeage_invite
+		ret.insert(tmp);
+	}
+	else if ((cur_chan.channel_flag_ & F_KEY_NEEDED) && !cur_chan.check_password(cur_chan, tmp_password))
+	{
+		tmp = Sender::cannot_join_message_key(joiner, chan_name); // connot_join_message_key
 		ret.insert(tmp);
 	}
 	else
@@ -367,6 +372,7 @@ Udata Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
 	{
+		tmp_channel.set_password(tmp_channel, mode);
 		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "+k", MODE);
 	}

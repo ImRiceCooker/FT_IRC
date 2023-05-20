@@ -46,7 +46,7 @@ private:
 
 public:
 	char channel_flag_;
-	
+
 	Channel();
 	std::vector<uintptr_t> &get_hosts(void);
 	void set_host(uintptr_t host_sock);
@@ -68,10 +68,12 @@ public:
 	void delete_user(User &usr);
 	void invite_user(uintptr_t user_sock);
 	void set_member_limit(int &member_limit);
+	void set_password(Channel &tmp_channel, t_mode mode);
 
 	std::string get_user_list_str(void);
 	void set_flag(Channel &channel, t_mode &mode);
 	bool has_invitation(const uintptr_t &usr);
+	bool check_password(Channel &tmp_channel, const std::string &tmp_password);
 	Udata send_all(User &sender, User &target, std::string msg, int remocon);
 
 	std::vector<User> &get_users(void);
