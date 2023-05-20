@@ -475,7 +475,7 @@ void Parser::parser_part_(const uintptr_t &ident, std::stringstream &line_ss, st
 	std::getline(line_ss, msg);
 	msg = message_resize_(msg, to_send);
 	User parter = database_.select_user(ident);
-	ret = database_.command_part(ident, chan_name, to_send);
+	ret = database_.command_part(ident, chan_name, msg);
 
 	push_multiple_write_events_(ret, ident, 2);
 }
@@ -494,7 +494,7 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 
 	if (chan_name.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "NOTICE");
+		Event tmp = Sender::command_empty_argument_461(ident, "TOPIC");
 		ret.insert(tmp);
 	}
 	else
@@ -526,7 +526,7 @@ void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, st
 	{
 		line_ss >> std::ws;
 		msg = message_resize_(msg, to_send);
-		ret = database_.command_kick(ident, target_name, chan_name, to_send);
+		ret = database_.command_kick(ident, target_name, chan_name, msg);
 	}
 	push_multiple_write_events_(ret, ident, 2);
 }

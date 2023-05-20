@@ -363,15 +363,8 @@ Event Database::command_user(const uintptr_t &ident, const std::string &username
 	}
 	User &cur_usr = select_user(ident);
 
-	if (!(cur_usr.flag_ & F_USER))
-	{
-		cur_usr.flag_ |= F_USER;
-		cur_usr.input_user(username, mode, unused, realname);
-		if (cur_usr.flag_ & F_NICK)
-		{
-			ret = Sender::welcome_message_connect(cur_usr);
-		}
-	}
+	cur_usr.input_user(username, mode, unused, realname);
+	ret = Sender::welcome_message_connect(cur_usr);
 	debug::showUsers(user_list_);
 	return ret;
 }
