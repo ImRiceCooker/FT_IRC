@@ -53,6 +53,7 @@ public:
 	static Event command_too_many_argument_461(const uintptr_t &sock, const std::string &command);
 	static Event mode_no_user_message(const User &sender, const std::string &target);
 	static Event mode_syntax_error(const User &sender, const std::string &target, const std::string &mode_option, const std::string &description, const std::string &err_syntax);
+	static Event mode_syntax_error_l_negative_num(const User &sender, const std::string &target, const std::string &mode_option, const std::string &mode_param);
 
 	static Event who_joiner_352_message(const User &sender, const std::string channel);
 	static std::string who_352_target_message(const User &sender, const std::string channel, const std::string target);
@@ -69,7 +70,8 @@ public:
 	static Event invite_no_user_message(const User &sender, const std::string &target_user);
 	static Event invitor_message(const User &invitor, const User &target_user, const std::string &channel);
 	static Event cannot_join_message(const User &receiver, const std::string &channel);
-
+	static Event cannot_join_message_key(const User &receiver, const std::string &channel);
+	
 private:
 	static const std::string server_name_;
 };

@@ -493,7 +493,7 @@ Event Sender::mode_message(const User &sender, const User &receiver, const std::
 {
 	Event ret;
 
-	const std::string &join_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 MODE " + channel + ":" + mode_type;
+	const std::string &join_message = ":" + sender.nickname_ + "!" + sender.username_ + "@127.0.0.1 MODE " + channel + " :" + mode_type;
 	ret = make_pair(receiver.client_sock_, join_message + "\r\n");
 	return ret;
 }
@@ -561,6 +561,17 @@ Event Sender::mode_syntax_error(const User &sender, const std::string &target, c
 	return (ret);
 }
 
+/** @brief 696 - param이 입력되어야 하는 mode 명령어에서 param이 존재하지 않을 때 **/
+Event Sender::mode_syntax_error_l_negative_num(const User &sender, const std::string &target, const std::string &mode_option, const std::string &mode_param)
+{
+	Event ret;
+
+	const std::string &msg = ":" + Sender::server_name_ + " 696 " + sender.nickname_ + " " +
+													 target + " " + mode_option + " " + mode_param + " :Invalid limit mode parameter. Syntax: <limit>.";
+	ret = std::make_pair(sender.client_sock_, msg + "\r\n");
+	return (ret);
+}
+
 /**  @brief invite  **/
 /** 127.000.000.001.06667-127.000.000.001.59616: :irc.local 443 A B #6 :is already on channel **/
 Event Sender::already_in_channel_message(const User &target_user, const std::string &channel)
@@ -618,5 +629,15 @@ Event Sender::cannot_join_message(const User &receiver, const std::string &chann
 
 	const std::string &inviting_message = ":" + server_name_ + " 473 " + receiver.nickname_ + " " + channel + " :Cannot join channel (invite only)";
 	ret = std::make_pair(receiver.client_sock_, inviting_message + "\r\n");
+	return ret;
+}
+
+/* 127.000.000.001.06667-127.000.000.001.42570: :irc.local 475 B #4 :Cannot join channel (incorrect channel key) */
+Event Sender::cannot_join_message_key(const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &key_error_message = ":" + server_name_ + " 475 " + receiver.nickname_ + " " + channel + " :Cannot join channel (incorrect channel key)";
+	ret = std::make_pair(receiver.client_sock_, key_error_message + "\r\n");
 	return ret;
 }

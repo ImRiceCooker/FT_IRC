@@ -5,6 +5,7 @@ Channel::Channel()
 {
 	this->channel_flag_ = 0b1000;
 	this->password_ = "";
+	this->member_limit_ = 0;
 }
 
 std::string &Channel::get_access(void) { return access_; }
@@ -193,12 +194,11 @@ void Channel::delete_user(User &usr)
 {
 	if (is_host(usr))
 		unset_host(usr);
-	
+
 	std::vector<User>::iterator it = std::find(this->connectors_.begin(),
 																						 this->connectors_.end(), usr);
 	std::size_t size = std::distance(this->connectors_.begin(), it);
 	this->connectors_.erase(this->connectors_.begin() + size);
-
 }
 bool Channel::operator==(const Channel &t) const
 {
@@ -261,6 +261,16 @@ bool Channel::is_host(User &usr)
 	return false;
 }
 
+int Channel::get_member_limit(void)
+{
+	return this->member_limit_;
+}
+
+void Channel::set_member_limit(int &member_limit)
+{
+	this->member_limit_ = member_limit;
+}
+
 void Channel::set_flag(Channel &channel, t_mode &mode)
 {
 	std::cout << "before: " << std::bitset<4>(channel.channel_flag_) << std::endl;
@@ -301,6 +311,18 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 		std::cout << "set flag: turned -T" << std::endl;
 		std::cout << std::bitset<4>(channel.channel_flag_) << std::endl;
 	}
+	else if (mode.mode_type == PLUS_L && !(channel.channel_flag_ & F_LIMITED_MEMBERSHIP))
+	{
+		channel.channel_flag_ += F_LIMITED_MEMBERSHIP;
+		std::cout << "set flag: turned +L" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
+	else if (mode.mode_type == MINUS_L && (channel.channel_flag_ & F_LIMITED_MEMBERSHIP))
+	{
+		channel.channel_flag_ -= F_LIMITED_MEMBERSHIP;
+		std::cout << "set flag: turned -L" << std::endl;
+		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
+	}
 	else
 		return ;
 }
@@ -319,4 +341,20 @@ bool Channel::has_invitation(const uintptr_t &usr)
 void Channel::invite_user(uintptr_t user)
 {
 	invitations_.push_back(user);
+}
+
+void Channel::set_password(Channel &tmp_channel, t_mode mode)
+{
+	std::cout << "mode.param : " + mode.param << std::endl;
+	tmp_channel.password_ = mode.param;
+	std::cout << "tmp_channel.password : " + tmp_channel.password_ << std::endl;
+}
+
+bool Channel::check_password(Channel &tmp_channel, const std::string &tmp_password)
+{
+	if (tmp_channel.password_ != tmp_password)
+	{
+		return false;
+	}
+	return true;
 }

@@ -187,8 +187,12 @@ Udata Database::run_mode(const uintptr_t &ident, t_mode &mode)
 		return command_mode_o_off(ident, mode);
 	else if (mode.mode_type == PLUS_T)
 		return command_mode_t_on(ident, mode);
-	else
+	else if (mode.mode_type == MINUS_T)
 		return command_mode_t_off(ident, mode);
+	else if (mode.mode_type == PLUS_L)
+		return command_mode_l_on(ident, mode);
+	else
+		return command_mode_l_off(ident, mode);
 }
 
 Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
@@ -390,7 +394,7 @@ Event Database::command_pong(const uintptr_t &ident, const std::string &target, 
 	return ret;
 }
 
-Udata Database::command_join(const uintptr_t &ident, const std::string &chan_name)
+Udata Database::command_join(const uintptr_t &ident, const std::string &chan_name, const std::string &tmp_password)
 {
 	Udata ret;
 	Event tmp = valid_user_checker_(ident, "JOIN");
@@ -428,7 +432,7 @@ Udata Database::command_join(const uintptr_t &ident, const std::string &chan_nam
 		}
 		else
 		{
-			ret = join_channel(cur_usr, chan_name);
+			ret = join_channel(cur_usr, chan_name, tmp_password);
 		}
 	}
 	return ret;

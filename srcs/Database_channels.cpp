@@ -4,10 +4,11 @@
 #include "User.hpp"
 #include "color.hpp"
 #include <sys/_types/_size_t.h>
+#include <iostream>
+#include <sstream>
 //
 #include <bitset>
 
-#include <bitset>
 
 bool Database::is_channel(std::string &chan_name)
 {
@@ -103,7 +104,7 @@ Channel &Database::select_channel(User &connector)
 	return *it;
 }
 
-Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name)
+Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, const std::string &tmp_password)
 {
 	Udata ret;
 	Event tmp;
@@ -130,7 +131,12 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name)
 	}
 	else if ((cur_chan.channel_flag_ & F_INVITE_ONLY) && !cur_chan.has_invitation(joiner.client_sock_))
 	{
-		tmp = Sender::cannot_join_message(joiner, chan_name);
+		tmp = Sender::cannot_join_message(joiner, chan_name); // cannot_join_messeage_invite
+		ret.insert(tmp);
+	}
+	else if ((cur_chan.channel_flag_ & F_KEY_NEEDED) && !cur_chan.check_password(cur_chan, tmp_password))
+	{
+		tmp = Sender::cannot_join_message_key(joiner, chan_name); // connot_join_message_key
 		ret.insert(tmp);
 	}
 	else
@@ -370,6 +376,7 @@ Udata Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
 	{
+		tmp_channel.set_password(tmp_channel, mode);
 		tmp_channel.set_flag(tmp_channel, mode);
 		ret = tmp_channel.send_all(host, host, "+k", MODE);
 	}
@@ -473,6 +480,7 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
+
 Udata Database::command_mode_t_on(const uintptr_t &socket, t_mode mode)
 {
 	Udata ret;
@@ -512,4 +520,73 @@ Udata Database::command_mode_t_off(const uintptr_t &socket, t_mode mode)
 	}
 	return ret;
 }
+
+
+Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+	int	limit_num = 0;
+	std::stringstream get_limit_num_stream(mode.param);
+	get_limit_num_stream >> limit_num;
+
+	if (mode.param.length() == 0)
+	{
+		tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "limit", "limit");
+		ret.insert(tmp);
+		return ret;
+	}
+	else if (limit_num < 0)
+	{
+		tmp = Sender::mode_syntax_error_l_negative_num(select_user(socket), mode.target, mode.option, mode.param);
+		ret.insert(tmp);
+		return ret;
+	}
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		target_channel.set_member_limit(limit_num);
+		get_limit_num_stream.str("");
+		get_limit_num_stream.clear();
+		get_limit_num_stream << "\b+l :"<< limit_num;
+		ret = target_channel.send_all(host_user, host_user, get_limit_num_stream.str(), MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
+Udata Database::command_mode_l_off(const uintptr_t &socket, t_mode mode)
+{
+	Udata ret;
+	Event tmp;
+
+	if (mode.param.length() != 0)
+	{
+		tmp = Sender::mode_wrong_message(socket, mode.param.at(mode.param.length() - 1));
+		ret.insert(tmp);
+		return ret;
+	}
+
+	Channel &target_channel = select_channel(mode.target);
+	User &host_user = select_user(socket);
+	if (target_channel.is_host(host_user))
+	{
+		target_channel.set_flag(target_channel, mode);
+		ret = target_channel.send_all(host_user, host_user, "-l", MODE);
+	}
+	else
+	{
+		tmp = Sender::mode_error_not_op_message(host_user, mode.target);
+		ret.insert(tmp);
+	}
+	return ret;
+}
+
 

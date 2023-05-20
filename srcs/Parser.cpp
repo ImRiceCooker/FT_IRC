@@ -144,7 +144,7 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 	}
 }
 
-/**		parser_mode_   **/
+/**		check_mode_err_type   **/
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
@@ -454,10 +454,11 @@ void Parser::parser_join_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	std::string chan_name;
+	std::string tmp_password;
 	Udata ret;
 
-	line_ss >> chan_name;
-	ret = database_.command_join(ident, chan_name);
+	line_ss >> chan_name >> tmp_password;
+	ret = database_.command_join(ident, chan_name, tmp_password);
 	push_multiple_write_events_(ret, ident, 2);
 }
 
