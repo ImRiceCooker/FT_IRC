@@ -193,12 +193,11 @@ void Channel::delete_user(User &usr)
 {
 	if (is_host(usr))
 		unset_host(usr);
-	
+
 	std::vector<User>::iterator it = std::find(this->connectors_.begin(),
 																						 this->connectors_.end(), usr);
 	std::size_t size = std::distance(this->connectors_.begin(), it);
 	this->connectors_.erase(this->connectors_.begin() + size);
-
 }
 bool Channel::operator==(const Channel &t) const
 {
@@ -310,4 +309,20 @@ bool Channel::has_invitation(const uintptr_t &usr)
 void Channel::invite_user(uintptr_t user)
 {
 	invitations_.push_back(user);
+}
+
+void Channel::set_password(Channel &tmp_channel, t_mode mode)
+{
+	std::cout << "mode.param : " + mode.param << std::endl;
+	tmp_channel.password_ = mode.param;
+	std::cout << "tmp_channel.password : " + tmp_channel.password_ << std::endl;
+}
+
+bool Channel::check_password(Channel &tmp_channel, const std::string &tmp_password)
+{
+	if (tmp_channel.password_ != tmp_password)
+	{
+		return false;
+	}
+	return true;
 }

@@ -26,7 +26,7 @@ public:
 
 	Udata set_topic(User &sender, std::string &chan_name, std::string &topic);
 	Udata kick_channel(User &host, User &target, std::string &chan_name, std::string &msg);
-	Udata join_channel(User &joiner, const std::string &chan_name_);
+	Udata join_channel(User &joiner, const std::string &chan_name_, const std::string &tmp_password);
 	Udata part_channel(User &leaver, std::string &chan_name, const std::string &msg_);
 	Udata quit_channel(User &leaver, std::string &chan_name, const std::string &msg_);
 	Udata nick_channel(User &who, std::string &new_nick);
@@ -42,7 +42,7 @@ public:
 	Udata command_privmsg(const uintptr_t &ident, const std::string &target_name, const std::string &msg);
 	Udata command_notice(const uintptr_t &ident, const std::string &target_name, const std::string &msg);
 	Event command_privmsg(std::string &target_name, std::string &line, const uintptr_t &ident);
-	Udata command_join(const uintptr_t &ident, const std::string &chan_name);
+	Udata command_join(const uintptr_t &ident, const std::string &chan_name, const std::string &password);
 	Udata command_part(const uintptr_t &ident, std::string &chan_name, const std::string &msg);
 	Udata command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg);
 	Udata command_mode(const uintptr_t &ident, t_mode &mode);

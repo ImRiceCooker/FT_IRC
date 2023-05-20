@@ -67,7 +67,8 @@ public:
 	static Event invite_no_user_message(const User &sender, const std::string &target_user);
 	static Event invitor_message(const User &invitor, const User &target_user, const std::string &channel);
 	static Event cannot_join_message(const User &receiver, const std::string &channel);
-
+	static Event cannot_join_message_key(const User &receiver, const std::string &channel);
+	
 private:
 	static const std::string server_name_;
 };

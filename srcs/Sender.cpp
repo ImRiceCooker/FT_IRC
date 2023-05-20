@@ -610,3 +610,13 @@ Event Sender::cannot_join_message(const User &receiver, const std::string &chann
 	ret = std::make_pair(receiver.client_sock_, inviting_message + "\r\n");
 	return ret;
 }
+
+/* 127.000.000.001.06667-127.000.000.001.42570: :irc.local 475 B #4 :Cannot join channel (incorrect channel key) */
+Event Sender::cannot_join_message_key(const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &key_error_message = ":" + server_name_ + " 475 " + receiver.nickname_ + " " + channel + " :Cannot join channel (incorrect channel key)";
+	ret = std::make_pair(receiver.client_sock_, key_error_message + "\r\n");
+	return ret;
+}
