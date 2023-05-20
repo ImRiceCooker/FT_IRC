@@ -304,15 +304,15 @@ Udata Database::set_topic(User &sender, std::string &chan_name, std::string &top
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
-	if (channel.is_host(sender))
+	if ((channel.channel_flag_ & F_TOPIC_OWNERSHIP) && !(channel.is_host(sender)))
 	{
-		std::string topic_msg = "Topic was changed to " + topic;
-		channel.set_topic(topic);
-		ret = channel.send_all(sender, sender, topic_msg, TOPIC);
+		tmp = Sender::topic_access_error(sender, chan_name);
+		ret.insert(tmp);
 	}
 	else
 	{
-		std::string topic_msg = "You do not have the authority to change the topic on this channel";
+		std::string topic_msg = "Topic was changed to " + topic;
+		channel.set_topic(topic);
 		ret = channel.send_all(sender, sender, topic_msg, TOPIC);
 	}
 	return ret;

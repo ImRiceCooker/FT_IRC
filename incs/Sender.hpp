@@ -40,6 +40,8 @@ public:
 	static Event kick_error_no_user_message(const User &sender, const std::string &host, const std::string &target, const std::string &channel);
 	static Event topic_message(const User &sender, const User &receiver, const std::string &channel, const std::string &topic);
 	static Event topic_error_message(const User &sender, const std::string &channel);
+	static Event topic_access_error(const User &sender, const std::string &channel);
+
 	static Event notice_p2p_message(const User &sender, const User &target, const std::string &msg);
 	static Event notice_channel_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg);
 	static Event notice_no_nick_message(const User &sender, const User &receiver);

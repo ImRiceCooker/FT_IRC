@@ -496,11 +496,6 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 		Event tmp = Sender::command_empty_argument_461(ident, "NOTICE");
 		ret.insert(tmp);
 	}
-	else if((cur_chan.channel_flag_ & F_TOPIC_OWNERSHIP) && !(cur_chan.is_host(ident)))
-	{
-		Event tmp = Sender::mode_error_not_op_message(cur_usr, chan_name);
-		ret.insert(tmp);
-	}
 	else
 	{
 		line_ss >> std::ws;
