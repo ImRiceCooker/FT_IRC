@@ -133,7 +133,7 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, con
 	}
 	else if ((cur_chan.channel_flag_ & F_KEY_NEEDED) && !cur_chan.check_password(cur_chan, tmp_password))
 	{
-		tmp = Sender::cannot_join_message(joiner, chan_name); // connot_join_message_key
+		tmp = Sender::cannot_join_message_key(joiner, chan_name); // connot_join_message_key
 		ret.insert(tmp);
 	}
 	else
