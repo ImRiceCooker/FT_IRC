@@ -6,6 +6,20 @@
 
 #include "debug.hpp"
 
+Udata (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode &mode) =
+{
+	&Database::command_mode_i_on,
+	&Database::command_mode_i_off,
+	&Database::command_mode_t_on,
+	&Database::command_mode_t_off,
+	&Database::command_mode_l_on,
+	&Database::command_mode_l_off,
+	&Database::command_mode_o_on,
+	&Database::command_mode_o_off,
+	&Database::command_mode_k_on,
+	&Database::command_mode_k_off,
+};
+
 std::vector<User> &Database::get_user_list(void)
 {
 	return user_list_;
@@ -176,30 +190,6 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
-Udata Database::run_mode(const uintptr_t &ident, t_mode &mode)
-{
-	if (mode.mode_type == PLUS_I)
-		return command_mode_i_on(ident, mode);
-	else if (mode.mode_type == MINUS_I)
-		return command_mode_i_off(ident, mode);
-	else if (mode.mode_type == PLUS_K)
-		return (command_mode_k_on(ident, mode));
-	else if (mode.mode_type == MINUS_K)
-		return (command_mode_k_off(ident, mode));
-	else if (mode.mode_type == PLUS_O)
-		return command_mode_o_on(ident, mode);
-	else if (mode.mode_type == MINUS_O)
-		return command_mode_o_off(ident, mode);
-	else if (mode.mode_type == PLUS_T)
-		return command_mode_t_on(ident, mode);
-	else if (mode.mode_type == MINUS_T)
-		return command_mode_t_off(ident, mode);
-	else if (mode.mode_type == PLUS_L)
-		return command_mode_l_on(ident, mode);
-	else
-		return command_mode_l_off(ident, mode);
-}
-
 Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
@@ -216,7 +206,7 @@ Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 		return ret;
 	}
 	else
-		ret = run_mode(ident, mode);
+		ret = (this->*run_mode_func_ptr[mode.mode_type])(ident, mode);
 	return ret;
 }
 

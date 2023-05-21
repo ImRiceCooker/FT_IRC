@@ -411,26 +411,26 @@ Udata Database::command_mode_k_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_o_on(const uintptr_t &socket, t_mode mode)
+Udata Database::command_mode_o_on(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
 
 	if (mode.param.length() == 0)
 	{
-		tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "op", "nick");
+		tmp = Sender::mode_syntax_error(select_user(ident), mode.target, mode.option, "op", "nick");
 		ret.insert(tmp);
 		return ret;
 	}
 	else if (!is_user(mode.param))
 	{
-		tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
+		tmp = Sender::mode_no_user_message(select_user(ident), mode.param);
 		ret.insert(tmp);
 		return ret;
 	}
 
 	Channel &target_channel = select_channel(mode.target);
-	User &host_user = select_user(socket);
+	User &host_user = select_user(ident);
 	if (target_channel.is_host(host_user))
 	{
 		if (!target_channel.is_host(select_user(mode.param)))
@@ -447,26 +447,26 @@ Udata Database::command_mode_o_on(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
+Udata Database::command_mode_o_off(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
 
 	if (mode.param.length() == 0)
 	{
-		tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "op", "nick");
+		tmp = Sender::mode_syntax_error(select_user(ident), mode.target, mode.option, "op", "nick");
 		ret.insert(tmp);
 		return ret;
 	}
 	else if (!is_user(mode.param))
 	{
-		tmp = Sender::mode_no_user_message(select_user(socket), mode.param);
+		tmp = Sender::mode_no_user_message(select_user(ident), mode.param);
 		ret.insert(tmp);
 		return ret;
 	}
 
 	Channel &target_channel = select_channel(mode.target);
-	User &host_user = select_user(socket);
+	User &host_user = select_user(ident);
 	if (target_channel.is_host(host_user))
 	{
 		if (target_channel.is_host(select_user(mode.param)))
@@ -483,13 +483,13 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-Udata Database::command_mode_t_on(const uintptr_t &socket, t_mode mode)
+Udata Database::command_mode_t_on(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
 
 	Channel &target_channel = select_channel(mode.target);
-	User &host_user = select_user(socket);
+	User &host_user = select_user(ident);
 	if (target_channel.is_host(host_user))
 	{
 		target_channel.set_flag(target_channel, mode);
@@ -503,13 +503,13 @@ Udata Database::command_mode_t_on(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-Udata Database::command_mode_t_off(const uintptr_t &socket, t_mode mode)
+Udata Database::command_mode_t_off(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
 
 	Channel &target_channel = select_channel(mode.target);
-	User &host_user = select_user(socket);
+	User &host_user = select_user(ident);
 	if (target_channel.is_host(host_user))
 	{
 		target_channel.set_flag(target_channel, mode);
@@ -523,7 +523,7 @@ Udata Database::command_mode_t_off(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
+Udata Database::command_mode_l_on(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
@@ -533,19 +533,19 @@ Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
 
 	if (mode.param.length() == 0)
 	{
-		tmp = Sender::mode_syntax_error(select_user(socket), mode.target, mode.option, "limit", "limit");
+		tmp = Sender::mode_syntax_error(select_user(ident), mode.target, mode.option, "limit", "limit");
 		ret.insert(tmp);
 		return ret;
 	}
 	else if (limit_num < 0)
 	{
-		tmp = Sender::mode_syntax_error_l_negative_num(select_user(socket), mode.target, mode.option, mode.param);
+		tmp = Sender::mode_syntax_error_l_negative_num(select_user(ident), mode.target, mode.option, mode.param);
 		ret.insert(tmp);
 		return ret;
 	}
 
 	Channel &target_channel = select_channel(mode.target);
-	User &host_user = select_user(socket);
+	User &host_user = select_user(ident);
 	if (target_channel.is_host(host_user))
 	{
 		target_channel.set_flag(target_channel, mode);
@@ -563,20 +563,20 @@ Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-Udata Database::command_mode_l_off(const uintptr_t &socket, t_mode mode)
+Udata Database::command_mode_l_off(const uintptr_t &ident, t_mode &mode)
 {
 	Udata ret;
 	Event tmp;
 
 	if (mode.param.length() != 0)
 	{
-		tmp = Sender::mode_wrong_message(socket, mode.param.at(mode.param.length() - 1));
+		tmp = Sender::mode_wrong_message(ident, mode.param.at(mode.param.length() - 1));
 		ret.insert(tmp);
 		return ret;
 	}
 
 	Channel &target_channel = select_channel(mode.target);
-	User &host_user = select_user(socket);
+	User &host_user = select_user(ident);
 	if (target_channel.is_host(host_user))
 	{
 		target_channel.set_flag(target_channel, mode);

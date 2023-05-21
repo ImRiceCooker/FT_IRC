@@ -47,17 +47,17 @@ public:
 	Udata command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg);
 	Udata command_mode(const uintptr_t &ident, t_mode &mode);
 	Udata command_invite(const uintptr_t &ident, std::string &user, std::string &chan_name);
-	Udata run_mode(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_i_on(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_i_off(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_k_on(const uintptr_t &ident, t_mode &mode);
 	Udata command_mode_k_off(const uintptr_t &ident, t_mode &mode);
-	Udata command_mode_o_on(const uintptr_t &socket, t_mode mode);
-	Udata command_mode_o_off(const uintptr_t &socket, t_mode mode);
-	Udata command_mode_t_on(const uintptr_t &socket, t_mode mode);
-	Udata command_mode_t_off(const uintptr_t &socket, t_mode mode);
-	Udata command_mode_l_on(const uintptr_t &socket, t_mode mode);
-	Udata command_mode_l_off(const uintptr_t &socket, t_mode mode);
+	Udata command_mode_o_on(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_o_off(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_t_on(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_t_off(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_l_on(const uintptr_t &ident, t_mode &mode);
+	Udata command_mode_l_off(const uintptr_t &ident, t_mode &mode);
+	static Udata (Database::*run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode &mode);
 
 	bool is_user(const uintptr_t &ident);
 	bool is_user(const std::string &nickname);
