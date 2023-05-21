@@ -157,6 +157,11 @@ void Database::delete_user(User &leaver)
 	}
 }
 
+/**		is_valid_nick   **/
+/**		@brief NICK이 유효한지 검사  **/
+/**		@brief NICK이 첫글자가 알파벳, _ 가 아니면 에러  **/
+/**		@brief NICK이 첫글자 제외 알파벳, 숫자, _ 아니면 에러  **/
+
 bool Database::is_valid_nick(std::string &new_nick)
 {
 	if (!isalpha(static_cast<int>(new_nick[0])) && static_cast<int>(new_nick[0]) != '_')
@@ -241,20 +246,6 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 	}
 	else
 	{
-		// if (is_user_in_channel(cur_usr))
-		// {
-		// 	Channel &cur_chan = select_channel(cur_usr);
-		// 	ret = quit_channel(cur_usr, cur_chan.get_name(), msg);
-		// }
-		// 	else
-		// 	{
-		// 		tmp = Sender::quit_leaver_message(cur_usr, msg);
-		// 		ret.insert(tmp);
-		// 	}
-
-		// 127.000.000.001.06667-127.000.000.001.59616: :irc.local 341 A C :#6 // A에게 보내는 메세지 (초대한 자)
-		// 127.000.000.001.06667-127.000.000.001.46928: :irc.local NOTICE #6 :*** A invited C into the channel // C에게 보내는 메시지(초대받은자)
-
 		User &invitor = select_user(ident);
 		User &invited_user = select_user(user);
 		Channel &cur_channel = select_channel(chan_name);
@@ -294,45 +285,52 @@ Udata Database::command_nick(const uintptr_t &ident, std::string &new_nick)
 		return ret;
 	}
 	User &cur_usr = select_user(ident);
+	/* 유효한 NICK 인지 확인 */
 	if (!is_valid_nick(new_nick))
 	{
+		/* NICK이 비어있는 경우*/
 		if (cur_usr.nickname_.empty())
 			tmp = Sender::nick_wrong_message(ident, new_nick);
+		/* NICK이 비어있지 않지만, 잘못된 경우 */
 		else
 		{
-			User &you_usr = select_user(cur_usr.nickname_);
-			tmp = Sender::nick_wrong_message(you_usr, new_nick);
+			User &existed_usr = select_user(cur_usr.nickname_);
+			tmp = Sender::nick_wrong_message(existed_usr, new_nick);
 		}
 		ret.insert(tmp);
 		return ret;
 	}
+	/* 새로운 NICK이 이미 존재하는 NICK인 경우*/
 	if (is_user(new_nick))
 	{
-		User &you_usr = select_user(new_nick);
-		if (ident == you_usr.client_sock_)
+		User &existed_usr = select_user(new_nick);
+		/* 자기 자신인 경우 문제 없음 */
+		if (ident == existed_usr.client_sock_)
 			return ret;
-		if (you_usr.username_.size())
+		/* 이미 다른 유저가 NICK과 username을 선점한 경우 */
+		if (existed_usr.username_.size())
 		{
+			/* 아직 자신의 NICK이 없는 경우 */
 			if (cur_usr.nickname_.empty())
 				tmp = Sender::nick_error_message(ident, new_nick);
+			/* 자신의 NICK이 있는 경우 */
 			else
 				tmp = Sender::nick_error_message(cur_usr, new_nick);
 			ret.insert(tmp);
 			return ret;
 		}
-		tmp = Sender::nick_error_message2(you_usr, new_nick);
+		/* NICK을 빼앗는 경우 */
+		tmp = Sender::nick_error_message2(existed_usr, new_nick);
 		ret.insert(tmp);
-		tmp = Sender::nick_steal_message(cur_usr, new_nick);
-		ret.insert(tmp);
-		std::cerr << "before -> you_usr flag : " << std::bitset<4>(you_usr.flag_) << '\n';
-		you_usr.nickname_.clear();
-		you_usr.flag_ &= ~F_NICK;
-		std::cerr << "after  -> you_usr flag : " << std::bitset<4>(you_usr.flag_) << '\n';
+		existed_usr.nickname_.clear();
+		existed_usr.flag_ &= ~F_NICK;
 	}
+	/* NICK 처음 설정하는 경우 */
 	if (!(cur_usr.flag_ & F_NICK))
 	{
 		cur_usr.nickname_ = new_nick;
 		cur_usr.flag_ |= F_NICK;
+		/* USER가 먼저 설정 돼있다면, welcome_message 출력 */
 		if (cur_usr.flag_ & F_USER)
 		{
 			tmp = Sender::welcome_message_connect(cur_usr);
@@ -341,6 +339,7 @@ Udata Database::command_nick(const uintptr_t &ident, std::string &new_nick)
 	}
 	else
 	{
+		/* 만약 NICK 명령어를 쓴 유저가 채널 안에 있다면 바꾸고, send_all */
 		if (is_user_in_channel(cur_usr))
 		{
 			ret = nick_channel(cur_usr, new_nick);

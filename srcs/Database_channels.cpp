@@ -9,7 +9,6 @@
 //
 #include <bitset>
 
-
 bool Database::is_channel(std::string &chan_name)
 {
 	std::vector<Channel>::iterator it;
@@ -286,14 +285,18 @@ Udata Database::kick_channel(User &host, User &target, std::string &chan_name, s
 	return ret;
 }
 
+/**		nick_channel   **/
+/**		@brief NICK 명령어를 채널 안에서 한 경우   **/
+/**		@brief 변경했다고 채널 모두에게 send_all, 채널 객체 nick 변경  **/
+
 Udata Database::nick_channel(User &nicker, std::string &send_msg)
 {
 	Udata ret;
 	Event tmp;
-	User trash;
+	User dummy_user;
 
 	Channel &channel = select_channel(nicker);
-	ret = channel.send_all(nicker, trash, send_msg, NICK);
+	ret = channel.send_all(nicker, dummy_user, send_msg, NICK);
 	channel.change_nick(nicker, send_msg);
 	return ret;
 }
@@ -480,7 +483,6 @@ Udata Database::command_mode_o_off(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-
 Udata Database::command_mode_t_on(const uintptr_t &socket, t_mode mode)
 {
 	Udata ret;
@@ -521,12 +523,11 @@ Udata Database::command_mode_t_off(const uintptr_t &socket, t_mode mode)
 	return ret;
 }
 
-
 Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
 {
 	Udata ret;
 	Event tmp;
-	int	limit_num = 0;
+	int limit_num = 0;
 	std::stringstream get_limit_num_stream(mode.param);
 	get_limit_num_stream >> limit_num;
 
@@ -551,7 +552,7 @@ Udata Database::command_mode_l_on(const uintptr_t &socket, t_mode mode)
 		target_channel.set_member_limit(limit_num);
 		get_limit_num_stream.str("");
 		get_limit_num_stream.clear();
-		get_limit_num_stream << "\b+l :"<< limit_num;
+		get_limit_num_stream << "\b+l :" << limit_num;
 		ret = target_channel.send_all(host_user, host_user, get_limit_num_stream.str(), MODE);
 	}
 	else
@@ -588,5 +589,3 @@ Udata Database::command_mode_l_off(const uintptr_t &socket, t_mode mode)
 	}
 	return ret;
 }
-
-
