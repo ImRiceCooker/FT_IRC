@@ -312,6 +312,9 @@ void Parser::parser_pass_(const uintptr_t &ident, std::stringstream &line_ss, st
 /**		parser_nick_   **/
 /**		@brief NICK 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 닉네임을 등록   **/
+/**		@brief valid NICK인지 확인, 이미 존재하는 NICK인지 확인, 점유 못한 NICK은 뺏음   **/
+/**		@brief channel에서 NICK 변경시, send_all **/
+
 void Parser::parser_nick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
@@ -532,7 +535,7 @@ void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, st
 }
 
 /**		push_write_event_   **/
-/**		@brief 발생한 하나의 이벤트를 write 상태로 변경하는 함수   **/
+/**		@brief 발생한 한 개의 이벤트를 write 상태로 변경하는 함수   **/
 void Parser::push_write_event_(Event &ret)
 {
 	if (ret.second.empty())
