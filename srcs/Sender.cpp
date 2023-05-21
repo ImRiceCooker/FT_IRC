@@ -174,6 +174,21 @@ Event Sender::welcome_message_connect(const User &sender)
 	return ret;
 }
 
+/** @brief user시 보내는 302 패킷 메세지 **/
+Event Sender::user_302_message(const User &sender)
+{
+	Event ret;
+	std::string msg;
+
+	if (sender.flag_ & F_NICK)
+		msg = ":" + Sender::server_name_ + " 302 " + sender.nickname_ + " :" + sender.username_ + "=+root@127.0.0.1 " + sender.mode_ + "=+root@127.0.0.1 " + sender.unused_ + "=+root@127.0.0.1 " + sender.realname_ + "=+root@127.0.0.1";
+	else
+		msg = ":" + Sender::server_name_ + " 302  :";
+
+	ret = std::make_pair(sender.client_sock_, msg + "\r\n");
+	return ret;
+}
+
 // /****************************       <QUIT>       ****************************/
 
 /** @brief quit을 한 클라이언트에 보내는 패킷 메세지 **/

@@ -362,9 +362,17 @@ Event Database::command_user(const uintptr_t &ident, const std::string &username
 		return ret;
 	}
 	User &cur_usr = select_user(ident);
-	cur_usr.flag_ |= F_USER;
 	cur_usr.input_user(username, mode, unused, realname);
-	ret = Sender::welcome_message_connect(cur_usr);
+	if (!(cur_usr.flag_ & F_USER))
+	{
+		cur_usr.flag_ |= F_USER;
+		if (cur_usr.flag_ & F_NICK)
+			ret = Sender::welcome_message_connect(cur_usr);
+		else
+			ret = Sender::user_302_message(cur_usr);
+	}
+	else
+		ret = Sender::user_302_message(cur_usr);
 	debug::showUsers(user_list_);
 	return ret;
 }
