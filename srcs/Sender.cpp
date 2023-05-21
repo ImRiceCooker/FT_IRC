@@ -166,6 +166,21 @@ Event Sender::welcome_message_connect(const User &sender)
 	return ret;
 }
 
+/** @brief user시 보내는 302 패킷 메세지 **/
+Event Sender::user_302_message(const User &sender)
+{
+	Event ret;
+	std::string msg;
+
+	if (sender.flag_ & F_NICK)
+		msg = ":" + Sender::server_name_ + " 302 " + sender.nickname_ + " :" + sender.username_ + "=+root@127.0.0.1 " + sender.mode_ + "=+root@127.0.0.1 " + sender.unused_ + "=+root@127.0.0.1 " + sender.realname_ + "=+root@127.0.0.1";
+	else
+		msg = ":" + Sender::server_name_ + " 302  :";
+
+	ret = std::make_pair(sender.client_sock_, msg + "\r\n");
+	return ret;
+}
+
 // /****************************       <QUIT>       ****************************/
 
 /** @brief quit을 한 클라이언트에 보내는 패킷 메세지 **/
@@ -630,6 +645,16 @@ Event Sender::cannot_join_message_key(const User &receiver, const std::string &c
 	Event ret;
 
 	const std::string &key_error_message = ":" + server_name_ + " 475 " + receiver.nickname_ + " " + channel + " :Cannot join channel (incorrect channel key)";
+	ret = std::make_pair(receiver.client_sock_, key_error_message + "\r\n");
+	return ret;
+}
+
+/* 127.000.000.001.06667-127.000.000.001.49612: :irc.local 471 b #4 :Cannot join channel (channel is full) */
+Event Sender::cannot_join_message_limit(const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &key_error_message = ":" + server_name_ + " 471  " + receiver.nickname_ + " " + channel + " :Cannot join channel (channel is full)";
 	ret = std::make_pair(receiver.client_sock_, key_error_message + "\r\n");
 	return ret;
 }

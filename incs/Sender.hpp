@@ -16,6 +16,7 @@ public:
 	static Event command_empty_argument_461(const User &sender, const std::string &command);
 	static Event command_empty_argument_461(const uintptr_t &sock, const std::string &command);
 	static Event welcome_message_connect(const User &sender);
+	static Event user_302_message(const User &sender);
 	static Event nick_well_message(const User &sender, const User &receiver, const std::string &new_nick);
 	static Event nick_error_message(const User &sender, const std::string &new_nick);
 	static Event nick_error_message2(const User &sender, const std::string &new_nick);
@@ -70,7 +71,7 @@ public:
 	static Event invitor_message(const User &invitor, const User &target_user, const std::string &channel);
 	static Event cannot_join_message(const User &receiver, const std::string &channel);
 	static Event cannot_join_message_key(const User &receiver, const std::string &channel);
-	
+	static Event cannot_join_message_limit(const User &receiver, const std::string &channel);	
 private:
 	static const std::string server_name_;
 };
