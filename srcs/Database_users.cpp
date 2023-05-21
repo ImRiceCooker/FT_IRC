@@ -277,7 +277,7 @@ Event Database::command_pass(const uintptr_t &ident)
 Udata Database::command_nick(const uintptr_t &ident, std::string &new_nick)
 {
 	Udata ret;
-	Event tmp = valid_user_checker_(ident, "NICK"); // tmp 변수 이름 변경?
+	Event tmp = valid_user_checker_(ident, "NICK");
 
 	if (tmp.second.size())
 	{
