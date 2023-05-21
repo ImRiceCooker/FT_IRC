@@ -656,3 +656,13 @@ Event Sender::cannot_join_message_key(const User &receiver, const std::string &c
 	ret = std::make_pair(receiver.client_sock_, key_error_message + "\r\n");
 	return ret;
 }
+
+/* 127.000.000.001.06667-127.000.000.001.49612: :irc.local 471 b #4 :Cannot join channel (channel is full) */
+Event Sender::cannot_join_message_limit(const User &receiver, const std::string &channel)
+{
+	Event ret;
+
+	const std::string &key_error_message = ":" + server_name_ + " 471  " + receiver.nickname_ + " " + channel + " :Cannot join channel (channel is full)";
+	ret = std::make_pair(receiver.client_sock_, key_error_message + "\r\n");
+	return ret;
+}

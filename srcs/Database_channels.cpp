@@ -134,22 +134,26 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, con
 		tmp = Sender::cannot_join_message(joiner, chan_name); // cannot_join_messeage_invite
 		ret.insert(tmp);
 	}
-	else if ((cur_chan.channel_flag_ & F_KEY_NEEDED) && !cur_chan.check_password(cur_chan, tmp_password))
+	else if (!(cur_chan.channel_flag_ & F_INVITE_ONLY) && (cur_chan.channel_flag_ & F_KEY_NEEDED) && !cur_chan.check_password(cur_chan, tmp_password))
 	{
 		tmp = Sender::cannot_join_message_key(joiner, chan_name); // connot_join_message_key
+		ret.insert(tmp);
+	}
+	else if (!(cur_chan.channel_flag_ & F_INVITE_ONLY) &&(cur_chan.channel_flag_ & F_LIMITED_MEMBERSHIP) && static_cast<int>(cur_chan.get_users().size()) >= cur_chan.get_member_limit())
+	{
+		tmp = Sender::cannot_join_message_limit(joiner, chan_name);
 		ret.insert(tmp);
 	}
 	else
 	{
 		std::cout << "bitset: " << std::bitset<3>(cur_chan.channel_flag_) << "\n";
 		std::cout << ", has invitation: " << cur_chan.has_invitation(joiner.client_sock_) << "\n";
-		Channel &chan = select_channel(chan_name);
-		chan.add_user(joiner);
-		const std::string &chan_user_list(chan.get_user_list_str());
-		ret = chan.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
+		cur_chan.add_user(joiner);
+		const std::string &chan_user_list(cur_chan.get_user_list_str());
+		ret = cur_chan.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
 		Udata_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, chan.get_name(), chan.get_access(), chan_user_list);
-		it->second += Sender::join_366_message(joiner, chan.get_name());
+		it->second += Sender::join_353_message(joiner, cur_chan.get_name(), cur_chan.get_access(), chan_user_list);
+		it->second += Sender::join_366_message(joiner, cur_chan.get_name());
 	}
 	return ret;
 }
