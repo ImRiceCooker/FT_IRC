@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include <sys/_types/_size_t.h>
+#include <iostream>
 
 const std::string Parser::commands[N_COMMAND] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE", "MODE", "INVITE"};
 void (Parser::*Parser::func_ptr[N_COMMAND])(const uintptr_t &, std::stringstream &, std::string &) =
@@ -123,7 +124,15 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 		}
 		if (i < N_COMMAND)
 		{
-			std::size_t pos(line.find(':'));
+			std::size_t pos;
+			if ((i == 3) && (line.find(':') != std::string::npos))
+			{
+				pos = line.find(':') - 1;
+			}
+			else
+			{
+				pos = line.find(':');
+			}
 			std::string to_send;
 			if (pos == std::string::npos)
 			{
@@ -364,21 +373,19 @@ void Parser::parser_user_(const uintptr_t &ident, std::stringstream &line_ss, st
 void Parser::parser_ping_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	Event ret;
-	std::string msg, target;
+	std::string msg;
 
-	line_ss >> msg >> target;
+	line_ss >> msg;
+	std::cout << msg << to_send << std::endl;
 	msg = message_resize_(msg, to_send);
+	std::cout << msg << std::endl;
 	if (msg.empty())
 	{
 		ret = Sender::command_empty_argument_461(ident, "PING");
 		push_write_event_(ret);
 		return;
 	}
-	else if (msg.find(' ') == std::string::npos)
-	{
-		target.clear();
-	}
-	ret = database_.command_pong(ident, target, msg);
+	ret = database_.command_pong(ident, msg);
 	push_write_event_(ret);
 }
 

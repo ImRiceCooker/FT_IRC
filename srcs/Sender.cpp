@@ -5,12 +5,11 @@ const std::string Sender::server_name_ = "irc.local";
 /****************************       <PING && PONG && USE && etc>       ****************************/
 
 /** @brief PING명령에 대한 응답으로 PONG 전송s **/
-Event Sender::pong(const uintptr_t &socket, const std::string &target, const std::string &msg)
+Event Sender::pong(const uintptr_t &socket, const std::string &msg)
 {
 	Event ret;
 
-	const std::string &cur_target = target.empty() ? target : Sender::server_name_;
-	const std::string &pong_reply = ":" + Sender::server_name_ + " PONG " + cur_target + " :" + msg;
+	const std::string &pong_reply = ":" + Sender::server_name_ + " PONG " +  Sender::server_name_ + " :" + msg;
 	ret = std::make_pair(socket, pong_reply + "\r\n");
 	return ret;
 }

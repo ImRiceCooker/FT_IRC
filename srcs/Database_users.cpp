@@ -366,7 +366,7 @@ Event Database::command_user(const uintptr_t &ident, const std::string &username
 	return ret;
 }
 
-Event Database::command_pong(const uintptr_t &ident, const std::string &target, const std::string &msg)
+Event Database::command_pong(const uintptr_t &ident, std::string &msg)
 {
 	Event ret = valid_user_checker_(ident, "PING");
 
@@ -375,12 +375,14 @@ Event Database::command_pong(const uintptr_t &ident, const std::string &target, 
 		return ret;
 	}
 	User &cur_user = select_user(ident);
-	if (msg.at(0) == ':')
+	if (msg.at(0) == ':' && msg.length() == 1)
 	{
 		ret = Sender::command_no_origin_specified_409(cur_user, "PING");
 		return ret;
 	}
-	ret = Sender::pong(ident, target, msg);
+	if (msg.at(0) == ':')
+		msg = msg.substr(1, msg.length() - 1);
+	ret = Sender::pong(ident, msg);
 	return ret;
 }
 
