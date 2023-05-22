@@ -30,7 +30,6 @@ class Receiver
 		void					carriage_remover_(std::string& to_remove);
 
 	public:
-		static bool				end_server;
 		Receiver(Udata& serv_udata, const uintptr_t& port, const std::string& password);
 
 		void					stop_receiver();
