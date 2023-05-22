@@ -37,7 +37,7 @@ public:
 	Udata command_nick(const uintptr_t &ident, std::string &nick_name);
 	Event command_user(const uintptr_t &ident, const std::string &username, const std::string &mode,
 										 const std::string &unused, const std::string &realname);
-	Event command_pong(const uintptr_t &ident, const std::string &target, const std::string &msg);
+	Event command_pong(const uintptr_t &ident, std::string &msg);
 	Udata command_quit(const uintptr_t &ident, const std::string &chan_name);
 	Udata command_privmsg(const uintptr_t &ident, const std::string &target_name, const std::string &msg);
 	Udata command_notice(const uintptr_t &ident, const std::string &target_name, const std::string &msg);
