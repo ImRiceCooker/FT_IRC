@@ -125,36 +125,6 @@ bool Database::is_user(const std::string &nickname)
 	return (false);
 }
 
-bool Database::does_has_nickname(const uintptr_t &ident)
-{
-	try
-	{
-		User &tmp = select_user(ident);
-		if (tmp.nickname_.empty())
-			return (false);
-	}
-	catch (const std::exception &)
-	{
-		return (false);
-	}
-	return (true);
-}
-
-bool Database::does_has_username(const uintptr_t &ident)
-{
-	try
-	{
-		User &tmp = select_user(ident);
-		if (tmp.username_.empty())
-			return (false);
-	}
-	catch (const std::exception &)
-	{
-		return (false);
-	}
-	return (true);
-}
-
 void Database::delete_user(User &leaver)
 {
 	int idx = 0;
