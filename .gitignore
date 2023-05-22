@@ -4,4 +4,5 @@ tags
 a.out
 .vscode/
 build/
+ircserv
 *.json
