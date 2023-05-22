@@ -30,20 +30,10 @@ const std::string Parser::command_toupper(const char *command)
 
 void Parser::print_title(const std::string &title)
 {
-
-	std::string under_bar = "____";
-	std::string over_bar = "‾‾‾‾";
-	for (std::size_t i = 0; i < title.length(); ++i)
-	{
-		under_bar += "_";
-		over_bar += "‾";
-	}
-	std::cout << BOLDCYAN << under_bar
-						<< std::endl
-						<< "| " << title << " |"
-						<< std::endl
-						<< over_bar
-						<< RESET << std::endl;
+	std::cout	<< BOLDBLUE
+				<< ">> " << title << " <<"
+				<< std::endl
+				<< RESET << std::endl;
 }
 
 Parser::Parser(Udata &serv_udata, const std::string &password)
