@@ -9,7 +9,7 @@ KeventHandler::KeventHandler()
 	kq_ = kqueue();
 	if (kq_ < 0)
 	{
-		exit_with_perror("err: Kqueue Creating Fail");
+		exit_with_perror("Failed to create kqueue");
 	}
 }
 
@@ -32,7 +32,7 @@ void	KeventHandler::kevent_init_(uintptr_t ident, int16_t filter, uint16_t flags
 /**		set_monitor   **/
 /**		@brief 새로 발생한 이벤트들을 kevent 벡터에 담아주는 함수   **/
 /**		@param 이벤트 등록을 계속할 지 판별하는 flag   **/
-std::vector<struct kevent>	KeventHandler::set_monitor(const bool& end_signal)
+std::vector<struct kevent>	KeventHandler::set_monitor(const bool& end_signal)//TODO: is_end_signal로 바꾸기
 {
 	std::vector<struct kevent>	res;
 

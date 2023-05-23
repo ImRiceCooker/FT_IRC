@@ -7,23 +7,23 @@
 
 class Receiver;
 
-enum e_val { N_COMMAND = 13 };
+enum e_val { N_COMMAND = 13 }; // TODO: N_CMD로 바꾸기
 
 class Parser
 {
 	private:
 		Udata&				parser_udata_;
 		Database			database_;
-		const std::string&	password_;
+		const std::string&	password_;//TODO: server_password_로 바꾸기
 
 		static const std::string	commands[N_COMMAND];
-		static void (Parser::*func_ptr[N_COMMAND])(const uintptr_t&, std::stringstream&, std::string&);
+		static void (Parser::*func_ptr[N_COMMAND])(const uintptr_t&, std::stringstream&, std::string&);// TODO: command_handlers로 바꾸기
 
 		std::string			set_message_(std::string &msg, const std::size_t& start);
 		std::string			message_resize_(const std::string& tmp, const std::string& to_send);
 		void				push_write_event_(Event& tmp);
 		void				push_multiple_write_events_(Udata& tmp, const uintptr_t& ident, const int flag);
-		void				parser_pass_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
+		void				parser_pass_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send); //TODO: paser -> parse로 바꾸기
 		void				parser_nick_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
 		void				parser_user_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
 		void				parser_ping_(const uintptr_t& ident, std::stringstream& line_ss, std::string& to_send);
@@ -45,6 +45,6 @@ class Parser
 		Parser(Udata& serv_udata, const std::string& password);
 
 		void			clear_all();
-		void			command_parser(const uintptr_t& ident, std::string& command);
-		void			error_situation(const uintptr_t& ident);
+		void			command_parser(const uintptr_t& ident, std::string& command);// TODO: parse_command로 바꾸기
+		void			error_situation(const uintptr_t& ident);// TODO: handle_error로 바꾸기
 };

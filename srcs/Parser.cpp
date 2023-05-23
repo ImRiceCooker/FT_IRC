@@ -222,10 +222,6 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 	Event tmp;
 
 	set_mode(mode, line_ss);
-	std::cout << "target: " << mode.target << std::endl;
-	std::cout << "option: " << mode.option << std::endl;
-	std::cout << "param: " << mode.param << std::endl;
-
 	switch (check_mode_err_type(mode))
 	{
 	case CMD_EMPTY:
@@ -259,10 +255,6 @@ void Parser::parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, 
 
 	line_ss >> user;
 	line_ss >> channel;
-
-	std::cout << "user: " << user << std::endl;
-	std::cout << "channel: " << channel << std::endl;
-
 	if (user.empty() || channel.empty())
 	{
 		Event tmp = Sender::command_empty_argument_461(ident, "INVITE");
@@ -366,9 +358,7 @@ void Parser::parser_ping_(const uintptr_t &ident, std::stringstream &line_ss, st
 	std::string msg;
 
 	line_ss >> msg;
-	std::cout << msg << to_send << std::endl;
 	msg = message_resize_(msg, to_send);
-	std::cout << msg << std::endl;
 	if (msg.empty())
 	{
 		ret = Sender::command_empty_argument_461(ident, "PING");
