@@ -541,17 +541,10 @@ Udata Database::command_notice(const uintptr_t &ident, const std::string &target
 	}
 	else
 	{
-		// if (is_user(target_name))
-		// {
-		// 	User &tar_usr = select_user(target_name);
-
-		// 	tmp = Sender::notice_p2p_message(cur_usr, tar_usr, msg);
-		// 	ret.insert(tmp);
-		// }
 		if (is_user(target_name))
 		{
 			User &tar_usr = select_user(target_name);
-			tmp = Sender::privmsg_p2p_message(cur_usr, tar_usr, msg);
+			tmp = Sender::notice_p2p_message(cur_usr, tar_usr, msg);
 			ret.insert(tmp);
 			tmp.first = cur_usr.client_sock_;
 			tmp.second.clear();
