@@ -53,7 +53,7 @@ public:
 	void unset_host(User &host_user);
 	bool is_host(uintptr_t client_sock);
 	bool is_host(User &user);
-	std::string &get_name(void);
+	std::string &get_channel_name(void);
 	std::string &get_topic(void);
 	std::string &get_access(void);
 	int get_member_limit(void);

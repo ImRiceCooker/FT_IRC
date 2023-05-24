@@ -20,7 +20,7 @@ bool Database::is_channel(std::string &chan_name)
 
 	for (it = channel_list_.begin(); it != channel_list_.end(); ++it)
 	{
-		if (it->get_name() == chan_name)
+		if (it->get_channel_name() == chan_name)
 		{
 			return true;
 		}
@@ -72,7 +72,7 @@ Channel &Database::select_channel(std::string &chan_name)
 
 	for (; it != channel_list_.end(); ++it)
 	{
-		if (it->get_name() == chan_name)
+		if (it->get_channel_name() == chan_name)
 		{
 			return *it;
 		}
@@ -86,7 +86,7 @@ Channel &Database::select_channel(const std::string &chan_name)
 
 	for (; it != channel_list_.end(); ++it)
 	{
-		if (it->get_name() == chan_name)
+		if (it->get_channel_name() == chan_name)
 		{
 			return *it;
 		}
@@ -130,8 +130,8 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 		tmp = Sender::join_message(joiner, joiner, chan_name);
 		ret.insert(tmp);
 		event_map_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, chan.get_name(), chan.get_access(), "@" + joiner.nickname_);
-		it->second += Sender::join_366_message(joiner, chan.get_name());
+		it->second += Sender::join_353_message(joiner, chan.get_channel_name(), chan.get_access(), "@" + joiner.nickname_);
+		it->second += Sender::join_366_message(joiner, chan.get_channel_name());
 	}
 	else if ((cur_chan.channel_flag_ & F_INVITE_ONLY) && !cur_chan.has_invitation(joiner.client_sock_))
 	{
@@ -156,8 +156,8 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 		const std::string &chan_user_list(cur_chan.get_user_list_str());
 		ret = cur_chan.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
 		event_map_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, cur_chan.get_name(), cur_chan.get_access(), chan_user_list);
-		it->second += Sender::join_366_message(joiner, cur_chan.get_name());
+		it->second += Sender::join_353_message(joiner, cur_chan.get_channel_name(), cur_chan.get_access(), chan_user_list);
+		it->second += Sender::join_366_message(joiner, cur_chan.get_channel_name());
 	}
 	return ret;
 }

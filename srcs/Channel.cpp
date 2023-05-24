@@ -74,10 +74,10 @@ event_map Channel::send_all(User &sender, User &target, std::string msg, int rem
 		switch (remocon)
 		{
 		case JOIN:
-			packet = Sender::join_message(sender, *it, this->get_name());
+			packet = Sender::join_message(sender, *it, this->get_channel_name());
 			break;
 		case PART:
-			packet = Sender::part_message(sender, *it, this->get_name(), msg);
+			packet = Sender::part_message(sender, *it, this->get_channel_name(), msg);
 			break;
 		case PRIV:
 			if (sender == *it)
@@ -87,11 +87,11 @@ event_map Channel::send_all(User &sender, User &target, std::string msg, int rem
 			}
 			else
 			{
-				packet = Sender::privmsg_channel_message(sender, *it, msg, this->get_name());
+				packet = Sender::privmsg_channel_message(sender, *it, msg, this->get_channel_name());
 			}
 			break;
 		case KICK:
-			packet = Sender::kick_message(sender, *it, target.nickname_, this->get_name(), msg);
+			packet = Sender::kick_message(sender, *it, target.nickname_, this->get_channel_name(), msg);
 			break;
 		case QUIT:
 			packet = (sender == *it) ? Sender::quit_leaver_message(sender, msg)
@@ -105,26 +105,26 @@ event_map Channel::send_all(User &sender, User &target, std::string msg, int rem
 			}
 			else
 			{
-				packet = Sender::notice_channel_message(sender, *it, msg, this->get_name());
+				packet = Sender::notice_channel_message(sender, *it, msg, this->get_channel_name());
 			}
 			break;
 		case TOPIC:
-			packet = Sender::topic_message(sender, *it, this->get_name(), msg);
+			packet = Sender::topic_message(sender, *it, this->get_channel_name(), msg);
 			break;
 		case NICK:
 			packet = Sender::nick_well_message(sender, *it, msg);
 			break;
 		case MODE:
-			packet = Sender::mode_message(sender, *it, this->get_name(), msg);
+			packet = Sender::mode_message(sender, *it, this->get_channel_name(), msg);
 			break;
 		case INVITE:
 			if (sender == *it) // invitor 에게 보내는 메세지
 			{
-				packet = Sender::invitor_message(sender, target, this->get_name());
+				packet = Sender::invitor_message(sender, target, this->get_channel_name());
 			}
 			else // 방에 있는 사람들에게 보내는 메세지
 			{
-				packet = Sender::invite_message(sender, *it, this->get_name());
+				packet = Sender::invite_message(sender, *it, this->get_channel_name());
 			}
 			break;
 		}
@@ -133,13 +133,13 @@ event_map Channel::send_all(User &sender, User &target, std::string msg, int rem
 	}
 	if (remocon == INVITE)
 	{
-		event_pair packet = Sender::invitee_message(sender, target, this->get_name());
+		event_pair packet = Sender::invitee_message(sender, target, this->get_channel_name());
 		ret.insert(packet);
 	}
 	return ret;
 }
 
-std::string &Channel::get_name(void)
+std::string &Channel::get_channel_name(void)
 {
 	return this->name_;
 }

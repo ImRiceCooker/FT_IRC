@@ -40,7 +40,7 @@ void Database::delete_error_user(const uintptr_t &ident)
 		const int user_size = users.size();
 		cur_chan.delete_user(cur_usr);
 		if (user_size == 1)
-			delete_channel(cur_chan.get_name());
+			delete_channel(cur_chan.get_channel_name());
 	}
 	user_list_.erase(remove(user_list_.begin(), user_list_.end(), cur_usr), user_list_.end());
 }
@@ -432,7 +432,7 @@ event_map Database::command_quit(const uintptr_t &ident, const std::string &msg)
 		if (is_user_in_channel(cur_usr))
 		{
 			Channel &cur_chan = select_channel(cur_usr);
-			ret = quit_channel(cur_usr, cur_chan.get_name(), msg);
+			ret = quit_channel(cur_usr, cur_chan.get_channel_name(), msg);
 		}
 		else
 		{
@@ -585,7 +585,7 @@ event_pair Database::bot_privmsg(User &cur_usr, const std::string &msg)
 			bot_msg = "● [CHANNEL LIST] : ";
 			for (std::size_t i(0); i < channel_list_.size(); ++i)
 			{
-				bot_msg += std::to_string(i) + ". " + channel_list_[i].get_name() + " : " + channel_list_[i].get_topic() + ((i == (channel_list_.size() - 1)) ? "" : ", ");
+				bot_msg += std::to_string(i) + ". " + channel_list_[i].get_channel_name() + " : " + channel_list_[i].get_topic() + ((i == (channel_list_.size() - 1)) ? "" : ", ");
 			}
 		}
 	}
