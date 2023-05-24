@@ -33,7 +33,7 @@ enum e_channel_flag
 class Channel
 {
 private:
-	std::vector<User> connectors_;
+	std::vector<User> channel_members_;
 	std::vector<uintptr_t> hosts_;
 	std::vector<uintptr_t> invitations_;
 	std::string name_;

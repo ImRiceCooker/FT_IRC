@@ -13,7 +13,7 @@ void Channel::set_access(const std::string &access) { access_ = access; }
 void Channel::change_nick(User &usr, std::string new_nick)
 {
 	std::vector<User>::iterator it;
-	for (it = connectors_.begin(); it != connectors_.end(); it++)
+	for (it = channel_members_.begin(); it != channel_members_.end(); it++)
 	{
 		if (it->nickname_ == usr.nickname_)
 		{
@@ -27,10 +27,10 @@ std::vector<User> Channel::sort_users(void)
 {
 	std::vector<User> ret;
 
-	ret.push_back(connectors_.at(0));
-	if (connectors_.size() == 1)
+	ret.push_back(channel_members_.at(0));
+	if (channel_members_.size() == 1)
 		return ret;
-	for (std::vector<User>::iterator it = connectors_.begin(); it != connectors_.end(); ++it)
+	for (std::vector<User>::iterator it = channel_members_.begin(); it != channel_members_.end(); ++it)
 	{
 		std::vector<User>::iterator ret_it = ret.begin();
 		for (; ret_it != ret.end(); ++ret_it)
@@ -67,7 +67,7 @@ event_map Channel::send_all(User &sender, User &target, std::string msg, int rem
 	event_map ret;
 	std::vector<User>::iterator it;
 
-	for (it = connectors_.begin(); it != connectors_.end(); it++)
+	for (it = channel_members_.begin(); it != channel_members_.end(); it++)
 	{
 		event_pair packet;
 
@@ -153,7 +153,7 @@ bool Channel::is_user(User &usr)
 {
 	std::vector<User>::iterator it;
 
-	for (it = connectors_.begin(); it != connectors_.end(); it++)
+	for (it = channel_members_.begin(); it != channel_members_.end(); it++)
 	{
 		if (it->client_sock_ == usr.client_sock_)
 			return 1;
@@ -163,7 +163,7 @@ bool Channel::is_user(User &usr)
 
 void Channel::add_user(User &joiner)
 {
-	connectors_.push_back(joiner);
+	channel_members_.push_back(joiner);
 }
 
 void Channel::set_channel_name(std::string &chan_name)
@@ -178,17 +178,17 @@ void Channel::set_topic(std::string &topic)
 
 std::vector<User> &Channel::get_users()
 {
-	return this->connectors_;
+	return this->channel_members_;
 }
 void Channel::delete_user(User &usr)
 {
 	if (is_host(usr))
 		unset_host(usr);
 
-	std::vector<User>::iterator it = std::find(this->connectors_.begin(),
-																						 this->connectors_.end(), usr);
-	std::size_t size = std::distance(this->connectors_.begin(), it);
-	this->connectors_.erase(this->connectors_.begin() + size);
+	std::vector<User>::iterator it = std::find(this->channel_members_.begin(),
+																						 this->channel_members_.end(), usr);
+	std::size_t size = std::distance(this->channel_members_.begin(), it);
+	this->channel_members_.erase(this->channel_members_.begin() + size);
 }
 bool Channel::operator==(const Channel &t) const
 {
