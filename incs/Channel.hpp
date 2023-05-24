@@ -39,8 +39,8 @@ private:
 	std::string name_;
 	std::string topic_;
 	std::string access_;
-	std::string password_;
-	int	member_limit_;
+	std::string key_;
+	int member_limit_;
 
 public:
 	char channel_flag_;

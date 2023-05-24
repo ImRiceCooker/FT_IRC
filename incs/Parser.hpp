@@ -17,7 +17,7 @@ class Parser
 private:
 	Udata &parser_udata_;
 	Database database_;
-	const std::string &password_; // TODO: server_password_로 바꾸기
+	const std::string &password_;
 
 	static const std::string commands[N_COMMAND];
 	static void (Parser::*func_ptr[N_COMMAND])(const uintptr_t &, std::stringstream &, std::string &); // TODO: command_handlers로 바꾸기

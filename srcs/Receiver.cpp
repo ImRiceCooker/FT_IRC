@@ -203,11 +203,7 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 int Receiver::client_write_event_handler_(struct kevent &cur_event)
 {
 	Udata_iter target = udata_.find(cur_event.ident);
-
-	std::cout << BOLDGREEN << " < SEND > \n"
-						<< RESET << std::endl
-						<< GRAY << "  [ Socket ] :  " << target->first << std::endl
-						<< "  [ Message ]  : " << target->second << RESET << std::endl;
+	ServerStatus::print_send(target->first, target->second);
 	int send_bytes = send(cur_event.ident, target->second.c_str(), target->second.size(), 0);
 	if (send_bytes < 0)
 	{

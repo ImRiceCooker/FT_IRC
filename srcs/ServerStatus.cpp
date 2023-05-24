@@ -32,3 +32,11 @@ void ServerStatus::print_recived(const uintptr_t &socket, const std::string &com
             << "  [ Input ] :  " << command << RESET << std::endl
             << std::endl;
 }
+void ServerStatus::print_send(const uintptr_t &socket, const std::string &msg)
+
+{
+  std::cout << BOLDGREEN << " < SEND > \n"
+            << RESET << std::endl
+            << GRAY << "  [ Socket ] :  " << socket << std::endl
+            << "  [ Message ]  : " << msg << RESET << std::endl;
+}
