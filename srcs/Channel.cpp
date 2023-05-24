@@ -149,7 +149,7 @@ std::string &Channel::get_topic(void)
 	return this->topic_;
 }
 
-bool Channel::is_user(User &usr)
+bool Channel::is_channel_members(User &usr)
 {
 	std::vector<User>::iterator it;
 

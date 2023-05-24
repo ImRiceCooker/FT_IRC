@@ -59,7 +59,7 @@ public:
 	int get_member_limit(void);
 	void set_access(const std::string &access);
 	void set_topic(std::string &topic);
-	bool is_user(User &usr);
+	bool is_channel_members(User &usr);
 	void change_nick(User &usr, std::string new_nick);
 	void add_user(User &joiner);
 	void set_channel_name(std::string &chan_name);

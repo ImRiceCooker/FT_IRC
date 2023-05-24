@@ -34,7 +34,7 @@ bool Database::is_user_in_channel(User &leaver)
 
 	for (; it != channel_list_.end(); ++it)
 	{
-		if (it->is_user(leaver))
+		if (it->is_channel_members(leaver))
 		{
 			return true;
 		}
@@ -100,7 +100,7 @@ Channel &Database::select_channel(User &connector)
 
 	for (; it != channel_list_.end(); ++it)
 	{
-		if (it->is_user(connector))
+		if (it->is_channel_members(connector))
 		{
 			return *it;
 		}
@@ -175,7 +175,7 @@ event_map Database::quit_channel(User &leaver, std::string &chan_name, const std
 		return ret;
 	}
 	Channel &chan = select_channel(chan_name);
-	if (chan.is_user(leaver) == 0)
+	if (chan.is_channel_members(leaver) == 0)
 	{
 		tmp = Sender::no_user_message(leaver, leaver.nickname_);
 		return ret;
@@ -203,7 +203,7 @@ event_map Database::part_channel(User &leaver, std::string &chan_name, const std
 		return ret;
 	}
 	Channel &chan = select_channel(chan_name);
-	if (chan.is_user(leaver) == 0)
+	if (chan.is_channel_members(leaver) == 0)
 	{
 		tmp = Sender::no_user_message(leaver, leaver.nickname_);
 		return ret;
@@ -229,7 +229,7 @@ event_map Database::channel_msg(User &sender, std::string chan_name, const std::
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
-	if (channel.is_user(sender) == false)
+	if (channel.is_channel_members(sender) == false)
 	{
 		tmp = Sender::no_user_message(sender, sender.nickname_);
 		ret.insert(tmp);
@@ -251,7 +251,7 @@ event_map Database::notice_channel(User &sender, std::string chan_name, const st
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
-	if (channel.is_user(sender) == false)
+	if (channel.is_channel_members(sender) == false)
 	{
 		tmp = Sender::no_user_message(sender, sender.nickname_);
 		ret.insert(tmp);
@@ -275,7 +275,7 @@ event_map Database::kick_channel(User &host, User &target, std::string &chan_nam
 	Channel &channel = select_channel(chan_name);
 	if (channel.is_host(host))
 	{
-		if (channel.is_user(target) == true)
+		if (channel.is_channel_members(target) == true)
 		{
 			ret = channel.send_all(host, target, msg, KICK);
 			channel.delete_user(target);
