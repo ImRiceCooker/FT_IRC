@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Sender.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 #include "TypeMode.hpp"
 
 #include <vector>
@@ -72,7 +72,7 @@ public:
 	void set_flag(Channel &channel, t_mode &mode);
 	bool has_invitation(const uintptr_t &usr);
 	bool check_password(Channel &tmp_channel, const std::string &tmp_password);
-	Udata send_all(User &sender, User &target, std::string msg, int remocon);
+	event_map send_all(User &sender, User &target, std::string msg, int remocon);
 
 	std::vector<User> &get_users(void);
 	std::vector<User> sort_users(void);

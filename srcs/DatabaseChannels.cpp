@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 #include "Database.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 #include "User.hpp"
 #include "Color.hpp"
 #include <sys/_types/_size_t.h>
@@ -108,16 +108,16 @@ Channel &Database::select_channel(User &connector)
 	return *it;
 }
 
-Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, const std::string &tmp_password)
+event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name, const std::string &tmp_password)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 	std::string chan_name(tmp_chan_name);
 	Channel &cur_chan = select_channel(tmp_chan_name);
 
 	if (is_user_in_channel(joiner))
 	{
-		Event tmp2;
+		event_pair tmp2;
 		tmp = Sender::join_message(joiner, joiner, chan_name);
 		tmp2 = Sender::part_message(joiner, joiner, chan_name, "invalid : No Double join");
 		tmp.second += tmp2.second;
@@ -129,7 +129,7 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, con
 		Channel &chan = create_channel(joiner, chan_name, "=");
 		tmp = Sender::join_message(joiner, joiner, chan_name);
 		ret.insert(tmp);
-		Udata_iter it = ret.find(joiner.client_sock_);
+		event_map_iter it = ret.find(joiner.client_sock_);
 		it->second += Sender::join_353_message(joiner, chan.get_name(), chan.get_access(), "@" + joiner.nickname_);
 		it->second += Sender::join_366_message(joiner, chan.get_name());
 	}
@@ -143,7 +143,7 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, con
 		tmp = Sender::cannot_join_message_key(joiner, chan_name); // connot_join_message_key
 		ret.insert(tmp);
 	}
-	else if (!(cur_chan.channel_flag_ & F_INVITE_ONLY) &&(cur_chan.channel_flag_ & F_LIMITED_MEMBERSHIP) && static_cast<int>(cur_chan.get_users().size()) >= cur_chan.get_member_limit())
+	else if (!(cur_chan.channel_flag_ & F_INVITE_ONLY) && (cur_chan.channel_flag_ & F_LIMITED_MEMBERSHIP) && static_cast<int>(cur_chan.get_users().size()) >= cur_chan.get_member_limit())
 	{
 		tmp = Sender::cannot_join_message_limit(joiner, chan_name);
 		ret.insert(tmp);
@@ -155,17 +155,17 @@ Udata Database::join_channel(User &joiner, const std::string &tmp_chan_name, con
 		cur_chan.add_user(joiner);
 		const std::string &chan_user_list(cur_chan.get_user_list_str());
 		ret = cur_chan.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
-		Udata_iter it = ret.find(joiner.client_sock_);
+		event_map_iter it = ret.find(joiner.client_sock_);
 		it->second += Sender::join_353_message(joiner, cur_chan.get_name(), cur_chan.get_access(), chan_user_list);
 		it->second += Sender::join_366_message(joiner, cur_chan.get_name());
 	}
 	return ret;
 }
 
-Udata Database::quit_channel(User &leaver, std::string &chan_name, const std::string &msg_)
+event_map Database::quit_channel(User &leaver, std::string &chan_name, const std::string &msg_)
 {
-	Event tmp;
-	Udata ret;
+	event_pair tmp;
+	event_map ret;
 	std::string msg(msg_);
 
 	if (is_channel(chan_name) == false)
@@ -190,10 +190,10 @@ Udata Database::quit_channel(User &leaver, std::string &chan_name, const std::st
 	return ret;
 }
 
-Udata Database::part_channel(User &leaver, std::string &chan_name, const std::string &msg_)
+event_map Database::part_channel(User &leaver, std::string &chan_name, const std::string &msg_)
 {
-	Event tmp;
-	Udata ret;
+	event_pair tmp;
+	event_map ret;
 	std::string msg(msg_);
 
 	if (is_channel(chan_name) == false)
@@ -217,10 +217,10 @@ Udata Database::part_channel(User &leaver, std::string &chan_name, const std::st
 	return ret;
 }
 
-Udata Database::channel_msg(User &sender, std::string chan_name, const std::string &msg)
+event_map Database::channel_msg(User &sender, std::string chan_name, const std::string &msg)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	if (is_channel(chan_name) == false)
 	{
@@ -239,10 +239,10 @@ Udata Database::channel_msg(User &sender, std::string chan_name, const std::stri
 	return ret;
 }
 
-Udata Database::notice_channel(User &sender, std::string chan_name, const std::string &msg)
+event_map Database::notice_channel(User &sender, std::string chan_name, const std::string &msg)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	if (is_channel(chan_name) == false)
 	{
@@ -261,10 +261,10 @@ Udata Database::notice_channel(User &sender, std::string chan_name, const std::s
 	return ret;
 }
 
-Udata Database::kick_channel(User &host, User &target, std::string &chan_name, std::string &msg)
+event_map Database::kick_channel(User &host, User &target, std::string &chan_name, std::string &msg)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	if (is_channel(chan_name) == false)
 	{
@@ -298,10 +298,10 @@ Udata Database::kick_channel(User &host, User &target, std::string &chan_name, s
 /**		@brief NICK 명령어를 채널 안에서 한 경우   **/
 /**		@brief 변경했다고 채널 모두에게 send_all, 채널 객체 nick 변경  **/
 
-Udata Database::nick_channel(User &nicker, std::string &send_msg)
+event_map Database::nick_channel(User &nicker, std::string &send_msg)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 	User dummy_user;
 
 	Channel &channel = select_channel(nicker);
@@ -310,10 +310,10 @@ Udata Database::nick_channel(User &nicker, std::string &send_msg)
 	return ret;
 }
 
-Udata Database::set_topic(User &sender, std::string &chan_name, std::string &topic)
+event_map Database::set_topic(User &sender, std::string &chan_name, std::string &topic)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(sender.client_sock_, "INVITE");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(sender.client_sock_, "INVITE");
 	Channel &channel = select_channel(chan_name);
 
 	if (tmp.second.size())
@@ -340,10 +340,10 @@ Udata Database::set_topic(User &sender, std::string &chan_name, std::string &top
 	return ret;
 }
 
-Udata Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	Channel &tmp_channel = select_channel(mode.target);
 	User &host = select_user(ident);
@@ -360,10 +360,10 @@ Udata Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	Channel &tmp_channel = select_channel(mode.target);
 	User &host = select_user(ident);
@@ -380,10 +380,10 @@ Udata Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 	Channel &tmp_channel = select_channel(mode.target);
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
@@ -400,10 +400,10 @@ Udata Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_k_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_k_off(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	Channel &tmp_channel = select_channel(mode.target);
 	User &host = select_user(ident);
@@ -420,10 +420,10 @@ Udata Database::command_mode_k_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_o_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_o_on(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	if (mode.param.length() == 0)
 	{
@@ -456,10 +456,10 @@ Udata Database::command_mode_o_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_o_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_o_off(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	if (mode.param.length() == 0)
 	{
@@ -492,10 +492,10 @@ Udata Database::command_mode_o_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_t_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_t_on(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	Channel &target_channel = select_channel(mode.target);
 	User &host_user = select_user(ident);
@@ -512,10 +512,10 @@ Udata Database::command_mode_t_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_t_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_t_off(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	Channel &target_channel = select_channel(mode.target);
 	User &host_user = select_user(ident);
@@ -532,10 +532,10 @@ Udata Database::command_mode_t_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_l_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_l_on(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 	int limit_num = 0;
 	std::stringstream get_limit_num_stream(mode.param);
 	get_limit_num_stream >> limit_num;
@@ -572,10 +572,10 @@ Udata Database::command_mode_l_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_mode_l_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_l_off(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	if (mode.param.length() != 0)
 	{

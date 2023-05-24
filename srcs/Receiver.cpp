@@ -1,6 +1,6 @@
 #include "Receiver.hpp"
 #include "Database.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 #include "Color.hpp"
 #include "ServerStatus.hpp"
 #include <atomic>
@@ -21,7 +21,7 @@ KeventHandler &Receiver::get_Kevent_Handler(void)
 /**		@param serv_udata 이벤트를 관리할 map   **/
 /**		@param port 소켓을 생성할 포켓 번호   **/
 /**		@param password irc서버 비밀번호   **/
-Receiver::Receiver(Udata &serv_udata, const uintptr_t &port, const std::string &password)
+Receiver::Receiver(event_map &serv_udata, const uintptr_t &port, const std::string &password)
 		: parser_(serv_udata, password), udata_(serv_udata)
 {
 	init_socket_(port);
@@ -159,12 +159,12 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 	if (newline_pos == std::string::npos)
 	{
 		/**   먼저 저장되어 있는 백업이 있는지 찾는다.  **/
-		Udata_iter cur_backup = carriage_backup_.find(cur_event.ident);
+		event_map_iter cur_backup = carriage_backup_.find(cur_event.ident);
 
 		/**   개행이 없고, 백업이 없으면 백업본을 하나 만들어 저장한다.  **/
 		if (cur_backup == carriage_backup_.end())
 		{
-			Event tmp;
+			event_pair tmp;
 			tmp.first = cur_event.ident;
 			tmp.second = command;
 			carriage_backup_.insert(tmp);
@@ -181,7 +181,7 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 	else
 	{
 		/**   먼저 저장되어 있는 백업 본이 있는지 찾는다.  **/
-		Udata_iter cur_backup = carriage_backup_.find(cur_event.ident);
+		event_map_iter cur_backup = carriage_backup_.find(cur_event.ident);
 
 		/**   저장된 백업본이 있으면 클라이언트한테 받은 커맨드 문자열 앞에 백업을 붙여주고, 저장된 데이터는 삭제한다.  **/
 		if (cur_backup != carriage_backup_.end())
@@ -202,7 +202,7 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 /**		@param cur_event 현재 발생된 이벤트   **/
 int Receiver::client_write_event_handler_(struct kevent &cur_event)
 {
-	Udata_iter target = udata_.find(cur_event.ident);
+	event_map_iter target = udata_.find(cur_event.ident);
 	ServerStatus::print_send(target->first, target->second);
 	int send_bytes = send(cur_event.ident, target->second.c_str(), target->second.size(), 0);
 	if (send_bytes < 0)

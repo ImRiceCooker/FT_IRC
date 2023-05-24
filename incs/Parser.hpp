@@ -15,7 +15,7 @@ enum e_val
 class Parser
 {
 private:
-	Udata &parser_udata_;
+	event_map &parser_udata_;
 	Database database_;
 	const std::string &password_;
 
@@ -24,8 +24,8 @@ private:
 
 	std::string set_message_(std::string &msg, const std::size_t &start);
 	std::string message_resize_(const std::string &tmp, const std::string &to_send);
-	void push_write_event_(Event &tmp);
-	void push_multiple_write_events_(Udata &tmp, const uintptr_t &ident, const int flag);
+	void push_write_event_(event_pair &tmp);
+	void push_multiple_write_events_(event_map &tmp, const uintptr_t &ident, const int flag);
 	void parser_pass_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send); // TODO: paser -> parse로 바꾸기
 	void parser_nick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send);
 	void parser_user_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send);
@@ -42,7 +42,7 @@ private:
 	const std::string command_toupper(const char *command);
 
 public:
-	Parser(Udata &serv_udata, const std::string &password);
+	Parser(event_map &serv_udata, const std::string &password);
 
 	void clear_all();
 	void command_parser(const uintptr_t &ident, std::string &command); // TODO: parse_command로 바꾸기

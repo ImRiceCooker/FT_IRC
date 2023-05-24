@@ -9,7 +9,7 @@
 
 #include "KeventHandler.hpp"
 #include "Parser.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 
 class Parser;
 
@@ -18,8 +18,8 @@ class Receiver
 	private:
 		static KeventHandler	kq_;
 		Parser					parser_;
-		Udata&					udata_;
-		Udata					carriage_backup_;
+		event_map&					udata_;
+		event_map					carriage_backup_;
 		sockaddr_in				server_addr_;
 		uintptr_t				server_sock_;
 
@@ -30,7 +30,7 @@ class Receiver
 		void					carriage_remover_(std::string& to_remove);
 
 	public:
-		Receiver(Udata& serv_udata, const uintptr_t& port, const std::string& password);
+		Receiver(event_map& serv_udata, const uintptr_t& port, const std::string& password);
 
 		void					stop_receiver();
 		void 					start();

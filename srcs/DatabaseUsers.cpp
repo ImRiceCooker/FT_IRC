@@ -1,12 +1,12 @@
 #include "Database.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 #include "User.hpp"
 #include <string>
 #include <sys/_types/_ct_rune_t.h>
 
 #include "ServerStatus.hpp"
 
-Udata (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode &mode) =
+event_map (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode &mode) =
 		{
 				&Database::command_mode_i_on,
 				&Database::command_mode_i_off,
@@ -45,9 +45,9 @@ void Database::delete_error_user(const uintptr_t &ident)
 	user_list_.erase(remove(user_list_.begin(), user_list_.end(), cur_usr), user_list_.end());
 }
 
-Event Database::valid_user_checker_(const uintptr_t &ident, const std::string &command_type)
+event_pair Database::valid_user_checker_(const uintptr_t &ident, const std::string &command_type)
 {
-	Event ret;
+	event_pair ret;
 
 	ret.first = ident;
 	if (!is_user(ident))
@@ -160,10 +160,10 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
-Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode(const uintptr_t &ident, t_mode &mode)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "MODE");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "MODE");
 
 	if (tmp.second.size())
 	{
@@ -180,10 +180,10 @@ Udata Database::command_mode(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::string &chan_name)
+event_map Database::command_invite(const uintptr_t &ident, std::string &user, std::string &chan_name)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "INVITE");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "INVITE");
 
 	if (tmp.second.size())
 	{
@@ -191,17 +191,17 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 	}
 	else if (is_channel(chan_name) == false)
 	{
-		Event tmp = Sender::no_channel_message(select_user(ident), chan_name);
+		event_pair tmp = Sender::no_channel_message(select_user(ident), chan_name);
 		ret.insert(tmp);
 	}
 	else if (is_user(user) == false)
 	{
-		Event tmp = Sender::invite_no_user_message(select_user(ident), user);
+		event_pair tmp = Sender::invite_no_user_message(select_user(ident), user);
 		ret.insert(tmp);
 	}
 	else if (is_user_in_channel(select_user(user)) == true) // 이미 이 방에 있는 유저라면
 	{
-		Event tmp = Sender::already_in_channel_message(select_user(ident), chan_name);
+		event_pair tmp = Sender::already_in_channel_message(select_user(ident), chan_name);
 		ret.insert(tmp);
 	}
 	else
@@ -218,9 +218,9 @@ Udata Database::command_invite(const uintptr_t &ident, std::string &user, std::s
 	return ret;
 }
 
-Event Database::command_pass(const uintptr_t &ident)
+event_pair Database::command_pass(const uintptr_t &ident)
 {
-	Event tmp;
+	event_pair tmp;
 
 	tmp.first = ident;
 	if (!is_user(ident))
@@ -234,10 +234,10 @@ Event Database::command_pass(const uintptr_t &ident)
 	return tmp;
 }
 
-Udata Database::command_nick(const uintptr_t &ident, std::string &new_nick)
+event_map Database::command_nick(const uintptr_t &ident, std::string &new_nick)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "NICK");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "NICK");
 
 	if (tmp.second.size())
 	{
@@ -312,9 +312,9 @@ Udata Database::command_nick(const uintptr_t &ident, std::string &new_nick)
 	return ret;
 }
 
-Event Database::command_user(const uintptr_t &ident, const std::string &username, const std::string &mode, const std::string &unused, const std::string &realname)
+event_pair Database::command_user(const uintptr_t &ident, const std::string &username, const std::string &mode, const std::string &unused, const std::string &realname)
 {
-	Event ret = valid_user_checker_(ident, "USER");
+	event_pair ret = valid_user_checker_(ident, "USER");
 
 	if (ret.second.size())
 	{
@@ -336,9 +336,9 @@ Event Database::command_user(const uintptr_t &ident, const std::string &username
 	return ret;
 }
 
-Event Database::command_pong(const uintptr_t &ident, std::string &msg)
+event_pair Database::command_pong(const uintptr_t &ident, std::string &msg)
 {
-	Event ret = valid_user_checker_(ident, "PING");
+	event_pair ret = valid_user_checker_(ident, "PING");
 
 	if (ret.second.size())
 	{
@@ -356,10 +356,10 @@ Event Database::command_pong(const uintptr_t &ident, std::string &msg)
 	return ret;
 }
 
-Udata Database::command_join(const uintptr_t &ident, const std::string &chan_name, const std::string &tmp_password)
+event_map Database::command_join(const uintptr_t &ident, const std::string &chan_name, const std::string &tmp_password)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "JOIN");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "JOIN");
 
 	if (tmp.second.size())
 	{
@@ -400,10 +400,10 @@ Udata Database::command_join(const uintptr_t &ident, const std::string &chan_nam
 	return ret;
 }
 
-Udata Database::command_part(const uintptr_t &ident, std::string &chan_name, const std::string &msg)
+event_map Database::command_part(const uintptr_t &ident, std::string &chan_name, const std::string &msg)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "PART");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "PART");
 
 	if (tmp.second.size())
 	{
@@ -415,10 +415,10 @@ Udata Database::command_part(const uintptr_t &ident, std::string &chan_name, con
 	return ret;
 }
 
-Udata Database::command_quit(const uintptr_t &ident, const std::string &msg)
+event_map Database::command_quit(const uintptr_t &ident, const std::string &msg)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "QUIT");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "QUIT");
 
 	if (tmp.second.size())
 	{
@@ -444,10 +444,10 @@ Udata Database::command_quit(const uintptr_t &ident, const std::string &msg)
 	return ret;
 }
 
-Udata Database::command_privmsg(const uintptr_t &ident, const std::string &target_name, const std::string &msg)
+event_map Database::command_privmsg(const uintptr_t &ident, const std::string &target_name, const std::string &msg)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "PRIVMSG");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "PRIVMSG");
 
 	if (tmp.second.size())
 	{
@@ -489,10 +489,10 @@ Udata Database::command_privmsg(const uintptr_t &ident, const std::string &targe
 	return ret;
 }
 
-Udata Database::command_notice(const uintptr_t &ident, const std::string &target_name, const std::string &msg)
+event_map Database::command_notice(const uintptr_t &ident, const std::string &target_name, const std::string &msg)
 {
-	Udata ret;
-	Event tmp = valid_user_checker_(ident, "NOTICE");
+	event_map ret;
+	event_pair tmp = valid_user_checker_(ident, "NOTICE");
 
 	if (tmp.second.size())
 	{
@@ -529,10 +529,10 @@ Udata Database::command_notice(const uintptr_t &ident, const std::string &target
 	return ret;
 }
 
-Udata Database::command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg)
+event_map Database::command_kick(const uintptr_t &ident, const std::string &target_name, std::string &chan_name, std::string &msg)
 {
-	Event tmp = valid_user_checker_(ident, "KICK");
-	Udata ret;
+	event_pair tmp = valid_user_checker_(ident, "KICK");
+	event_map ret;
 
 	if (tmp.second.size())
 	{
@@ -565,9 +565,9 @@ void Database::bot_maker(const std::string &name)
 	tmp_usr.input_user("Dummy", "Dummy", "localhost", "Dummy");
 	user_list_.push_back(tmp_usr);
 }
-Event Database::bot_privmsg(User &cur_usr, const std::string &msg)
+event_pair Database::bot_privmsg(User &cur_usr, const std::string &msg)
 {
-	Event tmp;
+	event_pair tmp;
 	std::string bot_msg;
 
 	if (msg == "!command")

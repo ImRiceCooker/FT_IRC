@@ -54,7 +54,7 @@ Server::Server(const std::string& port, const std::string& password)
 	password_ = password;
 }
 
-Udata&	Server::get_server_udata(void)
+event_map&	Server::get_server_udata(void)
 {
 	return serv_udata_;
 }

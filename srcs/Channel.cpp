@@ -1,5 +1,5 @@
 #include "Channel.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 
 Channel::Channel()
 {
@@ -62,14 +62,14 @@ std::string Channel::get_user_list_str(void)
 	return ret;
 }
 
-Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon)
+event_map Channel::send_all(User &sender, User &target, std::string msg, int remocon)
 {
-	Udata ret;
+	event_map ret;
 	std::vector<User>::iterator it;
 
 	for (it = connectors_.begin(); it != connectors_.end(); it++)
 	{
-		Event packet;
+		event_pair packet;
 
 		switch (remocon)
 		{
@@ -133,7 +133,7 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 	}
 	if (remocon == INVITE)
 	{
-		Event packet = Sender::invitee_message(sender, target, this->get_name());
+		event_pair packet = Sender::invitee_message(sender, target, this->get_name());
 		ret.insert(packet);
 	}
 	return ret;

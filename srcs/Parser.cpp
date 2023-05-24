@@ -1,6 +1,6 @@
 #include "Parser.hpp"
 #include "Receiver.hpp"
-#include "Udata.hpp"
+#include "Event.hpp"
 #include "Color.hpp"
 #include "Database.hpp"
 #include "ServerStatus.hpp"
@@ -29,7 +29,7 @@ const std::string Parser::command_toupper(const char *command)
 	return ret;
 }
 
-Parser::Parser(Udata &serv_udata, const std::string &password)
+Parser::Parser(event_map &serv_udata, const std::string &password)
 		: parser_udata_(serv_udata), password_(password)
 {
 	database_.bot_maker("BOT");
@@ -39,14 +39,14 @@ Parser::Parser(Udata &serv_udata, const std::string &password)
 /**		@brief SIGINT가 들어올 경우 모든 클라이언트를 삭제하고 소켓까지 닫아주는 함수   **/
 void Parser::clear_all()
 {
-	Udata to_delete;
+	event_map to_delete;
 
 	to_delete.clear();
 	for (std::vector<User>::iterator it = database_.get_user_list().begin(); it != database_.get_user_list().end(); ++it)
 	{
 		if (it->client_sock_ == 0)
 			continue;
-		Event tmp = Sender::quit_leaver_message(*it, "");
+		event_pair tmp = Sender::quit_leaver_message(*it, "");
 		to_delete.insert(tmp);
 		Receiver::get_Kevent_Handler().set_exit(it->client_sock_);
 	}
@@ -54,7 +54,7 @@ void Parser::clear_all()
 	std::vector<struct kevent> events = Receiver::get_Kevent_Handler().set_monitor(flag);
 	for (std::size_t i(0); i < events.size(); ++i)
 	{
-		Udata_iter target = to_delete.find(events[i].ident);
+		event_map_iter target = to_delete.find(events[i].ident);
 		send(events[i].ident, target->second.c_str(), target->second.size(), 0);
 		uintptr_t tmp_fd = events[i].ident;
 		Receiver::get_Kevent_Handler().delete_event(events[i]);
@@ -129,7 +129,7 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 		}
 		else
 		{
-			Event tmp;
+			event_pair tmp;
 			tmp.first = ident;
 			push_write_event_(tmp);
 		}
@@ -211,8 +211,8 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	t_mode mode;
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 
 	set_mode(mode, line_ss);
 	switch (check_mode_err_type(mode))
@@ -244,18 +244,18 @@ void Parser::parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, 
 	static_cast<void>(to_send);
 	std::string channel;
 	std::string user;
-	Udata ret;
+	event_map ret;
 
 	line_ss >> user;
 	line_ss >> channel;
 	if (user.empty() || channel.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "INVITE");
+		event_pair tmp = Sender::command_empty_argument_461(ident, "INVITE");
 		ret.insert(tmp);
 	}
 	else if (line_ss.rdbuf()->in_avail() != 0)
 	{
-		Event tmp = Sender::command_too_many_argument_461(ident, "INVITE");
+		event_pair tmp = Sender::command_too_many_argument_461(ident, "INVITE");
 		ret.insert(tmp);
 	}
 	else
@@ -272,7 +272,7 @@ void Parser::parser_pass_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	std::string pw;
-	Event ret;
+	event_pair ret;
 
 	line_ss >> pw;
 	ret.first = ident;
@@ -303,12 +303,12 @@ void Parser::parser_nick_(const uintptr_t &ident, std::stringstream &line_ss, st
 {
 	static_cast<void>(to_send);
 	std::string nick;
-	Udata ret;
+	event_map ret;
 
 	line_ss >> nick;
 	if (nick.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "NICK");
+		event_pair tmp = Sender::command_empty_argument_461(ident, "NICK");
 		push_write_event_(tmp);
 		return;
 	}
@@ -321,8 +321,8 @@ void Parser::parser_nick_(const uintptr_t &ident, std::stringstream &line_ss, st
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 유저를 등록   **/
 void Parser::parser_user_(const uintptr_t &ident, std::stringstream &line_ss, std::string &real_name)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 	std::string argument[3];
 	std::string real;
 
@@ -347,7 +347,7 @@ void Parser::parser_user_(const uintptr_t &ident, std::stringstream &line_ss, st
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 PONG 메세지 생성   **/
 void Parser::parser_ping_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
-	Event ret;
+	event_pair ret;
 	std::string msg;
 
 	line_ss >> msg;
@@ -367,7 +367,7 @@ void Parser::parser_ping_(const uintptr_t &ident, std::stringstream &line_ss, st
 /**		@brief 유저 메소드를 불러 종료할 유저에 대한 메세지를 만들고, 채널에 있을 경우 다른 유저들에 대한 메세지도 만듬   **/
 void Parser::parser_quit_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
-	Udata ret;
+	event_map ret;
 	std::string nick, tmp;
 
 	while (line_ss >> tmp)
@@ -388,13 +388,13 @@ void Parser::parser_quit_(const uintptr_t &ident, std::stringstream &line_ss, st
 void Parser::parser_privmsg_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	std::string target, msg;
-	Udata ret;
+	event_map ret;
 
 	line_ss >> target;
 	line_ss >> std::ws;
 	if (target.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "PRIVMSG");
+		event_pair tmp = Sender::command_empty_argument_461(ident, "PRIVMSG");
 		ret.insert(tmp);
 	}
 	else
@@ -412,13 +412,13 @@ void Parser::parser_privmsg_(const uintptr_t &ident, std::stringstream &line_ss,
 void Parser::parser_notice_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	std::string target, msg;
-	Udata ret;
+	event_map ret;
 
 	line_ss >> target;
 	line_ss >> std::ws;
 	if (target.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "NOTICE");
+		event_pair tmp = Sender::command_empty_argument_461(ident, "NOTICE");
 		ret.insert(tmp);
 	}
 	else
@@ -438,7 +438,7 @@ void Parser::parser_join_(const uintptr_t &ident, std::stringstream &line_ss, st
 	static_cast<void>(to_send);
 	std::string chan_name;
 	std::string tmp_password;
-	Udata ret;
+	event_map ret;
 
 	line_ss >> chan_name >> tmp_password;
 	ret = database_.command_join(ident, chan_name, tmp_password);
@@ -450,7 +450,7 @@ void Parser::parser_join_(const uintptr_t &ident, std::stringstream &line_ss, st
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널에서 해당 유저를 나가게 함   **/
 void Parser::parser_part_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
-	Udata ret;
+	event_map ret;
 	std::string chan_name, msg;
 
 	line_ss >> chan_name;
@@ -468,7 +468,7 @@ void Parser::parser_part_(const uintptr_t &ident, std::stringstream &line_ss, st
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널의 토픽을 설정함   **/
 void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
-	Udata ret;
+	event_map ret;
 	User cur_usr = database_.select_user(ident);
 	std::string chan_name, msg;
 
@@ -477,7 +477,7 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 
 	if (chan_name.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "TOPIC");
+		event_pair tmp = Sender::command_empty_argument_461(ident, "TOPIC");
 		ret.insert(tmp);
 	}
 	else
@@ -495,14 +495,14 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널에 있는 특정 대상을 kick함   **/
 void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
-	Udata ret;
-	Event tmp;
+	event_map ret;
+	event_pair tmp;
 	std::string chan_name, target_name, msg;
 
 	line_ss >> chan_name >> target_name >> msg;
 	if (chan_name.empty() || target_name.empty())
 	{
-		Event tmp = Sender::command_empty_argument_461(ident, "KICK");
+		event_pair tmp = Sender::command_empty_argument_461(ident, "KICK");
 		ret.insert(tmp);
 	}
 	else
@@ -516,7 +516,7 @@ void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, st
 
 /**		push_write_event_   **/
 /**		@brief 발생한 한 개의 이벤트를 write 상태로 변경하는 함수   **/
-void Parser::push_write_event_(Event &ret)
+void Parser::push_write_event_(event_pair &ret)
 {
 	if (ret.second.empty())
 	{
@@ -529,9 +529,9 @@ void Parser::push_write_event_(Event &ret)
 
 /**		push_multiple_write_events_   **/
 /**		@brief 발생한 여러 개의 이벤트들을 write 상태로 변경하는 함수   **/
-void Parser::push_multiple_write_events_(Udata &ret, const uintptr_t &ident, const int flag)
+void Parser::push_multiple_write_events_(event_map &ret, const uintptr_t &ident, const int flag)
 {
-	Udata_iter target = ret.find(ident);
+	event_map_iter target = ret.find(ident);
 
 	/**   등록할 이벤트가 없는 경우 해당 이벤트를 read 상태로 만들어 줌   **/
 	if (ret.empty())
@@ -560,7 +560,7 @@ void Parser::push_multiple_write_events_(Udata &ret, const uintptr_t &ident, con
 		}
 	}
 	/**   내가 있으면 나를 제외한 클라이언트들의 이벤트를 등록함   **/
-	for (Udata_iter iter = ret.begin(); iter != ret.end(); ++iter)
+	for (event_map_iter iter = ret.begin(); iter != ret.end(); ++iter)
 	{
 		if (target != ret.end() && iter->first == ident)
 		{
