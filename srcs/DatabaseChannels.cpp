@@ -183,7 +183,7 @@ event_map Database::quit_channel(User &leaver, std::string &chan_name, const std
 	std::vector<User> &users = channel.get_users();
 	const int user_size = users.size();
 	ret = channel.send_all(leaver, leaver, msg, QUIT);
-	channel.delete_user(leaver);
+	channel.delete_from_channel_member(leaver);
 
 	if (user_size == 1)
 		delete_channel(chan_name);
@@ -211,7 +211,7 @@ event_map Database::part_channel(User &leaver, std::string &chan_name, const std
 	std::vector<User> users = channel.get_users();
 	int user_size = users.size();
 	ret = channel.send_all(leaver, leaver, msg, PART);
-	channel.delete_user(leaver);
+	channel.delete_from_channel_member(leaver);
 	if (user_size == 1)
 		delete_channel(chan_name);
 	return ret;
@@ -278,7 +278,7 @@ event_map Database::kick_channel(User &host, User &target, std::string &chan_nam
 		if (channel.is_channel_members(target) == true)
 		{
 			ret = channel.send_all(host, target, msg, KICK);
-			channel.delete_user(target);
+			channel.delete_from_channel_member(target);
 		}
 		else
 		{

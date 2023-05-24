@@ -180,7 +180,7 @@ std::vector<User> &Channel::get_users()
 {
 	return this->channel_members_;
 }
-void Channel::delete_user(User &usr)
+void Channel::delete_from_channel_member(User &usr)
 {
 	if (is_host(usr))
 		unset_host(usr);

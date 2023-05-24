@@ -63,7 +63,7 @@ public:
 	void change_nick(User &usr, std::string new_nick);
 	void add_to_channel_member(User &joiner);
 	void set_channel_name(std::string &chan_name);
-	void delete_user(User &usr);
+	void delete_from_channel_member(User &usr);
 	void invite_user(uintptr_t user_sock);
 	void set_member_limit(int &member_limit);
 	void set_password(Channel &tmp_channel, t_mode_input mode);

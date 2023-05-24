@@ -38,7 +38,7 @@ void Database::delete_error_user(const uintptr_t &ident)
 
 		std::vector<User> &users = cur_channel.get_users();
 		const int user_size = users.size();
-		cur_channel.delete_user(cur_usr);
+		cur_channel.delete_from_channel_member(cur_usr);
 		if (user_size == 1)
 			delete_channel(cur_channel.get_channel_name());
 	}
