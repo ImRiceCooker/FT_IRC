@@ -43,7 +43,6 @@ private:
 	std::string access_;
 	std::string password_;
 	int	member_limit_;
-	int error_;
 
 public:
 	char channel_flag_;
@@ -79,7 +78,5 @@ public:
 
 	std::vector<User> &get_users(void);
 	std::vector<User> sort_users(void);
-	void seterror();
-	int geterror();
 	bool operator==(const Channel &t) const;
 };

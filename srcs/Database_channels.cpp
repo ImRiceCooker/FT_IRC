@@ -9,6 +9,11 @@
 //
 #include <bitset>
 
+std::vector<Channel> &Database::get_channels()
+{
+	return channel_list_;
+}
+
 bool Database::is_channel(std::string &chan_name)
 {
 	std::vector<Channel>::iterator it;

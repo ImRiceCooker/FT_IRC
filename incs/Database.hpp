@@ -30,7 +30,7 @@ public:
 	Udata part_channel(User &leaver, std::string &chan_name, const std::string &msg_);
 	Udata quit_channel(User &leaver, std::string &chan_name, const std::string &msg_);
 	Udata nick_channel(User &who, std::string &new_nick);
-	std::vector<Channel> &get_channels() { return channel_list_; };
+	std::vector<Channel> &get_channels();
 
 	void delete_error_user(const uintptr_t &ident);
 	Event command_pass(const uintptr_t &ident);
@@ -64,10 +64,6 @@ public:
 	User &select_user(const uintptr_t &ident);
 	User &select_user(const std::string &nickname);
 	void delete_user(User &leaver);
-	bool is_duplicate_ident(const uintptr_t &ident);
-	bool is_duplicate_nick(std::string &nick_name);
-	bool does_has_nickname(const uintptr_t &ident);
-	bool does_has_username(const uintptr_t &ident);
 	bool is_valid_nick(std::string &new_nick);
 
 	Event bot_privmsg(User &cur_usr, const std::string &msg);
