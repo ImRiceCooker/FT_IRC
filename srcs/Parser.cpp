@@ -140,7 +140,7 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 /**		@brief MODE 명령어를 파싱하는 함수   **/
 /**		@brief mode로 들어오는 command line의 인자들을 각각 파싱한 후, 상황에 따른 에러메세지 반환   **/
 
-int check_mode_err_type(t_mode &mode)
+int check_mode_err_type(t_mode_input &mode)
 {
 	if (mode.target.length() == 0 || mode.option.length() == 0)
 		return CMD_EMPTY;
@@ -155,7 +155,7 @@ int check_mode_err_type(t_mode &mode)
 	return -1;
 }
 
-void set_mode_type(t_mode &mode)
+void set_mode_input_type(t_mode_input &mode)
 {
 	mode.mode_type = MODE_TYPE_ERR;
 	if (mode.option.length() != 2)
@@ -193,10 +193,10 @@ void set_mode_type(t_mode &mode)
 	return;
 }
 
-void set_mode(t_mode &mode, std::stringstream &line)
+void set_mode_input(t_mode_input &mode, std::stringstream &line)
 {
 	line >> mode.target >> mode.option >> mode.param;
-	set_mode_type(mode);
+	set_mode_input_type(mode);
 }
 
 char get_wrong_mode_option(std::string wrong_mode)
@@ -210,11 +210,11 @@ char get_wrong_mode_option(std::string wrong_mode)
 void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
-	t_mode mode;
+	t_mode_input mode;
 	event_map ret;
 	event_pair tmp;
 
-	set_mode(mode, line_ss);
+	set_mode_input(mode, line_ss);
 	switch (check_mode_err_type(mode))
 	{
 	case CMD_EMPTY:

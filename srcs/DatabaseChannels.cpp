@@ -340,7 +340,7 @@ event_map Database::set_topic(User &sender, std::string &chan_name, std::string 
 	return ret;
 }
 
-event_map Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_i_on(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -360,7 +360,7 @@ event_map Database::command_mode_i_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_i_off(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -380,7 +380,7 @@ event_map Database::command_mode_i_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -400,7 +400,7 @@ event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_k_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_k_off(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -420,7 +420,7 @@ event_map Database::command_mode_k_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_o_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_o_on(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -456,7 +456,7 @@ event_map Database::command_mode_o_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_o_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_o_off(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -492,7 +492,7 @@ event_map Database::command_mode_o_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_t_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_t_on(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -512,7 +512,7 @@ event_map Database::command_mode_t_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_t_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_t_off(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -532,7 +532,7 @@ event_map Database::command_mode_t_off(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_l_on(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_l_on(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;
@@ -572,7 +572,7 @@ event_map Database::command_mode_l_on(const uintptr_t &ident, t_mode &mode)
 	return ret;
 }
 
-event_map Database::command_mode_l_off(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode_l_off(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp;

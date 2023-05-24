@@ -66,10 +66,10 @@ public:
 	void delete_user(User &usr);
 	void invite_user(uintptr_t user_sock);
 	void set_member_limit(int &member_limit);
-	void set_password(Channel &tmp_channel, t_mode mode);
+	void set_password(Channel &tmp_channel, t_mode_input mode);
 
 	std::string get_user_list_str(void);
-	void set_flag(Channel &channel, t_mode &mode);
+	void set_flag(Channel &channel, t_mode_input &mode);
 	bool has_invitation(const uintptr_t &usr);
 	bool check_password(Channel &tmp_channel, const std::string &tmp_password);
 	event_map send_all(User &sender, User &target, std::string msg, int remocon);

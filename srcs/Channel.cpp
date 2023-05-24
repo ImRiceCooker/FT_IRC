@@ -261,7 +261,7 @@ void Channel::set_member_limit(int &member_limit)
 	this->member_limit_ = member_limit;
 }
 
-void Channel::set_flag(Channel &channel, t_mode &mode)
+void Channel::set_flag(Channel &channel, t_mode_input &mode)
 {
 	if (mode.mode_type == PLUS_I && !(channel.channel_flag_ & F_INVITE_ONLY))
 	{
@@ -315,7 +315,7 @@ void Channel::invite_user(uintptr_t user)
 	invitations_.push_back(user);
 }
 
-void Channel::set_password(Channel &tmp_channel, t_mode mode)
+void Channel::set_password(Channel &tmp_channel, t_mode_input mode)
 {
 	tmp_channel.key_ = mode.param;
 }

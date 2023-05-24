@@ -15,20 +15,20 @@ typedef enum e_mode_type
 	PLUS_K,
 	MINUS_K,
 	MODE_TYPE_ERR
-}	t_mode_type;
+}	t_mode_input_type;
 
 typedef enum e_mode_err_type
 {
 	CMD_EMPTY,
 	CMD_TOO_MANY,
 	WRONG_MSG
-}	t_mode_err_type;
+}	t_mode_input_err_type;
 
 
-typedef struct s_mode
+typedef struct s_mode_input
 {
-	t_mode_type mode_type;
+	t_mode_input_type mode_type;
 	std::string target;
 	std::string option;
 	std::string param;
-} t_mode;
+} t_mode_input_input;

@@ -6,7 +6,7 @@
 
 #include "ServerStatus.hpp"
 
-event_map (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode &mode) =
+event_map (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode_input &mode) =
 		{
 				&Database::command_mode_i_on,
 				&Database::command_mode_i_off,
@@ -160,7 +160,7 @@ bool Database::is_valid_nick(std::string &new_nick)
 	return true;
 }
 
-event_map Database::command_mode(const uintptr_t &ident, t_mode &mode)
+event_map Database::command_mode(const uintptr_t &ident, t_mode_input &mode)
 {
 	event_map ret;
 	event_pair tmp = valid_user_checker_(ident, "MODE");
