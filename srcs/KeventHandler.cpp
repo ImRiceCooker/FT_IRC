@@ -1,6 +1,6 @@
 #include "KeventHandler.hpp"
 
-void exit_with_perror(const std::string& msg);
+void exit_with_perror(const std::string &msg);
 
 /**		keventHandler   **/
 /**		@brief kqueue를 새로 등록   **/
@@ -21,9 +21,9 @@ KeventHandler::~KeventHandler()
 	}
 }
 
-void	KeventHandler::kevent_init_(uintptr_t ident, int16_t filter, uint16_t flags, uint32_t fflags, int64_t data, void *udata)
+void KeventHandler::kevent_init_(uintptr_t ident, int16_t filter, uint16_t flags, uint32_t fflags, int64_t data, void *udata)
 {
-	struct kevent	event = {};
+	struct kevent event = {};
 
 	EV_SET(&event, ident, filter, flags, fflags, data, udata);
 	change_list_.push_back(event);
@@ -32,14 +32,14 @@ void	KeventHandler::kevent_init_(uintptr_t ident, int16_t filter, uint16_t flags
 /**		set_monitor   **/
 /**		@brief 새로 발생한 이벤트들을 kevent 벡터에 담아주는 함수   **/
 /**		@param 이벤트 등록을 계속할 지 판별하는 flag   **/
-std::vector<struct kevent>	KeventHandler::set_monitor(const bool& end_signal)//TODO: is_end_signal로 바꾸기
+std::vector<struct kevent> KeventHandler::set_monitor(const bool &end_signal) // TODO: is_end_signal로 바꾸기
 {
-	std::vector<struct kevent>	res;
+	std::vector<struct kevent> res;
 
 	if (end_signal)
 		return res;
-	struct kevent	event_list[10];
-	int	event_num(-1);
+	struct kevent event_list[10];
+	int event_num(-1);
 
 	while ((event_num < 0))
 	{
@@ -53,41 +53,41 @@ std::vector<struct kevent>	KeventHandler::set_monitor(const bool& end_signal)//T
 	return (res);
 }
 
-void	KeventHandler::set_server(uintptr_t ident)
+void KeventHandler::set_server(uintptr_t ident)
 {
 	kevent_init_(ident, EVFILT_READ, EV_ADD, 0, 0, NULL);
 }
 
-void	KeventHandler::set_read(uintptr_t ident)
+void KeventHandler::set_read(uintptr_t ident)
 {
 	kevent_init_(ident, EVFILT_READ, EV_ADD | EV_ONESHOT, 0, 0, NULL);
 }
 
-void	KeventHandler::set_write(uintptr_t ident)
+void KeventHandler::set_write(uintptr_t ident)
 {
 	kevent_init_(ident, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 }
 
 /**		set_exit   **/
 /**		@brief set_write와 유사하나 종료 신호를 보내기 위한 더미 udata를 생성하여 이벤트를 등록   **/
-void	KeventHandler::set_exit(uintptr_t ident)
+void KeventHandler::set_exit(uintptr_t ident)
 {
-	char	k(0);
+	char k(0);
 
 	kevent_init_(ident, EVFILT_WRITE, EV_ADD, 0, 0, &k);
 }
 
-void	KeventHandler::delete_event(const struct kevent &event)
+void KeventHandler::delete_event(const struct kevent &event)
 {
-	struct kevent	tmp;
+	struct kevent tmp;
 
 	EV_SET(&tmp, event.ident, event.filter, EV_DELETE, 0, 0, 0);
 	kevent(kq_, &tmp, 1, NULL, 0, NULL);
 }
 
-void	KeventHandler::delete_server(uintptr_t serv_sock)
+void KeventHandler::delete_server(uintptr_t serv_sock)
 {
-	struct kevent	tmp;
+	struct kevent tmp;
 
 	EV_SET(&tmp, serv_sock, EVFILT_READ, EV_DELETE, 0, 0, 0);
 	kevent(kq_, &tmp, 1, NULL, 0, NULL);

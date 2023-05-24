@@ -31,4 +31,4 @@ typedef struct s_mode_input
 	std::string target;
 	std::string option;
 	std::string param;
-} t_mode_input_input;
+} t_mode_input;

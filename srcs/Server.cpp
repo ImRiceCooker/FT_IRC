@@ -1,11 +1,11 @@
 #include "Server.hpp"
 
-void exit_with_perror(const std::string& msg);
+void exit_with_perror(const std::string &msg);
 
-Server*		Server::server_ptr_ = NULL;
-Receiver*	Server::receiver_ptr_ = NULL;
+Server *Server::server_ptr_ = NULL;
+Receiver *Server::receiver_ptr_ = NULL;
 
-static bool	_port_checker(const std::string &str)
+static bool _port_checker(const std::string &str)
 {
 	if (str.empty())
 	{
@@ -35,12 +35,12 @@ static bool _pw_checker(const std::string &str)
 	return (false);
 }
 
-void	Server::server_sigint(void)
+void Server::server_sigint(void)
 {
 	receiver_ptr_->stop_receiver();
 }
 
-Server::Server(const std::string& port, const std::string& password)
+Server::Server(const std::string &port, const std::string &password)
 {
 	if (_port_checker(port) || _pw_checker(password))
 	{
@@ -54,14 +54,14 @@ Server::Server(const std::string& port, const std::string& password)
 	password_ = password;
 }
 
-event_map&	Server::get_server_udata(void)
+event_map &Server::get_server_udata(void)
 {
 	return serv_udata_;
 }
 
 void Server::start()
 {
-	Receiver	receiver(get_server_udata(), port_, password_);
+	Receiver receiver(get_server_udata(), port_, password_);
 	Server::receiver_ptr_ = &receiver;
 
 	receiver.start();
