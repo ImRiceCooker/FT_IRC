@@ -50,12 +50,6 @@ public:
 	static Event mode_syntax_error(const User &sender, const std::string &target, const std::string &mode_option, const std::string &description, const std::string &err_syntax);
 	static Event mode_syntax_error_l_negative_num(const User &sender, const std::string &target, const std::string &mode_option, const std::string &mode_param);
 
-	//@todo: remove who
-	static Event who_joiner_352_message(const User &sender, const std::string channel);
-	static std::string who_352_target_message(const User &sender, const std::string channel, const std::string target);
-	static std::string who_315_message(const User &sender, const std::string channel);
-	//
-
 	static std::string join_353_message(const User &sender, const std::string &chan_name, const std::string &chan_status, const std::string &chan_user_list);
 	static std::string join_366_message(const User &sender, const std::string &chan_name);
 	static Event mode_message(const User &sender, const User &receiver, const std::string &channel, const std::string &mode_type);

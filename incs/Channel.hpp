@@ -17,10 +17,8 @@ enum e_send_switch
 	QUIT,
 	NOTICE,
 	TOPIC,
-	WALL,
 	NICK,
 	MODE,
-	WHO,
 	INVITE
 };
 

@@ -108,20 +108,11 @@ Udata Channel::send_all(User &sender, User &target, std::string msg, int remocon
 				packet = Sender::notice_channel_message(sender, *it, msg, this->get_name());
 			}
 			break;
-		// case WALL:
-		// 	if (sender == *it)
-		// 	{
-		// 		continue;
-		// 	}
-		// 	packet = Sender::wall_message(sender, this->get_host(), this->get_name(), msg);
 		case TOPIC:
 			packet = Sender::topic_message(sender, *it, this->get_name(), msg);
 			break;
 		case NICK:
 			packet = Sender::nick_well_message(sender, *it, msg);
-			break;
-		case WHO:
-			packet = Sender::who_joiner_352_message(sender, this->get_name());
 			break;
 		case MODE:
 			packet = Sender::mode_message(sender, *it, this->get_name(), msg);
@@ -323,7 +314,7 @@ void Channel::set_flag(Channel &channel, t_mode &mode)
 		std::cout << std::bitset<3>(channel.channel_flag_) << std::endl;
 	}
 	else
-		return ;
+		return;
 }
 
 bool Channel::has_invitation(const uintptr_t &usr)

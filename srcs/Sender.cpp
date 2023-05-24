@@ -230,30 +230,6 @@ std::string Sender::join_366_message(const User &sender, const std::string &chan
 	return ret + "\r\n";
 }
 
-/** @brief 352 join 할때 joiner(조인 하는 자신)에게도 보내는 패킷 메세자 **/
-Event Sender::who_joiner_352_message(const User &sender, const std::string channel)
-{
-	Event ret;
-
-	const std::string &who_message = ":" + Sender::server_name_ + " 352 " + sender.nickname_ + " " + channel + " " + sender.username_ + " " + sender.mode_ + " " + sender.unused_ + " " + sender.nickname_ + " H :0 root";
-	ret = std::make_pair(sender.client_sock_, who_message + "\r\n");
-	return ret;
-}
-
-/** @brief 352 who_joiner_352_message 함수 호출 직후에 같이 보내지는 패킷 메세지 **/
-std::string Sender::who_352_target_message(const User &sender, const std::string channel, const std::string target)
-{
-	const std::string &ret = ":" + Sender::server_name_ + " 352 " + sender.nickname_ + " " + channel + " " + sender.username_ + " " + sender.mode_ + " " + sender.unused_ + " " + target + " H :0 root";
-	return ret;
-}
-
-/** @brief 315 who_352_target_message 함수 호출 직후에 같이 보내지는 패킷 메세지 **/
-std::string Sender::who_315_message(const User &sender, const std::string channel)
-{
-	const std::string &ret = ":" + Sender::server_name_ + " 315 " + sender.nickname_ + " " + channel + " :End of /WHO list";
-	return ret;
-}
-
 /****************************       <PART>       ****************************/
 
 /** @brief part 할 때 leaver 외에 다른 클라이언트들에게도 보내는 패킷 메세지 **/
@@ -346,7 +322,7 @@ Event Sender::privmsg_no_user_error_message(const User &sender, const std::strin
 	return (ret);
 }
 
-/****************************       <NOTICE && WALL>       ****************************/
+/****************************       <NOTICE>       ****************************/
 
 /** @brief target 클라이언트에게 notice 명령어를 사용할 때 target 클라이언트에게 보내지는 패킷 메세지 **/
 Event Sender::notice_p2p_message(const User &sender, const User &target, const std::string &msg)
@@ -380,17 +356,6 @@ Event Sender::notice_no_nick_message(const User &sender, const User &receiver)
 	ret = std::make_pair(sender.client_sock_, privmsg + "\r\n");
 	return (ret);
 }
-
-/** @brief  wall 할 때 메세지를 받는 receiver 클라이언트들에게 보내지는 패킷 메세지 **/
-// Event Sender::wall_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg)
-// {
-// 	Event ret;
-
-// 	const std::string &privmsg = ":" + sender.nickname_ + "!" + sender.username_ + "@" + receiver.unused_ +
-// 															 " NOTICE @" + channel + " :" + msg;
-// 	ret = std::make_pair(receiver.client_sock_, privmsg + "\r\n");
-// 	return (ret);
-// }
 
 /****************************       <TOPIC>       ****************************/
 

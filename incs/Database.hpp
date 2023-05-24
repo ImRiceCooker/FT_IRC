@@ -29,7 +29,7 @@ public:
 	Udata join_channel(User &joiner, const std::string &chan_name_, const std::string &tmp_password);
 	Udata part_channel(User &leaver, std::string &chan_name, const std::string &msg_);
 	Udata quit_channel(User &leaver, std::string &chan_name, const std::string &msg_);
-	Udata nick_channel(User &who, std::string &new_nick);
+	Udata nick_channel(User &nicker, std::string &send_msg);
 	std::vector<Channel> &get_channels();
 
 	void delete_error_user(const uintptr_t &ident);
