@@ -47,7 +47,7 @@ Channel &Database::create_channel(User &joiner, std::string &chan_name, std::str
 	Channel tmp;
 
 	tmp.set_channel_name(chan_name);
-	tmp.add_user(joiner);
+	tmp.add_to_channel_member(joiner);
 	tmp.set_host(joiner);
 	tmp.set_access(chan_access);
 	channel_list_.push_back(tmp);
@@ -152,7 +152,7 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 	{
 		std::cout << "bitset: " << std::bitset<3>(cur_channel.channel_flag_) << "\n";
 		std::cout << ", has invitation: " << cur_channel.has_invitation(joiner.client_sock_) << "\n";
-		cur_channel.add_user(joiner);
+		cur_channel.add_to_channel_member(joiner);
 		const std::string &chan_user_list(cur_channel.get_user_list_str());
 		ret = cur_channel.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
 		event_map_iter it = ret.find(joiner.client_sock_);

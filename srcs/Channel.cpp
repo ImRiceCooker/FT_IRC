@@ -161,7 +161,7 @@ bool Channel::is_channel_members(User &usr)
 	return 0;
 }
 
-void Channel::add_user(User &joiner)
+void Channel::add_to_channel_member(User &joiner)
 {
 	channel_members_.push_back(joiner);
 }

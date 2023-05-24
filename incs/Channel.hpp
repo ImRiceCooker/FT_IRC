@@ -61,7 +61,7 @@ public:
 	void set_topic(std::string &topic);
 	bool is_channel_members(User &usr);
 	void change_nick(User &usr, std::string new_nick);
-	void add_user(User &joiner);
+	void add_to_channel_member(User &joiner);
 	void set_channel_name(std::string &chan_name);
 	void delete_user(User &usr);
 	void invite_user(uintptr_t user_sock);
