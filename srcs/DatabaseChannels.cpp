@@ -126,12 +126,12 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 	}
 	if (is_channel(chan_name) == false)
 	{
-		Channel &chan = create_channel(joiner, chan_name, "=");
+		Channel &channel = create_channel(joiner, chan_name, "=");
 		tmp = Sender::join_message(joiner, joiner, chan_name);
 		ret.insert(tmp);
 		event_map_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, chan.get_channel_name(), chan.get_access(), "@" + joiner.nickname_);
-		it->second += Sender::join_366_message(joiner, chan.get_channel_name());
+		it->second += Sender::join_353_message(joiner, channel.get_channel_name(), channel.get_access(), "@" + joiner.nickname_);
+		it->second += Sender::join_366_message(joiner, channel.get_channel_name());
 	}
 	else if ((cur_chan.channel_flag_ & F_INVITE_ONLY) && !cur_chan.has_invitation(joiner.client_sock_))
 	{
@@ -174,16 +174,16 @@ event_map Database::quit_channel(User &leaver, std::string &chan_name, const std
 		ret.insert(tmp);
 		return ret;
 	}
-	Channel &chan = select_channel(chan_name);
-	if (chan.is_channel_members(leaver) == 0)
+	Channel &channel = select_channel(chan_name);
+	if (channel.is_channel_members(leaver) == 0)
 	{
 		tmp = Sender::no_user_message(leaver, leaver.nickname_);
 		return ret;
 	}
-	std::vector<User> &users = chan.get_users();
+	std::vector<User> &users = channel.get_users();
 	const int user_size = users.size();
-	ret = chan.send_all(leaver, leaver, msg, QUIT);
-	chan.delete_user(leaver);
+	ret = channel.send_all(leaver, leaver, msg, QUIT);
+	channel.delete_user(leaver);
 
 	if (user_size == 1)
 		delete_channel(chan_name);
@@ -202,16 +202,16 @@ event_map Database::part_channel(User &leaver, std::string &chan_name, const std
 		ret.insert(tmp);
 		return ret;
 	}
-	Channel &chan = select_channel(chan_name);
-	if (chan.is_channel_members(leaver) == 0)
+	Channel &channel = select_channel(chan_name);
+	if (channel.is_channel_members(leaver) == 0)
 	{
 		tmp = Sender::no_user_message(leaver, leaver.nickname_);
 		return ret;
 	}
-	std::vector<User> users = chan.get_users();
+	std::vector<User> users = channel.get_users();
 	int user_size = users.size();
-	ret = chan.send_all(leaver, leaver, msg, PART);
-	chan.delete_user(leaver);
+	ret = channel.send_all(leaver, leaver, msg, PART);
+	channel.delete_user(leaver);
 	if (user_size == 1)
 		delete_channel(chan_name);
 	return ret;
