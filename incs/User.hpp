@@ -21,5 +21,4 @@ struct User
 	bool	operator!=(const User& obj) const { return this->client_sock_ != obj.client_sock_; };
 	bool	operator>(const User& obj) const { return this->client_sock_ > obj.client_sock_; };
 	bool	operator<(const User& obj) const { return this->client_sock_ < obj.client_sock_; };
-	bool	is_user_has_nick(void) const;
 };
