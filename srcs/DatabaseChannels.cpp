@@ -113,7 +113,7 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 	event_map ret;
 	event_pair tmp;
 	std::string chan_name(tmp_chan_name);
-	Channel &cur_chan = select_channel(tmp_chan_name);
+	Channel &cur_channel = select_channel(tmp_chan_name);
 
 	if (is_user_in_channel(joiner))
 	{
@@ -133,31 +133,31 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 		it->second += Sender::join_353_message(joiner, channel.get_channel_name(), channel.get_access(), "@" + joiner.nickname_);
 		it->second += Sender::join_366_message(joiner, channel.get_channel_name());
 	}
-	else if ((cur_chan.channel_flag_ & F_INVITE_ONLY) && !cur_chan.has_invitation(joiner.client_sock_))
+	else if ((cur_channel.channel_flag_ & F_INVITE_ONLY) && !cur_channel.has_invitation(joiner.client_sock_))
 	{
 		tmp = Sender::cannot_join_message(joiner, chan_name); // cannot_join_messeage_invite
 		ret.insert(tmp);
 	}
-	else if (!(cur_chan.channel_flag_ & F_INVITE_ONLY) && (cur_chan.channel_flag_ & F_KEY_NEEDED) && !cur_chan.check_password(cur_chan, tmp_password))
+	else if (!(cur_channel.channel_flag_ & F_INVITE_ONLY) && (cur_channel.channel_flag_ & F_KEY_NEEDED) && !cur_channel.check_password(cur_channel, tmp_password))
 	{
 		tmp = Sender::cannot_join_message_key(joiner, chan_name); // connot_join_message_key
 		ret.insert(tmp);
 	}
-	else if (!(cur_chan.channel_flag_ & F_INVITE_ONLY) && (cur_chan.channel_flag_ & F_LIMITED_MEMBERSHIP) && static_cast<int>(cur_chan.get_users().size()) >= cur_chan.get_member_limit())
+	else if (!(cur_channel.channel_flag_ & F_INVITE_ONLY) && (cur_channel.channel_flag_ & F_LIMITED_MEMBERSHIP) && static_cast<int>(cur_channel.get_users().size()) >= cur_channel.get_member_limit())
 	{
 		tmp = Sender::cannot_join_message_limit(joiner, chan_name);
 		ret.insert(tmp);
 	}
 	else
 	{
-		std::cout << "bitset: " << std::bitset<3>(cur_chan.channel_flag_) << "\n";
-		std::cout << ", has invitation: " << cur_chan.has_invitation(joiner.client_sock_) << "\n";
-		cur_chan.add_user(joiner);
-		const std::string &chan_user_list(cur_chan.get_user_list_str());
-		ret = cur_chan.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
+		std::cout << "bitset: " << std::bitset<3>(cur_channel.channel_flag_) << "\n";
+		std::cout << ", has invitation: " << cur_channel.has_invitation(joiner.client_sock_) << "\n";
+		cur_channel.add_user(joiner);
+		const std::string &chan_user_list(cur_channel.get_user_list_str());
+		ret = cur_channel.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
 		event_map_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, cur_chan.get_channel_name(), cur_chan.get_access(), chan_user_list);
-		it->second += Sender::join_366_message(joiner, cur_chan.get_channel_name());
+		it->second += Sender::join_353_message(joiner, cur_channel.get_channel_name(), cur_channel.get_access(), chan_user_list);
+		it->second += Sender::join_366_message(joiner, cur_channel.get_channel_name());
 	}
 	return ret;
 }

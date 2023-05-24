@@ -473,7 +473,7 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 	std::string chan_name, msg;
 
 	line_ss >> chan_name;
-	Channel cur_chan = database_.select_channel(chan_name);
+	Channel cur_channel = database_.select_channel(chan_name);
 
 	if (chan_name.empty())
 	{

@@ -34,13 +34,13 @@ void Database::delete_error_user(const uintptr_t &ident)
 	User &cur_usr = select_user(ident);
 	if (is_user_in_channel(cur_usr))
 	{
-		Channel &cur_chan = select_channel(cur_usr);
+		Channel &cur_channel = select_channel(cur_usr);
 
-		std::vector<User> &users = cur_chan.get_users();
+		std::vector<User> &users = cur_channel.get_users();
 		const int user_size = users.size();
-		cur_chan.delete_user(cur_usr);
+		cur_channel.delete_user(cur_usr);
 		if (user_size == 1)
-			delete_channel(cur_chan.get_channel_name());
+			delete_channel(cur_channel.get_channel_name());
 	}
 	user_list_.erase(remove(user_list_.begin(), user_list_.end(), cur_usr), user_list_.end());
 }
@@ -431,8 +431,8 @@ event_map Database::command_quit(const uintptr_t &ident, const std::string &msg)
 
 		if (is_user_in_channel(cur_usr))
 		{
-			Channel &cur_chan = select_channel(cur_usr);
-			ret = quit_channel(cur_usr, cur_chan.get_channel_name(), msg);
+			Channel &cur_channel = select_channel(cur_usr);
+			ret = quit_channel(cur_usr, cur_channel.get_channel_name(), msg);
 		}
 		else
 		{
