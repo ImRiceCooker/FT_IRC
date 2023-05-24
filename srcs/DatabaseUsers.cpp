@@ -4,20 +4,20 @@
 #include <string>
 #include <sys/_types/_ct_rune_t.h>
 
-#include "debug.hpp"
+#include "ServerStatus.hpp"
 
 Udata (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode &mode) =
-{
-	&Database::command_mode_i_on,
-	&Database::command_mode_i_off,
-	&Database::command_mode_t_on,
-	&Database::command_mode_t_off,
-	&Database::command_mode_l_on,
-	&Database::command_mode_l_off,
-	&Database::command_mode_o_on,
-	&Database::command_mode_o_off,
-	&Database::command_mode_k_on,
-	&Database::command_mode_k_off,
+		{
+				&Database::command_mode_i_on,
+				&Database::command_mode_i_off,
+				&Database::command_mode_t_on,
+				&Database::command_mode_t_off,
+				&Database::command_mode_l_on,
+				&Database::command_mode_l_off,
+				&Database::command_mode_o_on,
+				&Database::command_mode_o_off,
+				&Database::command_mode_k_on,
+				&Database::command_mode_k_off,
 };
 
 std::vector<User> &Database::get_user_list(void)
@@ -230,7 +230,7 @@ Event Database::command_pass(const uintptr_t &ident)
 		tmp_user.flag_ |= F_PASS;
 		user_list_.push_back(tmp_user);
 	}
-	debug::showUsers(user_list_);
+	ServerStatus::print_users(user_list_);
 	return tmp;
 }
 
@@ -308,7 +308,7 @@ Udata Database::command_nick(const uintptr_t &ident, std::string &new_nick)
 		cur_usr.nickname_ = new_nick;
 		ret.insert(tmp);
 	}
-	debug::showUsers(user_list_);
+	ServerStatus::print_users(user_list_);
 	return ret;
 }
 
@@ -332,7 +332,7 @@ Event Database::command_user(const uintptr_t &ident, const std::string &username
 	}
 	else
 		ret = Sender::user_302_message(cur_usr);
-	debug::showUsers(user_list_);
+	ServerStatus::print_users(user_list_);
 	return ret;
 }
 

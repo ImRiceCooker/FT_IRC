@@ -1,8 +1,9 @@
 #include "Parser.hpp"
 #include "Receiver.hpp"
 #include "Udata.hpp"
-#include "color.hpp"
+#include "Color.hpp"
 #include "Database.hpp"
+#include "ServerStatus.hpp"
 
 #include <sstream>
 #include <string>
@@ -26,14 +27,6 @@ const std::string Parser::command_toupper(const char *command)
 		ret += std::toupper(static_cast<int>(command[i]));
 	}
 	return ret;
-}
-
-void Parser::print_title(const std::string &title)
-{
-	std::cout	<< BOLDBLUE
-				<< ">> " << title << " <<"
-				<< std::endl
-				<< RESET << std::endl;
 }
 
 Parser::Parser(Udata &serv_udata, const std::string &password)
@@ -108,7 +101,7 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 
 		line_ss >> command_type;
 		command_type = command_toupper(command_type.c_str());
-		print_title(command_type);
+		ServerStatus::print_input(command_type);
 		for (; i < N_COMMAND && (command_type != Parser::commands[i]); ++i)
 		{
 		}
@@ -166,7 +159,7 @@ void set_mode_type(t_mode &mode)
 {
 	mode.mode_type = MODE_TYPE_ERR;
 	if (mode.option.length() != 2)
-		return ;
+		return;
 
 	char sign = mode.option.at(0);
 	char option = mode.option.at(1);
@@ -197,7 +190,7 @@ void set_mode_type(t_mode &mode)
 		if (option == 'k')
 			mode.mode_type = MINUS_K;
 	}
-	return ;
+	return;
 }
 
 void set_mode(t_mode &mode, std::stringstream &line)

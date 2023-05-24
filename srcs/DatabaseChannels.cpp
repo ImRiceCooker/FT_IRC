@@ -2,7 +2,7 @@
 #include "Database.hpp"
 #include "Udata.hpp"
 #include "User.hpp"
-#include "color.hpp"
+#include "Color.hpp"
 #include <sys/_types/_size_t.h>
 #include <iostream>
 #include <sstream>

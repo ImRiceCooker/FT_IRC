@@ -2,7 +2,7 @@
 
 #include "Sender.hpp"
 #include "Udata.hpp"
-#include "Typemode.hpp"
+#include "TypeMode.hpp"
 
 #include <vector>
 #include <algorithm>

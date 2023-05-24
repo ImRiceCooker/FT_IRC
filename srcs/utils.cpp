@@ -1,6 +1,6 @@
 #include <string>
 #include <iostream>
-#include "color.hpp"
+#include "Color.hpp"
 
 void exit_with_perror(const std::string& msg)
 {
