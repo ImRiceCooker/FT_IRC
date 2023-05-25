@@ -64,6 +64,7 @@ void Receiver::start()
 {
 	while (true)
 	{
+		// std::cout << "tmpsdfadf" << std::endl;
 		std::vector<struct kevent> events = kq_.set_monitor(false);
 		for (std::size_t i(0); i < events.size(); ++i)
 		{
