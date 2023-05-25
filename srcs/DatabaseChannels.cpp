@@ -379,6 +379,13 @@ event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode_input &mode
 {
 	event_map ret;
 	event_pair tmp;
+	
+	if (mode.param.length() == 0)
+	{
+		tmp = Sender::mode_syntax_error(select_user(ident), mode.target, mode.option, "key", "key");
+		ret.insert(tmp);
+		return ret;
+	}
 	Channel &tmp_channel = select_channel(mode.target);
 	User &host = select_user(ident);
 	if (tmp_channel.is_host(host))
