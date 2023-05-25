@@ -6,7 +6,7 @@
 
 #include "ServerStatus.hpp"
 
-event_map (Database::*Database::run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode_input &mode) =
+event_map (Database::*Database::mode_handlers[N_MODE_TYPE])(const uintptr_t &ident, t_mode_input &mode) =
 		{
 				&Database::command_mode_i_on,
 				&Database::command_mode_i_off,
@@ -176,7 +176,7 @@ event_map Database::command_mode(const uintptr_t &ident, t_mode_input &mode)
 		return ret;
 	}
 	else
-		ret = (this->*run_mode_func_ptr[mode.mode_type])(ident, mode);
+		ret = (this->*mode_handlers[mode.mode_type])(ident, mode);
 	return ret;
 }
 

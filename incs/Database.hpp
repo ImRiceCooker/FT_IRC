@@ -57,7 +57,7 @@ public:
 	event_map command_mode_t_off(const uintptr_t &ident, t_mode_input &mode);
 	event_map command_mode_l_on(const uintptr_t &ident, t_mode_input &mode);
 	event_map command_mode_l_off(const uintptr_t &ident, t_mode_input &mode);
-	static event_map (Database::*run_mode_func_ptr[N_MODE_TYPE])(const uintptr_t &ident, t_mode_input &mode);
+	static event_map (Database::*mode_handlers[N_MODE_TYPE])(const uintptr_t &ident, t_mode_input &mode);
 
 	bool is_user(const uintptr_t &ident);
 	bool is_user(const std::string &nickname);
