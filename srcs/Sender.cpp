@@ -371,6 +371,15 @@ event_pair Sender::topic_message(const User &sender, const User &receiver, const
 }
 
 /****************************       <NO ** message>       ****************************/
+event_pair Sender::not_on_the_channel_message(const User &sender, const std::string &channel)
+{
+	event_pair ret;
+
+	const std::string &no_msg = ":" + Sender::server_name_ + " 442 " + sender.nickname_ + " " + channel +
+															 " :You’re not on that channel!";
+	ret = std::make_pair(sender.client_sock_, no_msg + "\r\n");
+	return (ret);
+}
 
 /** @brief 403 - 존재하지 않는 channel을 parameter로 했을 때 발생하는 패킷 메세지 **/
 event_pair Sender::no_channel_message(const User &sender, const std::string &channel)
@@ -535,7 +544,7 @@ event_pair Sender::invitee_message(const User &sender, const User &receiver, con
 {
 	event_pair ret;
 
-	const std::string &inviting_message = ":" + server_name_ + " NOTICE " + channel + " :*** " + sender.nickname_ + " invited " + receiver.username_ + " into the channel ";
+	const std::string &inviting_message = ":" + server_name_ + " NOTICE " + channel + " :*** " + sender.nickname_ + " invited " + receiver.nickname_ + " into the channel ";
 	ret = std::make_pair(receiver.client_sock_, inviting_message + "\r\n");
 	return ret;
 }
