@@ -6,8 +6,6 @@
 #include <sys/_types/_size_t.h>
 #include <iostream>
 #include <sstream>
-//
-#include <bitset>
 
 std::vector<Channel> &Database::get_channels()
 {
@@ -149,8 +147,6 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 	}
 	else
 	{
-		std::cout << "bitset: " << std::bitset<3>(cur_channel.channel_flag_) << "\n";
-		std::cout << ", has invitation: " << cur_channel.has_invitation(joiner.client_sock_) << "\n";
 		cur_channel.add_to_channel_member(joiner);
 		const std::string &chan_user_list(cur_channel.get_user_list_str());
 		ret = cur_channel.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
