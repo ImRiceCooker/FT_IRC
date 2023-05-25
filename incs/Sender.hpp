@@ -43,6 +43,8 @@ public:
 	static event_pair notice_channel_message(const User &sender, const User &receiver, const std::string &channel, const std::string &msg);
 	static event_pair notice_no_nick_message(const User &sender, const User &receiver);
 	static event_pair no_channel_message(const User &sender, const std::string &channel);
+	static event_pair not_on_the_channel_message(const User &sender, const std::string &channel);
+
 	static event_pair no_user_message(const User &sender, const std::string &target);
 	static event_pair mode_error_not_op_message(const User &sender, const std::string &channel);
 	static event_pair command_too_many_argument_461(const uintptr_t &sock, const std::string &command);
