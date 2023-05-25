@@ -8,8 +8,6 @@ Channel::Channel()
 	this->member_limit_ = 0;
 }
 
-std::string &Channel::get_access(void) { return access_; }
-void Channel::set_access(const std::string &access) { access_ = access; }
 void Channel::change_nick(User &usr, std::string new_nick)
 {
 	std::vector<User>::iterator it;

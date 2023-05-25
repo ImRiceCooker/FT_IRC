@@ -217,9 +217,9 @@ event_pair Sender::join_invalid_channel_name_message(const User &sender, const s
 }
 
 /** @brief 353 - join 시 같이 보내는 패킷 메세지 **/
-std::string Sender::join_353_message(const User &sender, const std::string &chan_name, const std::string &chan_access, const std::string &chan_user_list)
+std::string Sender::join_353_message(const User &sender, const std::string &chan_name, const std::string &chan_user_list)
 {
-	const std::string &ret = ":" + Sender::server_name_ + " 353 " + sender.nickname_ + " " + chan_access + " " + chan_name + " :" + chan_user_list;
+	const std::string &ret = ":" + Sender::server_name_ + " 353 " + sender.nickname_ + " " + "=" + " " + chan_name + " :" + chan_user_list;
 	return ret + "\r\n";
 }
 

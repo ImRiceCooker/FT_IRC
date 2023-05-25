@@ -42,14 +42,13 @@ bool Database::is_user_in_channel(User &leaver)
 	return false;
 }
 
-Channel &Database::create_channel(User &joiner, std::string &chan_name, std::string chan_access)
+Channel &Database::create_channel(User &joiner, std::string &chan_name)
 {
 	Channel tmp;
 
 	tmp.set_channel_name(chan_name);
 	tmp.add_to_channel_member(joiner);
 	tmp.set_host(joiner);
-	tmp.set_access(chan_access);
 	channel_list_.push_back(tmp);
 	return channel_list_.back();
 }
@@ -126,11 +125,11 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 	}
 	if (is_channel(chan_name) == false)
 	{
-		Channel &channel = create_channel(joiner, chan_name, "=");
+		Channel &channel = create_channel(joiner, chan_name);
 		tmp = Sender::join_message(joiner, joiner, chan_name);
 		ret.insert(tmp);
 		event_map_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, channel.get_channel_name(), channel.get_access(), "@" + joiner.nickname_);
+		it->second += Sender::join_353_message(joiner, channel.get_channel_name(), "@" + joiner.nickname_);
 		it->second += Sender::join_366_message(joiner, channel.get_channel_name());
 	}
 	else if ((cur_channel.channel_flag_ & F_INVITE_ONLY) && !cur_channel.has_invitation(joiner.client_sock_))
@@ -156,7 +155,7 @@ event_map Database::join_channel(User &joiner, const std::string &tmp_chan_name,
 		const std::string &chan_user_list(cur_channel.get_user_list_str());
 		ret = cur_channel.send_all(joiner, joiner, "Join \"" + chan_name + "\" channel, " + joiner.nickname_, JOIN);
 		event_map_iter it = ret.find(joiner.client_sock_);
-		it->second += Sender::join_353_message(joiner, cur_channel.get_channel_name(), cur_channel.get_access(), chan_user_list);
+		it->second += Sender::join_353_message(joiner, cur_channel.get_channel_name(), chan_user_list);
 		it->second += Sender::join_366_message(joiner, cur_channel.get_channel_name());
 	}
 	return ret;

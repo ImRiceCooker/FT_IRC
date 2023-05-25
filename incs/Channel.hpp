@@ -38,7 +38,6 @@ private:
 	std::vector<uintptr_t> invitations_;
 	std::string name_;
 	std::string topic_;
-	std::string access_;
 	std::string key_;
 	int member_limit_;
 
@@ -55,9 +54,7 @@ public:
 	bool is_host(User &user);
 	std::string &get_channel_name(void);
 	std::string &get_topic(void);
-	std::string &get_access(void);
 	int get_member_limit(void);
-	void set_access(const std::string &access);
 	void set_topic(std::string &topic);
 	bool is_channel_members(User &usr);
 	void change_nick(User &usr, std::string new_nick);

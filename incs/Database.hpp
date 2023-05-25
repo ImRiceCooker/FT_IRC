@@ -18,7 +18,7 @@ public:
 	event_map notice_channel(User &sender, std::string chan_name, const std::string &msg);
 	bool is_channel(std::string &chan_name);
 	bool is_user_in_channel(User &leaver);
-	Channel &create_channel(User &joiner, std::string &chan_name, std::string chan_access);
+	Channel &create_channel(User &joiner, std::string &chan_name);
 	void delete_channel(std::string &chan_name);
 	Channel &select_channel(std::string &chan_name);
 	Channel &select_channel(const std::string &chan_name);
