@@ -1,9 +1,0 @@
-*.o
-
-tags
-a.out
-.vscode/
-ircserv
-build/
-ircserv
-*.json
