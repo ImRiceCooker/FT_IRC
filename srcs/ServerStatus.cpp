@@ -19,23 +19,21 @@ void ServerStatus::print_users(const std::vector<User> &vect_user)
 void ServerStatus::print_input(const std::string &input)
 {
   std::cout << BOLDBLUE
-            << ">> " << input << " <<"
-            << std::endl
+            << ">> " << input << " <<\n"
             << RESET << std::endl;
 }
 
 void ServerStatus::print_recived(const uintptr_t &socket, const std::string &command)
 {
-  std::cout << BOLDGREEN << " < RECEIVE > \n"
+  std::cout << BOLDGREEN << "\n < RECEIVE > \n"
             << RESET << std::endl
             << GRAY << "  [ Socket ] :  " << socket << std::endl
-            << "  [ Input ] :  " << command << RESET << std::endl
-            << std::endl;
+            << "  [ Input ] :  " << command << RESET << std::endl;
 }
 void ServerStatus::print_send(const uintptr_t &socket, const std::string &msg)
 
 {
-  std::cout << BOLDGREEN << " < SEND > \n"
+  std::cout << BOLDGREEN << "\n < SEND > \n"
             << RESET << std::endl
             << GRAY << "  [ Socket ] :  " << socket << std::endl
             << "  [ Message ]  : " << msg << RESET << std::endl;
