@@ -10,15 +10,15 @@
 #include <sys/_types/_size_t.h>
 #include <iostream>
 
-const std::string Parser::commands[N_COMMAND] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE", "MODE", "INVITE"};
-void (Parser::*Parser::func_ptr[N_COMMAND])(const uintptr_t &, std::stringstream &, std::string &) =
-		{&Parser::parser_pass_, &Parser::parser_nick_, &Parser::parser_user_, &Parser::parser_ping_, &Parser::parser_join_, &Parser::parser_quit_, &Parser::parser_privmsg_,
-		 &Parser::parser_kick_, &Parser::parser_part_, &Parser::parser_topic_, &Parser::parser_notice_, &Parser::parser_mode_, &Parser::parser_invite_};
+const std::string Parser::commands[N_CMD] = {"PASS", "NICK", "USER", "PING", "JOIN", "QUIT", "PRIVMSG", "KICK", "PART", "TOPIC", "NOTICE", "MODE", "INVITE"};
+void (Parser::*Parser::command_handlers[N_CMD])(const uintptr_t &, std::stringstream &, std::string &) =
+		{&Parser::parse_pass_, &Parser::parse_nick_, &Parser::parse_user_, &Parser::parse_ping_, &Parser::parse_join_, &Parser::parse_quit_, &Parser::parse_privmsg_,
+		 &Parser::parse_kick_, &Parser::parse_part_, &Parser::parse_topic_, &Parser::parse_notice_, &Parser::parse_mode_, &Parser::parse_invite_};
 
-/**		command_toupper   **/
+/**		command_toupper_   **/
 /**		@brief NC로 소문자 명령을 보낼 경우 대문자로 변경하여 처리하기 위한 함수   **/
 /**		@param command 대문자로 변경할 명령어   **/
-const std::string Parser::command_toupper(const char *command)
+const std::string Parser::command_toupper_(const char *command)
 {
 	std::string ret;
 
@@ -48,7 +48,7 @@ void Parser::clear_all()
 			continue;
 		event_pair tmp = Sender::quit_leaver_message(*it, "");
 		to_delete.insert(tmp);
-		Receiver::get_Kevent_Handler().set_exit(it->client_sock_);
+		Receiver::get_Kevent_Handler().add_exit_event(it->client_sock_);
 	}
 	const bool flag = to_delete.size() ? false : true;
 	std::vector<struct kevent> events = Receiver::get_Kevent_Handler().set_monitor(flag);
@@ -63,7 +63,7 @@ void Parser::clear_all()
 	}
 }
 
-void Parser::error_situation(const uintptr_t &ident)
+void Parser::handle_error(const uintptr_t &ident)
 {
 	database_.delete_error_user(ident);
 }
@@ -84,11 +84,11 @@ std::string Parser::message_resize_(const std::string &tmp, const std::string &t
 	return ret;
 }
 
-/**		command_parser   **/
+/**		parse_command   **/
 /**		@brief 클라이언트가 보낸 명령어를 개행을 기준으로 한 줄씩 파싱하여 처리하는 함수   **/
 /**		@param ident 클라이언트의 소켓   **/
 /**		@param command 들어온 명령어   **/
-void Parser::command_parser(const uintptr_t &ident, std::string &command)
+void Parser::parse_command(const uintptr_t &ident, std::string &command)
 {
 	std::stringstream ss(command);
 	std::string line;
@@ -100,12 +100,12 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 		std::size_t i(0);
 
 		line_ss >> command_type;
-		command_type = command_toupper(command_type.c_str());
+		command_type = command_toupper_(command_type.c_str());
 		ServerStatus::print_input(command_type);
-		for (; i < N_COMMAND && (command_type != Parser::commands[i]); ++i)
+		for (; i < N_CMD && (command_type != Parser::commands[i]); ++i)
 		{
 		}
-		if (i < N_COMMAND)
+		if (i < N_CMD)
 		{
 			std::size_t pos;
 			if ((i == 3) && (line.find(':') != std::string::npos))
@@ -125,7 +125,7 @@ void Parser::command_parser(const uintptr_t &ident, std::string &command)
 			{
 				to_send = line.substr(pos + 1, line.length() - (pos + 1));
 			}
-			(this->*Parser::func_ptr[i])(ident, line_ss, to_send);
+			(this->*Parser::command_handlers[i])(ident, line_ss, to_send);
 		}
 		else
 		{
@@ -207,7 +207,7 @@ char get_wrong_mode_option(std::string wrong_mode)
 		return wrong_mode.at(1);
 }
 
-void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_mode_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
 	t_mode_input mode;
@@ -236,10 +236,10 @@ void Parser::parser_mode_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_multiple_write_events_(ret, ident, 0);
 }
 
-/**		parser_invite_   **/
+/**		parse_invite_   **/
 /**		@brief INVITE 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없거나, 채널이 없거나, 유저가 없으면 에러메세지 반환   **/
-void Parser::parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_invite_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
 	std::string channel;
@@ -265,10 +265,10 @@ void Parser::parser_invite_(const uintptr_t &ident, std::stringstream &line_ss, 
 	push_multiple_write_events_(ret, ident, 0);
 }
 
-/**		parser_pass_   **/
+/**		parse_pass_   **/
 /**		@brief PASS 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없거나 패스워드가 틀리면 오류를 보내고, 정상적인 패스워드면 유저를 등록   **/
-void Parser::parser_pass_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_pass_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
 	std::string pw;
@@ -293,13 +293,13 @@ void Parser::parser_pass_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_write_event_(ret);
 }
 
-/**		parser_nick_   **/
+/**		parse_nick_   **/
 /**		@brief NICK 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 닉네임을 등록   **/
 /**		@brief valid NICK인지 확인, 이미 존재하는 NICK인지 확인, 점유 못한 NICK은 뺏음   **/
 /**		@brief channel에서 NICK 변경시, send_all **/
 
-void Parser::parser_nick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_nick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
 	std::string nick;
@@ -316,10 +316,10 @@ void Parser::parser_nick_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_multiple_write_events_(ret, ident, 0);
 }
 
-/**		parser_user_   **/
+/**		parse_user_   **/
 /**		@brief USER 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 유저를 등록   **/
-void Parser::parser_user_(const uintptr_t &ident, std::stringstream &line_ss, std::string &real_name)
+void Parser::parse_user_(const uintptr_t &ident, std::stringstream &line_ss, std::string &real_name)
 {
 	event_map ret;
 	event_pair tmp;
@@ -342,10 +342,10 @@ void Parser::parser_user_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_multiple_write_events_(ret, ident, 0);
 }
 
-/**		parser_ping_   **/
+/**		parse_ping_   **/
 /**		@brief PING 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 PONG 메세지 생성   **/
-void Parser::parser_ping_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_ping_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_pair ret;
 	std::string msg;
@@ -362,10 +362,10 @@ void Parser::parser_ping_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_write_event_(ret);
 }
 
-/**		parser_quit_   **/
+/**		parse_quit_   **/
 /**		@brief QUIT 명령어를 파싱하는 함수   **/
 /**		@brief 유저 메소드를 불러 종료할 유저에 대한 메세지를 만들고, 채널에 있을 경우 다른 유저들에 대한 메세지도 만듬   **/
-void Parser::parser_quit_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_quit_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_map ret;
 	std::string nick, tmp;
@@ -382,10 +382,10 @@ void Parser::parser_quit_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_multiple_write_events_(ret, ident, 1);
 }
 
-/**		parser_privmsg_   **/
+/**		parse_privmsg_   **/
 /**		@brief PRIVMSG 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 상대에게 PRIVMSG 메세지 생성   **/
-void Parser::parser_privmsg_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_privmsg_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	std::string target, msg;
 	event_map ret;
@@ -406,10 +406,10 @@ void Parser::parser_privmsg_(const uintptr_t &ident, std::stringstream &line_ss,
 	push_multiple_write_events_(ret, ident, 0);
 }
 
-/**		parser_notice_   **/
+/**		parse_notice_   **/
 /**		@brief NOTICE 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 상대에게 NOTICE 메세지 생성   **/
-void Parser::parser_notice_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_notice_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	std::string target, msg;
 	event_map ret;
@@ -430,10 +430,10 @@ void Parser::parser_notice_(const uintptr_t &ident, std::stringstream &line_ss, 
 	push_multiple_write_events_(ret, ident, 0);
 }
 
-/**		parser_join_   **/
+/**		parse_join_   **/
 /**		@brief JOIN 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널에 join   **/
-void Parser::parser_join_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_join_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	static_cast<void>(to_send);
 	std::string chan_name;
@@ -445,10 +445,10 @@ void Parser::parser_join_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_multiple_write_events_(ret, ident, 2);
 }
 
-/**		parser_part_   **/
+/**		parse_part_   **/
 /**		@brief PART 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널에서 해당 유저를 나가게 함   **/
-void Parser::parser_part_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_part_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_map ret;
 	std::string chan_name, msg;
@@ -463,10 +463,10 @@ void Parser::parser_part_(const uintptr_t &ident, std::stringstream &line_ss, st
 	push_multiple_write_events_(ret, ident, 2);
 }
 
-/**		parser_topic_   **/
+/**		parse_topic_   **/
 /**		@brief TOPIC 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널의 토픽을 설정함   **/
-void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_topic_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_map ret;
 	User cur_usr = database_.select_user(ident);
@@ -490,10 +490,10 @@ void Parser::parser_topic_(const uintptr_t &ident, std::stringstream &line_ss, s
 	push_multiple_write_events_(ret, ident, 2);
 }
 
-/**		parser_kick_   **/
+/**		parse_kick_   **/
 /**		@brief KICK 명령어를 파싱하는 함수   **/
 /**		@brief 매개변수가 없으면 에러를 보내고, 있으면 유저 메소드를 호출하여 채널에 있는 특정 대상을 kick함   **/
-void Parser::parser_kick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
+void Parser::parse_kick_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_map ret;
 	event_pair tmp;
@@ -520,11 +520,11 @@ void Parser::push_write_event_(event_pair &ret)
 {
 	if (ret.second.empty())
 	{
-		Receiver::get_Kevent_Handler().set_read(ret.first);
+		Receiver::get_Kevent_Handler().add_read_event(ret.first);
 		return;
 	}
 	parser_udata_.insert(ret);
-	(Receiver::get_Kevent_Handler()).set_write(ret.first);
+	(Receiver::get_Kevent_Handler()).add_write_event(ret.first);
 }
 
 /**		push_multiple_write_events_   **/
@@ -536,7 +536,7 @@ void Parser::push_multiple_write_events_(event_map &ret, const uintptr_t &ident,
 	/**   등록할 이벤트가 없는 경우 해당 이벤트를 read 상태로 만들어 줌   **/
 	if (ret.empty())
 	{
-		Receiver::get_Kevent_Handler().set_read(ident);
+		Receiver::get_Kevent_Handler().add_read_event(ident);
 		return;
 	}
 	if (target != ret.end())
@@ -544,19 +544,19 @@ void Parser::push_multiple_write_events_(event_map &ret, const uintptr_t &ident,
 		/**   여러 소켓으로 데이터를 보낼 때 나만 제외할 경우   **/
 		if (target->second.empty() && flag == 0)
 		{
-			Receiver::get_Kevent_Handler().set_read(ident);
+			Receiver::get_Kevent_Handler().add_read_event(ident);
 		}
 		/**   해당 클라이언트를 종료할 경우   **/
 		else if (flag == 1)
 		{
 			parser_udata_.insert(*target);
-			Receiver::get_Kevent_Handler().set_exit(target->first);
+			Receiver::get_Kevent_Handler().add_exit_event(target->first);
 		}
 		/**   일반적으로 여러 소켓으로 데이터를 보낼 때 나를 제일 먼저 등록   **/
 		else
 		{
 			parser_udata_.insert(*target);
-			Receiver::get_Kevent_Handler().set_write(target->first);
+			Receiver::get_Kevent_Handler().add_write_event(target->first);
 		}
 	}
 	/**   내가 있으면 나를 제외한 클라이언트들의 이벤트를 등록함   **/
@@ -567,6 +567,6 @@ void Parser::push_multiple_write_events_(event_map &ret, const uintptr_t &ident,
 			continue;
 		}
 		parser_udata_.insert(*iter);
-		(Receiver::get_Kevent_Handler()).set_write(iter->first);
+		(Receiver::get_Kevent_Handler()).add_write_event(iter->first);
 	}
 }

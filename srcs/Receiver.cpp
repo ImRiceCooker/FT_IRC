@@ -57,7 +57,7 @@ void Receiver::bind_socket_()
 	{
 		std::cerr << "error" << std::endl;
 	}
-	kq_.set_server(server_sock_);
+	kq_.add_server_event(server_sock_);
 }
 
 void Receiver::start()
@@ -77,7 +77,7 @@ void Receiver::start()
 					std::cerr << "err: accepting connection fail" << std::endl;
 					continue;
 				}
-				kq_.set_read(client_sock);
+				kq_.add_read_event(client_sock);
 			}
 			/**   클라이언트 소켓으로 이벤트가 발생한 경우   **/
 			else
@@ -102,7 +102,7 @@ void Receiver::start()
 					/**   Write 이벤트를 다시 Read 상태로 변경   **/
 					uintptr_t tmp_fd = cur_event.ident;
 					kq_.delete_event(cur_event);
-					kq_.set_read(tmp_fd);
+					kq_.add_read_event(tmp_fd);
 				}
 			}
 		}
@@ -137,7 +137,7 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 		uintptr_t tmp_sock(cur_event.ident);
 
 		kq_.delete_event(cur_event);
-		parser_.error_situation(tmp_sock);
+		parser_.handle_error(tmp_sock);
 		close(tmp_sock);
 		return (1);
 	}
@@ -175,7 +175,7 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 			cur_backup->second += command;
 		}
 		/**   개행이 나올 때 까지 read 상태로 대기시킨다.  **/
-		kq_.set_read(cur_event.ident);
+		kq_.add_read_event(cur_event.ident);
 	}
 	/*****   개행을 찾았으면 Parser로 커맨드를 넘겨야 한다.  *****/
 	else
@@ -192,7 +192,7 @@ int Receiver::client_read_event_handler_(struct kevent &cur_event)
 		/**   Parser를 호출하여 한 줄의 명령어를 처리한다.  **/
 		/**   Receiver에서 캐리지 리턴을 모두 제거하여 Parser에서의 캐리지 처리(set_message)함수는 제거되었음  **/
 		ServerStatus::print_recived(cur_event.ident, command);
-		parser_.command_parser(cur_event.ident, command);
+		parser_.parse_command(cur_event.ident, command);
 	}
 	return (0);
 }
