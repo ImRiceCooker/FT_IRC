@@ -1,5 +1,6 @@
 #include "ServerStatus.hpp"
 #include "Color.hpp"
+#include <vector>
 
 void ServerStatus::print_users(const std::vector<User> &vect_user)
 {
