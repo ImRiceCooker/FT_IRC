@@ -469,7 +469,6 @@ void Parser::parse_part_(const uintptr_t &ident, std::stringstream &line_ss, std
 void Parser::parse_topic_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_map ret;
-	User cur_usr = database_.select_user(ident);
 	std::string chan_name, msg;
 
 	line_ss >> chan_name;
@@ -483,7 +482,7 @@ void Parser::parse_topic_(const uintptr_t &ident, std::stringstream &line_ss, st
 		line_ss >> std::ws;
 		std::getline(line_ss, msg);
 		msg = message_resize_(msg, to_send);
-		ret = database_.set_topic(cur_usr, chan_name, msg);
+		ret = database_.set_topic(ident, chan_name, msg);
 	}
 	push_multiple_write_events_(ret, ident, 2);
 }
