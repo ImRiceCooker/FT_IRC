@@ -274,6 +274,8 @@ event_map Database::kick_channel(User &host, User &target, std::string &chan_nam
 		{
 			ret = channel.send_all(host, target, msg, KICK);
 			channel.delete_from_channel_member(target);
+			if (channel.get_users().size() == 0)
+				delete_channel(chan_name);
 		}
 		else
 		{

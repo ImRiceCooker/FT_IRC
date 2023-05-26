@@ -601,7 +601,7 @@ event_pair Database::bot_privmsg(User &cur_usr, const std::string &msg)
 	}
 	else
 	{
-		bot_msg = "THAT IS NOT MY COMMAND. YOU CAN USE : '!commanmd' & '!channel' & !user.";
+		bot_msg = "THAT IS NOT MY COMMAND. YOU CAN USE : '!command' & '!channel' & !user.";
 	}
 	tmp = Sender::privmsg_bot_message(cur_usr, bot_msg);
 	return tmp;
