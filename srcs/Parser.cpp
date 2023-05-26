@@ -337,6 +337,12 @@ void Parser::parse_user_(const uintptr_t &ident, std::stringstream &line_ss, std
 		}
 	}
 	real = message_resize_(real, real_name);
+	if (real.empty())
+	{
+		tmp = Sender::command_empty_argument_461(ident, "USER");
+		push_write_event_(tmp);
+		return;
+	}
 	tmp = database_.command_user(ident, argument[0], argument[1], argument[2], real);
 	ret.insert(tmp);
 	push_multiple_write_events_(ret, ident, 0);
