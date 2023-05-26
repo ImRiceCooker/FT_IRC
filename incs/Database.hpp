@@ -24,7 +24,7 @@ public:
 	Channel &select_channel(const std::string &chan_name);
 	Channel &select_channel(User &connector);
 
-	event_map set_topic(User &sender, std::string &chan_name, std::string &topic);
+	event_map set_topic(const uintptr_t &ident, std::string &chan_name, std::string &topic);
 	event_map kick_channel(User &host, User &target, std::string &chan_name, std::string &msg);
 	event_map join_channel(User &joiner, const std::string &chan_name_, const std::string &tmp_password);
 	event_map part_channel(User &leaver, std::string &chan_name, const std::string &msg_);

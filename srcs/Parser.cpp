@@ -469,7 +469,6 @@ void Parser::parse_part_(const uintptr_t &ident, std::stringstream &line_ss, std
 void Parser::parse_topic_(const uintptr_t &ident, std::stringstream &line_ss, std::string &to_send)
 {
 	event_map ret;
-	User cur_usr = database_.select_user(ident);
 	std::string chan_name, msg;
 
 	line_ss >> chan_name;
@@ -478,27 +477,12 @@ void Parser::parse_topic_(const uintptr_t &ident, std::stringstream &line_ss, st
 		event_pair tmp = Sender::command_empty_argument_461(ident, "TOPIC");
 		ret.insert(tmp);
 	}
-	else if (!database_.is_channel(chan_name))
-	{
-		std::cout << "not channel\n";
-		event_pair tmp = Sender::no_channel_message(cur_usr, chan_name);
-		ret.insert(tmp);
-	}
 	else
 	{
-		Channel &cur_chan = database_.select_channel(chan_name);
-		if (!cur_chan.is_channel_members(cur_usr))
-		{
-			event_pair tmp = Sender::not_on_the_channel_message(cur_usr, chan_name);
-			ret.insert(tmp);
-		}
-		else
-		{
-			line_ss >> std::ws;
-			std::getline(line_ss, msg);
-			msg = message_resize_(msg, to_send);
-			ret = database_.set_topic(cur_usr, chan_name, msg);
-		}
+		line_ss >> std::ws;
+		std::getline(line_ss, msg);
+		msg = message_resize_(msg, to_send);
+		ret = database_.set_topic(ident, chan_name, msg);
 	}
 	push_multiple_write_events_(ret, ident, 2);
 }
