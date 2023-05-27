@@ -328,7 +328,7 @@ event_map Database::set_topic(const uintptr_t &ident, std::string &chan_name, st
 	Channel &channel = select_channel(chan_name);
 	if (topic.empty())
 	{
-		if (!channel.get_topic().is_empty())
+		if (!channel.get_topic().empty())
 		{
 			tmp = Sender::show_channel_topic(cur_user, channel.get_channel_name(), channel.get_topic());
 			ret.insert(tmp);

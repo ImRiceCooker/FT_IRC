@@ -38,7 +38,7 @@ public:
 	static event_pair kick_error_no_user_message(const User &sender, const std::string &host, const std::string &target, const std::string &channel);
 	static event_pair topic_message(const User &sender, const User &receiver, const std::string &channel, const std::string &topic);
 	static event_pair topic_access_error(const User &sender, const std::string &channel);
-	static event_pair show_channel_topic(const User &sender, const std::string &channel_name, const std::string &channel_topic)
+	static event_pair show_channel_topic(const User &sender, const std::string &channel_name, const std::string &channel_topic);
 
 
 	static event_pair notice_p2p_message(const User &sender, const User &target, const std::string &msg);
