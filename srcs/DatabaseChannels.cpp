@@ -326,6 +326,15 @@ event_map Database::set_topic(const uintptr_t &ident, std::string &chan_name, st
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
+	if (topic.empty())
+	{
+		if (!channel.get_topic().is_empty())
+		{
+			tmp = Sender::show_channel_topic(cur_user, channel.get_channel_name(), channel.get_topic());
+			ret.insert(tmp);
+		}
+		return ret;
+	}
 	if ((channel.channel_flag_ & F_TOPIC_OWNERSHIP) && !(channel.is_host(cur_user)))
 	{
 		tmp = Sender::topic_access_error(cur_user, chan_name);
