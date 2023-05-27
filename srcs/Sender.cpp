@@ -375,8 +375,8 @@ event_pair Sender::topic_access_error(const User &sender, const std::string &cha
 {
 	event_pair ret;
 
-	const std::string &topic_message = ":" + Sender::server_name_ + " 482 " + sender.nickname_ + " " + channel + " :You do not have access to change the topic on this channel";
-	ret = make_pair(sender.client_sock_, topic_message + "\r\n");
+	const std::string &topic_msg = ":" + Sender::server_name_ + " 482 " + sender.nickname_ + " " + channel + " :You do not have access to change the topic on this channel";
+	ret = std::make_pair(sender.client_sock_, topic_msg + "\r\n");
 	return ret;
 }
 
@@ -385,8 +385,8 @@ event_pair Sender::show_channel_topic(const User &sender, const std::string &cha
 {
 	event_pair ret;
 
-	const std::string &topic_message = ":" + Sender::server_name_ + " 332 " + sender.nickname_ + " " + channel_name + " :" + channel_topic;
-	ret = make_pair(sender.client_sock_, topic_message + "\r\n");
+	const std::string &topic_msg = ":" + Sender::server_name_ + " 332 " + sender.nickname_ + " " + channel_name + " :" + channel_topic;
+	ret = std::make_pair(sender.client_sock_, topic_msg + "\r\n");
 	return ret;
 }
 

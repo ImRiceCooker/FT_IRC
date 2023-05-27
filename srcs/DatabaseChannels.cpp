@@ -311,7 +311,6 @@ event_map Database::set_topic(const uintptr_t &ident, std::string &chan_name, st
 {
 	event_map ret;
 	event_pair tmp = valid_user_checker_(ident, "TOPIC");
-	ret.insert(tmp);
 
 	if (tmp.second.size())
 	{
@@ -398,7 +397,7 @@ event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode_input &mode
 {
 	event_map ret;
 	event_pair tmp;
-	
+
 	if (mode.param.length() == 0)
 	{
 		tmp = Sender::mode_syntax_error(select_user(ident), mode.target, mode.option, "key", "key");
