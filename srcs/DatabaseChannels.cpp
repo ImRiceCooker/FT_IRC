@@ -311,7 +311,6 @@ event_map Database::set_topic(const uintptr_t &ident, std::string &chan_name, st
 {
 	event_map ret;
 	event_pair tmp = valid_user_checker_(ident, "TOPIC");
-	ret.insert(tmp);
 
 	if (tmp.second.size())
 	{
@@ -326,6 +325,15 @@ event_map Database::set_topic(const uintptr_t &ident, std::string &chan_name, st
 		return ret;
 	}
 	Channel &channel = select_channel(chan_name);
+	if (topic.empty())
+	{
+		if (!channel.get_topic().empty())
+		{
+			tmp = Sender::show_channel_topic(cur_user, channel.get_channel_name(), channel.get_topic());
+			ret.insert(tmp);
+		}
+		return ret;
+	}
 	if ((channel.channel_flag_ & F_TOPIC_OWNERSHIP) && !(channel.is_host(cur_user)))
 	{
 		tmp = Sender::topic_access_error(cur_user, chan_name);
@@ -389,7 +397,7 @@ event_map Database::command_mode_k_on(const uintptr_t &ident, t_mode_input &mode
 {
 	event_map ret;
 	event_pair tmp;
-	
+
 	if (mode.param.length() == 0)
 	{
 		tmp = Sender::mode_syntax_error(select_user(ident), mode.target, mode.option, "key", "key");

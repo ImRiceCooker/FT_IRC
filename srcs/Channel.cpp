@@ -5,6 +5,7 @@ Channel::Channel()
 {
 	this->channel_flag_ = 0b1000;
 	this->key_ = "";
+	this->topic_ = "";
 	this->member_limit_ = 0;
 }
 
